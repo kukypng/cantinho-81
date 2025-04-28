@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StoreLayout from "@/components/layout/StoreLayout";
@@ -6,7 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { CheckCircle, Loader2, MapPin, Store } from "lucide-react";
+import { CheckCircle, Loader2, MapPin, Store, Truck } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
