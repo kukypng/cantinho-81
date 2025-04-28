@@ -1,7 +1,6 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, MapPin } from "lucide-react";
+import { ShoppingCart, Menu, MapPin, Settings } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
@@ -63,6 +62,12 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                   </span>
                 )}
               </Link>
+
+              <Link to="/login">
+                <Button variant="ghost" size="icon" className="text-white">
+                  <Settings className="h-5 w-5" />
+                </Button>
+              </Link>
               
               {isMobile && (
                 <Sheet>
@@ -82,6 +87,9 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                           {item.name}
                         </Link>
                       ))}
+                      <Link to="/login" className="text-lg font-medium">
+                        Admin
+                      </Link>
                     </nav>
                   </SheetContent>
                 </Sheet>
@@ -90,15 +98,8 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
           </div>
 
           {settings.welcomeMessage && (
-            <div className="bg-stone-100 p-2 text-center text-sm font-medium text-gray-700">
+            <div className="bg-white/10 p-2 text-center text-sm font-medium">
               {settings.welcomeMessage}
-            </div>
-          )}
-
-          {settings.freeDeliveryThreshold && settings.freeDeliveryThreshold > 0 && (
-            <div className="flex items-center justify-center gap-1 bg-store-yellow p-2 text-center text-sm font-medium text-black">
-              <MapPin className="h-4 w-4" />
-              <span>Entrega Grátis em pedidos acima de R$ {settings.freeDeliveryThreshold.toFixed(2)}</span>
             </div>
           )}
         </header>
@@ -109,12 +110,12 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
       </main>
 
       {showFooter && (
-        <footer className="border-t border-gray-200 bg-white py-8">
+        <footer className="border-t border-gray-100 bg-white py-6">
           <div className="container mx-auto px-4 text-center">
-            <p className="mb-4 text-sm text-gray-500">
+            <p className="text-sm text-gray-500">
               {settings.footerMessage || "Produtos feitos com ❤️"}
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="mt-1 text-xs text-gray-400">
               {settings.storeName} &copy; {new Date().getFullYear()}
             </p>
           </div>

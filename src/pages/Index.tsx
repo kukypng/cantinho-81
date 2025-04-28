@@ -24,50 +24,51 @@ const Index = () => {
 
   return (
     <StoreLayout>
-      {/* Free delivery banner */}
-      <div className="container mx-auto px-4 py-6">
-        {/* Banner */}
-        <div className="mb-8 rounded-lg bg-red-50 px-4 py-4">
-          <h2 className="mb-2 text-center text-2xl font-bold text-gray-900">
+      <div className="container mx-auto p-4">
+        {/* Store name and delivery info */}
+        <div className="mb-6 rounded-xl bg-gradient-to-r from-store-pink/5 to-store-pink/10 p-4">
+          <h1 className="text-center text-2xl font-bold text-gray-800">
             {settings.storeName}
-          </h2>
-          <div className="flex justify-center">
-            <div className="mt-2 inline-flex items-center rounded-full bg-store-yellow px-4 py-1">
-              <MapPin className="mr-1 h-4 w-4" />
-              <span className="text-sm font-medium">Entrega Grátis</span>
+          </h1>
+          {settings.freeDeliveryThreshold && settings.freeDeliveryThreshold > 0 && (
+            <div className="mt-2 flex justify-center">
+              <div className="inline-flex items-center gap-1 rounded-full bg-store-yellow px-3 py-1 text-sm font-medium text-gray-900">
+                <MapPin className="h-4 w-4" />
+                Entrega Grátis acima de R$ {settings.freeDeliveryThreshold}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Category filter */}
         {categories.length > 0 && (
-          <div className="mb-6 overflow-x-auto">
-            <div className="flex gap-2 pb-2">
+          <div className="mb-6 -mx-1 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+            <Button
+              variant={selectedCategory === null ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedCategory(null)}
+              className={selectedCategory === null ? "bg-store-pink hover:bg-store-pink/90 whitespace-nowrap" : "whitespace-nowrap"}
+            >
+              Todos
+            </Button>
+            {categories.map((category) => (
               <Button
-                variant={selectedCategory === null ? "default" : "outline"}
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
                 size="sm"
-                onClick={() => setSelectedCategory(null)}
-                className={selectedCategory === null ? "bg-store-pink hover:bg-store-pink/90" : ""}
+                onClick={() => setSelectedCategory(category)}
+                className={`${
+                  selectedCategory === category ? "bg-store-pink hover:bg-store-pink/90" : ""
+                } whitespace-nowrap`}
               >
-                Todos
+                {category}
               </Button>
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(category)}
-                  className={selectedCategory === category ? "bg-store-pink hover:bg-store-pink/90" : ""}
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
+            ))}
           </div>
         )}
 
         {/* Products grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
