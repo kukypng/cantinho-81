@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, ArrowRight } from "lucide-react";
+import { ShoppingCart, Menu, ArrowRight, Instagram, Phone } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
@@ -120,6 +120,32 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
             <p className="mt-1 text-xs text-gray-400">
               {settings.storeName} &copy; {new Date().getFullYear()}
             </p>
+            
+            {/* Social Media Links */}
+            <div className="mt-4 flex justify-center space-x-4">
+              {settings.socialMedia?.instagram && (
+                <a 
+                  href={settings.socialMedia.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full bg-store-pink p-2 text-white hover:bg-store-pink/90 transition-colors"
+                  aria-label="Instagram"
+                >
+                  <Instagram size={20} />
+                </a>
+              )}
+              {settings.socialMedia?.whatsapp && (
+                <a
+                  href={settings.socialMedia.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full bg-green-600 p-2 text-white hover:bg-green-700 transition-colors"
+                  aria-label="WhatsApp"
+                >
+                  <Phone size={20} />
+                </a>
+              )}
+            </div>
           </div>
         </footer>
       )}

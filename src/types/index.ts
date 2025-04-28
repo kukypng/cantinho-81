@@ -23,6 +23,10 @@ export interface StoreSettings {
   address?: string;
   welcomeMessage?: string;
   footerMessage?: string;
+  socialMedia?: {
+    instagram?: string;
+    whatsapp?: string;
+  };
 }
 
 export interface User {

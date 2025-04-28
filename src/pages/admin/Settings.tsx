@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useStore } from "@/context/StoreContext";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
-import { Store, Phone, Truck, MessageSquare } from "lucide-react";
+import { Store, Phone, Truck, MessageSquare, Instagram } from "lucide-react";
 
 const Settings = () => {
   const { settings, updateSettings } = useStore();
@@ -20,6 +19,8 @@ const Settings = () => {
     freeDeliveryThreshold: settings.freeDeliveryThreshold || 0,
     welcomeMessage: settings.welcomeMessage || "",
     footerMessage: settings.footerMessage || "",
+    instagram: settings.socialMedia?.instagram || "",
+    whatsapp: settings.socialMedia?.whatsapp || ""
   });
 
   const handleInputChange = (
@@ -42,10 +43,25 @@ const Settings = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Prepare socialMedia object
+    const socialMedia = {
+      instagram: formData.instagram,
+      whatsapp: formData.whatsapp
+    };
+    
+    // Update settings
     updateSettings({
       ...settings,
-      ...formData,
+      storeName: formData.storeName,
+      whatsappNumber: formData.whatsappNumber,
+      deliveryFee: formData.deliveryFee,
+      freeDeliveryThreshold: formData.freeDeliveryThreshold,
+      welcomeMessage: formData.welcomeMessage,
+      footerMessage: formData.footerMessage,
+      socialMedia
     });
+    
     toast.success("Configurações salvas com sucesso!");
   };
 
@@ -172,6 +188,44 @@ const Settings = () => {
                     onChange={handleInputChange}
                     placeholder="Ex: Produtos feitos com ❤️"
                   />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Instagram className="h-5 w-5" />
+                  Redes Sociais
+                </CardTitle>
+                <CardDescription>
+                  Configure os links para suas redes sociais.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="instagram">Link do Instagram</Label>
+                  <Input
+                    id="instagram"
+                    name="instagram"
+                    value={formData.instagram}
+                    onChange={handleInputChange}
+                    placeholder="Ex: https://instagram.com/sualoja"
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="whatsapp">Link do WhatsApp</Label>
+                  <Input
+                    id="whatsapp"
+                    name="whatsapp"
+                    value={formData.whatsapp}
+                    onChange={handleInputChange}
+                    placeholder="Ex: https://wa.me/5511999999999"
+                  />
+                  <p className="text-xs text-gray-500">
+                    Você pode usar o formato https://wa.me/SEU_NUMERO (com o código do país)
+                  </p>
                 </div>
               </CardContent>
             </Card>
