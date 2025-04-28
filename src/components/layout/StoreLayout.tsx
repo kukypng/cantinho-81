@@ -1,12 +1,11 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, ArrowRight } from "lucide-react";
+import { ShoppingCart, Menu } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface StoreLayoutProps {
@@ -30,13 +29,13 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-pink-50/30">
       {showHeader && (
-        <header className="sticky top-0 z-10 apple-glass">
+        <header className="sticky top-0 z-10 bg-store-pink text-white">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center">
-                <span className="text-xl font-medium tracking-tight text-gradient">{settings.storeName}</span>
+                <span className="text-xl font-medium">{settings.storeName}</span>
               </Link>
             </div>
             
@@ -46,7 +45,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                   <Link
                     key={item.name}
                     to={item.href}
-                    className="text-sm font-medium tracking-wide transition-colors hover:text-store-pink"
+                    className="text-sm font-medium tracking-wide transition-colors hover:text-white/80"
                   >
                     {item.name}
                   </Link>
@@ -55,33 +54,30 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
             )}
 
             <div className="flex items-center gap-4">
-              <div className="relative">
-                <Link to="/cart" className="relative hover:scale-105 transition-transform duration-300">
-                  <ShoppingCart className="h-6 w-6 stroke-[1.5px] text-store-pink" />
-                  {totalItems > 0 && (
-                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-pink text-xs font-bold text-white pink-glow">
-                      {totalItems}
-                    </span>
-                  )}
-                </Link>
+              <Link 
+                to="/cart" 
+                className="relative text-white hover:text-white/80 transition-colors"
+              >
+                <ShoppingCart className="h-6 w-6" />
                 {totalItems > 0 && (
-                  <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
-                    <div className="flex items-center gap-1 bg-store-pink/10 px-3 py-1 rounded-full text-store-pink shadow-sm animate-pulse">
-                      <span className="text-xs font-medium">Clique Aqui</span>
-                      <ArrowRight className="h-3 w-3" />
-                    </div>
-                  </Link>
+                  <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-bold text-store-pink">
+                    {totalItems}
+                  </span>
                 )}
-              </div>
+              </Link>
               
               {isMobile && (
                 <Sheet>
                   <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-foreground hover:text-store-pink">
-                      <Menu className="h-5 w-5 stroke-[1.5px]" />
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      className="text-white hover:text-white/80"
+                    >
+                      <Menu className="h-5 w-5" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="right" className="apple-glass border-l border-store-light-pink/50">
+                  <SheetContent side="right" className="border-l border-store-pink/50">
                     <nav className="flex flex-col gap-6 pt-12">
                       {navigationItems.map((item) => (
                         <Link
@@ -98,31 +94,19 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
               )}
             </div>
           </div>
-
-          {settings.welcomeMessage && (
-            <div className="transparent-welcome p-2 text-center text-sm font-medium tracking-wide text-store-pink">
-              {settings.welcomeMessage}
-            </div>
-          )}
         </header>
       )}
 
-      <main className={cn("flex-1 px-4 py-6 md:py-8", !showHeader && "pt-0")}>
-        <div className="container animate-fade-in">
-          {children}
-        </div>
+      <main className="flex-1">
+        {children}
       </main>
 
       {showFooter && (
-        <footer className="border-t border-store-light-pink/40 bg-pink-50/50 backdrop-blur-sm py-8">
-          <div className="container mx-auto px-4 text-center">
-            <p className="text-sm text-store-pink tracking-wide">
-              {settings.footerMessage}
-            </p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {settings.storeName} &copy; {new Date().getFullYear()}
-            </p>
-          </div>
+        <footer className="border-t border-store-pink/10 py-6 text-center text-sm text-muted-foreground">
+          <p>{settings.footerMessage}</p>
+          <p className="mt-2 text-xs">
+            {settings.storeName} &copy; {new Date().getFullYear()}
+          </p>
         </footer>
       )}
     </div>
