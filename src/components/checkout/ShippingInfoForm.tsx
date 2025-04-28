@@ -32,7 +32,7 @@ const ShippingInfoForm = ({ shippingInfo, onChange }: ShippingInfoFormProps) => 
           <Input
             id="name"
             name="name"
-            placeholder="Seu nome completo"
+            placeholder="Seu nome"
             value={shippingInfo.name}
             onChange={onChange}
           />
