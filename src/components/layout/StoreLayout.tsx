@@ -32,7 +32,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
   return (
     <div className="flex min-h-screen flex-col">
       {showHeader && (
-        <header className="sticky top-0 z-10 bg-gradient-to-r from-store-pink to-store-pink/90 text-white shadow-md">
+        <header className="sticky top-0 z-10 bg-store-pink shadow-md">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center">
@@ -100,14 +100,14 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
           </div>
 
           {settings.welcomeMessage && (
-            <div className="bg-white/10 p-2 text-center text-sm font-medium">
+            <div className="bg-transparent p-2 text-center text-sm font-medium text-white">
               {settings.welcomeMessage}
             </div>
           )}
         </header>
       )}
 
-      <main className={cn("flex-1", !showHeader && "pt-0")}>
+      <main className={cn("flex-1 bg-white", !showHeader && "pt-0")}>
         {children}
       </main>
 
