@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/types";
 import { toast } from "sonner";
+import defaultCredentialsData from "@/data/userCredentials.json";
 
 interface AuthContextType {
   currentUser: User | null;
@@ -20,12 +21,8 @@ interface UserCredentials {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Default admin user
-const DEFAULT_ADMIN: UserCredentials = {
-  email: "admin@parceiro1store.com",
-  password: "admin123",
-  isAdmin: true
-};
+// Default admin credentials
+const DEFAULT_ADMIN: UserCredentials = defaultCredentialsData[0];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);

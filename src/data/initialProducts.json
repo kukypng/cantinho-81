@@ -1,0 +1,37 @@
+
+[
+  {
+    "id": "1",
+    "name": "Tênis Esportivo Premium",
+    "description": "Tênis esportivo de alta performance",
+    "price": 299.00,
+    "imageUrl": "/lovable-uploads/c565362a-b192-4b93-a158-887bb045b216.png",
+    "featured": true,
+    "category": "Calçados"
+  },
+  {
+    "id": "2",
+    "name": "Mochila Executiva",
+    "description": "Mochila executiva com compartimento para laptop",
+    "price": 189.00,
+    "imageUrl": "https://placehold.co/400x300/eee/ccc",
+    "category": "Acessórios"
+  },
+  {
+    "id": "3",
+    "name": "Relógio Smart",
+    "description": "Smartwatch com monitor cardíaco",
+    "price": 399.00,
+    "imageUrl": "https://placehold.co/400x300/333/666",
+    "category": "Eletrônicos"
+  },
+  {
+    "id": "4",
+    "name": "Fone Bluetooth",
+    "description": "Fone de ouvido sem fio com cancelamento de ruído",
+    "price": 129.00,
+    "imageUrl": "https://placehold.co/400x300/ffff00/000000",
+    "featured": true,
+    "category": "Eletrônicos"
+  }
+]

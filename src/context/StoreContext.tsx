@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { StoreSettings } from "@/types";
+import defaultSettingsData from "@/data/defaultSettings.json";
 
 interface StoreContextType {
   settings: StoreSettings;
@@ -8,19 +9,10 @@ interface StoreContextType {
   isLoaded: boolean;
 }
 
-const defaultSettings: StoreSettings = {
-  storeName: "Parceiro 1 Store",
-  whatsappNumber: "5511999999999",
-  deliveryFee: 0,
-  freeDeliveryThreshold: 0,
-  welcomeMessage: "",
-  footerMessage: "",
-};
-
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<StoreSettings>(defaultSettings);
+  const [settings, setSettings] = useState<StoreSettings>(defaultSettingsData);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load settings from localStorage on mount

@@ -2,44 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Product } from "@/types";
 import { toast } from "sonner";
-
-// Sample product data
-const initialProducts: Product[] = [
-  {
-    id: "1",
-    name: "Tênis Esportivo Premium",
-    description: "Tênis esportivo de alta performance",
-    price: 299.00,
-    imageUrl: "/lovable-uploads/c565362a-b192-4b93-a158-887bb045b216.png",
-    featured: true,
-    category: "Calçados"
-  },
-  {
-    id: "2",
-    name: "Mochila Executiva",
-    description: "Mochila executiva com compartimento para laptop",
-    price: 189.00,
-    imageUrl: "https://placehold.co/400x300/eee/ccc",
-    category: "Acessórios"
-  },
-  {
-    id: "3",
-    name: "Relógio Smart",
-    description: "Smartwatch com monitor cardíaco",
-    price: 399.00,
-    imageUrl: "https://placehold.co/400x300/333/666",
-    category: "Eletrônicos"
-  },
-  {
-    id: "4",
-    name: "Fone Bluetooth",
-    description: "Fone de ouvido sem fio com cancelamento de ruído",
-    price: 129.00,
-    imageUrl: "https://placehold.co/400x300/ffff00/000000",
-    featured: true,
-    category: "Eletrônicos"
-  }
-];
+import initialProductsData from "@/data/initialProducts.json";
 
 interface ProductContextType {
   products: Product[];
@@ -63,13 +26,13 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setProducts(JSON.parse(savedProducts));
       } else {
         // Use sample products if none found
-        setProducts(initialProducts);
-        localStorage.setItem("products", JSON.stringify(initialProducts));
+        setProducts(initialProductsData);
+        localStorage.setItem("products", JSON.stringify(initialProductsData));
       }
     } catch (error) {
       console.error("Failed to load products:", error);
       // Fall back to initial products
-      setProducts(initialProducts);
+      setProducts(initialProductsData);
     }
   }, []);
 
