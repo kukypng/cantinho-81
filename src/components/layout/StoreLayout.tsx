@@ -27,6 +27,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
   const navigationItems = [
     { name: "Início", href: "/" },
     { name: "Carrinho", href: "/cart" },
+    { name: "Admin", href: "/admin" }
   ];
 
   return (
@@ -67,7 +68,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                 {totalItems > 0 && (
                   <div className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
                     <div className="flex items-center gap-2 bg-store-yellow text-black px-3 py-1 rounded-lg shadow-lg animate-pulse">
-                      <span className="text-sm font-medium">Clique aqui para continuar</span>
+                      <span className="text-sm font-medium">Clique Aqui</span>
                       <ArrowRight className="h-4 w-4" />
                     </div>
                   </div>
@@ -115,7 +116,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
         <footer className="border-t border-gray-100 bg-white py-6">
           <div className="container mx-auto px-4 text-center">
             <p className="text-sm text-gray-500">
-              {settings.footerMessage || "Produtos feitos com ❤️"}
+              {settings.footerMessage}
             </p>
             <p className="mt-1 text-xs text-gray-400">
               {settings.storeName} &copy; {new Date().getFullYear()}

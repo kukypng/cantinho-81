@@ -13,8 +13,8 @@ const defaultSettings: StoreSettings = {
   whatsappNumber: "5511999999999",
   deliveryFee: 0,
   freeDeliveryThreshold: 0,
-  welcomeMessage: "Feito com muito amor ❤️",
-  footerMessage: "Produtos feitos com ❤️",
+  welcomeMessage: "",
+  footerMessage: "",
 };
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
