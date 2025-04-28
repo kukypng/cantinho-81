@@ -72,7 +72,7 @@ const Login = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="admin@parceiro1store.com"
+                    placeholder="vai embora"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -108,7 +108,7 @@ const Login = () => {
               </form>
             </CardContent>
             <CardFooter className="justify-center text-center text-sm text-gray-500">
-              <p>Use admin@parceiro1store.com / admin123</p>
+              <p>Sai daqui demonio</p>
             </CardFooter>
           </Card>
         </div>
