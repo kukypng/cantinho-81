@@ -1,7 +1,5 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { CartItem, Product } from "@/types";
-import { toast } from "sonner";
 
 interface CartContextType {
   items: CartItem[];
@@ -18,7 +16,6 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   
-  // Load cart from localStorage on mount
   useEffect(() => {
     try {
       const savedCart = localStorage.getItem("cart");
@@ -30,7 +27,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     try {
       localStorage.setItem("cart", JSON.stringify(items));
@@ -53,7 +49,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return [...prevItems, { product, quantity: 1 }];
       }
     });
-    toast.success(`${product.name} adicionado ao carrinho!`);
   };
 
   const removeFromCart = (productId: string) => {

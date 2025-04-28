@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -47,26 +47,16 @@ const PaymentMethodSelector = ({
         {value === "cash" && (
           <div className="mt-3 border-t pt-3">
             <p className="mb-2 text-sm font-medium">Precisa de troco?</p>
-            <div className="flex items-center space-x-4">
+            <RadioGroup value={needChange ? "need-change" : "no-change"} onValueChange={(value) => onChangeOptionChange(value === "need-change")} className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem 
-                  value="no-change" 
-                  id="no-change" 
-                  checked={!needChange} 
-                  onClick={() => onChangeOptionChange(false)} 
-                />
+                <RadioGroupItem value="no-change" id="no-change" />
                 <Label htmlFor="no-change">Não</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem 
-                  value="need-change" 
-                  id="need-change" 
-                  checked={needChange} 
-                  onClick={() => onChangeOptionChange(true)} 
-                />
+                <RadioGroupItem value="need-change" id="need-change" />
                 <Label htmlFor="need-change">Sim</Label>
               </div>
-            </div>
+            </RadioGroup>
             
             {needChange && (
               <div className="mt-3">

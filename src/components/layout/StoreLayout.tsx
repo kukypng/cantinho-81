@@ -1,14 +1,13 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, MapPin } from "lucide-react";
+import { ShoppingCart, Menu, ArrowRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { toast } from "sonner";
 
 interface StoreLayoutProps {
   children: React.ReactNode;
@@ -24,20 +23,6 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
   const { totalItems } = useCart();
   const { settings } = useStore();
   const isMobile = useIsMobile();
-
-  React.useEffect(() => {
-    if (totalItems > 0) {
-      toast.success(
-        <div className="cursor-pointer" onClick={() => window.location.href = "/cart"}>
-          Produto adicionado! <span className="font-bold underline">Clique aqui</span> para finalizar sua compra!
-        </div>,
-        {
-          id: "cart-notification",
-          duration: 5000,
-        }
-      );
-    }
-  }, [totalItems]);
 
   const navigationItems = [
     { name: "Início", href: "/" },
@@ -70,14 +55,24 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
             )}
 
             <div className="flex items-center gap-4">
-              <Link to="/cart" className="relative">
-                <ShoppingCart className="h-6 w-6" />
+              <div className="relative">
+                <Link to="/cart" className="relative">
+                  <ShoppingCart className="h-6 w-6" />
+                  {totalItems > 0 && (
+                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-yellow text-xs font-bold text-black">
+                      {totalItems}
+                    </span>
+                  )}
+                </Link>
                 {totalItems > 0 && (
-                  <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-yellow text-xs font-bold text-black">
-                    {totalItems}
-                  </span>
+                  <div className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
+                    <div className="flex items-center gap-2 bg-store-yellow text-black px-3 py-1 rounded-lg shadow-lg animate-pulse">
+                      <span className="text-sm font-medium">Clique aqui para continuar</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </div>
+                  </div>
                 )}
-              </Link>
+              </div>
               
               {isMobile && (
                 <Sheet>
@@ -97,9 +92,6 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                           {item.name}
                         </Link>
                       ))}
-                      <Link to="/login" className="text-lg font-medium">
-                        Admin
-                      </Link>
                     </nav>
                   </SheetContent>
                 </Sheet>
