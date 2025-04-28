@@ -22,16 +22,16 @@ const Index = () => {
 
   return (
     <StoreLayout>
-      <div className="container mx-auto space-y-8">
+      <div className="container mx-auto p-4 space-y-8">
         {/* Store name and delivery info */}
-        <div className="mb-6 px-4">
-          <h1 className="text-center text-4xl font-bold">
+        <div className="mb-6 rounded-[2rem] bg-gradient-to-r from-store-pink/5 via-store-light-pink/10 to-store-pink/5 p-8 backdrop-blur-sm border border-store-pink/10">
+          <h1 className="text-center text-4xl font-bold text-gradient bg-gradient-to-r from-store-pink to-store-dark-pink">
             {settings.storeName}
           </h1>
           {settings.freeDeliveryThreshold && settings.freeDeliveryThreshold > 0 && (
             <div className="mt-4 flex justify-center">
-              <div className="inline-flex items-center gap-2 rounded-full bg-pink-50/80 backdrop-blur-sm px-6 py-3 text-sm font-medium text-store-pink shadow-sm">
-                <MapPin className="h-4 w-4" />
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/70 backdrop-blur-sm px-6 py-3 text-sm font-medium text-store-pink shadow-sm border border-store-pink/20">
+                <MapPin className="h-4 w-4 text-store-pink" />
                 Entrega Grátis acima de R$ {settings.freeDeliveryThreshold.toFixed(2)}
               </div>
             </div>
@@ -40,14 +40,14 @@ const Index = () => {
 
         {/* Category filter */}
         {categories.length > 0 && (
-          <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-2">
+          <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto pb-2">
             <Button
               variant={selectedCategory === null ? "default" : "outline"}
               size="sm"
               onClick={() => setSelectedCategory(null)}
               className={`${
                 selectedCategory === null 
-                  ? "bg-store-pink hover:bg-store-pink/90" 
+                  ? "bg-store-pink hover:bg-store-pink/90 shadow-lg hover:shadow-store-pink/25" 
                   : "border-store-pink/30 text-store-pink hover:text-store-pink hover:bg-store-pink/10"
               } whitespace-nowrap rounded-full px-6`}
             >
@@ -61,7 +61,7 @@ const Index = () => {
                 onClick={() => setSelectedCategory(category)}
                 className={`${
                   selectedCategory === category 
-                    ? "bg-store-pink hover:bg-store-pink/90" 
+                    ? "bg-store-pink hover:bg-store-pink/90 shadow-lg hover:shadow-store-pink/25" 
                     : "border-store-pink/30 text-store-pink hover:text-store-pink hover:bg-store-pink/10"
                 } whitespace-nowrap rounded-full px-6`}
               >
@@ -72,7 +72,7 @@ const Index = () => {
         )}
 
         {/* Products grid */}
-        <div className="grid grid-cols-2 gap-4 px-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
