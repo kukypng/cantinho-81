@@ -2,8 +2,8 @@
 {
   "storeName": "Cantinho da Ysa",
   "whatsappNumber": "5564999421093",
-  "deliveryFee": 28,
-  "freeDeliveryThreshold": 9,
-  "welcomeMessage": "",
+  "deliveryFee": 9,
+  "freeDeliveryThreshold": 28,
+  "welcomeMessage": "teste",
   "footerMessage": "Feito com amor❤️"
 }
