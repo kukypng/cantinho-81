@@ -8,31 +8,31 @@
     --foreground: 327 76% 47%;
 
     --card: 0 0% 100%;
-    --card-foreground: 327 76% 47%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 327 76% 47%;
+    --popover-foreground: 240 10% 3.9%;
 
     --primary: 327 76% 47%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 0 0% 98%;
 
     --secondary: 327 100% 96%;
-    --secondary-foreground: 327 76% 47%;
+    --secondary-foreground: 240 5.9% 10%;
 
     --muted: 327 100% 96%;
-    --muted-foreground: 327 76% 47%;
+    --muted-foreground: 240 3.8% 46.1%;
 
     --accent: 327 100% 96%;
-    --accent-foreground: 327 76% 47%;
+    --accent-foreground: 240 5.9% 10%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
     --border: 327 76% 47%;
     --input: 327 76% 47%;
     --ring: 327 76% 47%;
 
-    --radius: 0.5rem;
+    --radius: 0.8rem;
 
     --sidebar-background: 327 100% 96%;
     --sidebar-foreground: 327 76% 47%;
@@ -93,7 +93,7 @@
   }
 
   .glass-effect {
-    @apply backdrop-blur-lg bg-store-pink/10 border border-store-pink/20;
+    @apply backdrop-blur-lg bg-white/80 border border-store-pink/10 shadow-sm;
   }
 
   .smooth-transition {
@@ -101,6 +101,6 @@
   }
 
   .premium-button {
-    @apply bg-gradient-to-r from-store-pink to-store-light-pink text-white shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply bg-gradient-to-r from-store-pink to-store-light-pink text-white shadow-sm hover:shadow-md transition-all duration-300;
   }
 }
