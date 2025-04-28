@@ -36,7 +36,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center">
-                <span className="text-xl font-bold">{settings.storeName}</span>
+                <span className="text-xl font-bold text-white">{settings.storeName}</span>
               </Link>
             </div>
             
@@ -46,7 +46,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                   <Link
                     key={item.name}
                     to={item.href}
-                    className="text-sm font-medium transition-colors hover:text-white/80"
+                    className="text-sm font-medium text-white transition-colors hover:text-white/80"
                   >
                     {item.name}
                   </Link>
@@ -57,7 +57,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Link to="/cart" className="relative">
-                  <ShoppingCart className="h-6 w-6" />
+                  <ShoppingCart className="h-6 w-6 text-white" />
                   {totalItems > 0 && (
                     <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-yellow text-xs font-bold text-black">
                       {totalItems}
@@ -67,8 +67,8 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                 {totalItems > 0 && (
                   <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
                     <div className="flex items-center gap-2 bg-store-yellow/10 px-3 py-1 rounded-lg shadow-lg animate-pulse">
-                      <span className="text-sm font-medium">Clique Aqui</span>
-                      <ArrowRight className="h-4 w-4" />
+                      <span className="text-sm font-medium text-white">Clique Aqui</span>
+                      <ArrowRight className="h-4 w-4 text-white" />
                     </div>
                   </Link>
                 )}
