@@ -2,17 +2,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StoreLayout from "@/components/layout/StoreLayout";
-import CartItemCard from "@/components/CartItemCard";
 import { useCart } from "@/context/CartContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { CheckCircle, Loader2, MapPin, Store, Truck } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import DeliveryMethodSelector from "@/components/checkout/DeliveryMethodSelector";
+import ShippingInfoForm from "@/components/checkout/ShippingInfoForm";
+import PaymentMethodSelector from "@/components/checkout/PaymentMethodSelector";
+import OrderSummary from "@/components/checkout/OrderSummary";
 
 const Checkout = () => {
   const { items, subtotal, clearCart } = useCart();
@@ -106,182 +102,35 @@ const Checkout = () => {
 
         <div className="grid gap-8 md:grid-cols-3">
           <div className="md:col-span-2 space-y-8">
-            <div className="rounded-lg border bg-white p-6">
-              <h2 className="mb-4 flex items-center text-lg font-medium">
-                <Truck className="mr-2 h-5 w-5 text-store-pink" />
-                Método de Entrega
-              </h2>
-              <RadioGroup value={deliveryMethod} onValueChange={setDeliveryMethod} className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="delivery" id="delivery" />
-                  <Label htmlFor="delivery" className="flex items-center">
-                    <span className="ml-2">Entrega a Domicílio</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="pickup" id="pickup" />
-                  <Label htmlFor="pickup" className="flex items-center">
-                    <span className="ml-2">Retirada no Local</span>
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
+            <DeliveryMethodSelector 
+              value={deliveryMethod}
+              onChange={setDeliveryMethod}
+            />
 
             {deliveryMethod === "delivery" && (
-              <div className="rounded-lg border bg-white p-6">
-                <h2 className="mb-4 flex items-center text-lg font-medium">
-                  <MapPin className="mr-2 h-5 w-5 text-store-pink" />
-                  Informações de Entrega
-                </h2>
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="name" className="mb-1 block text-sm font-medium">
-                      Nome
-                    </label>
-                    <Input
-                      id="name"
-                      name="name"
-                      placeholder="Seu nome completo"
-                      value={shippingInfo.name}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="address" className="mb-1 block text-sm font-medium">
-                      Endereço
-                    </label>
-                    <Input
-                      id="address"
-                      name="address"
-                      placeholder="Rua, número"
-                      value={shippingInfo.address}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="complement" className="mb-1 block text-sm font-medium">
-                      Complemento
-                    </label>
-                    <Input
-                      id="complement"
-                      name="complement"
-                      placeholder="Apartamento, bloco, etc."
-                      value={shippingInfo.complement}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="district" className="mb-1 block text-sm font-medium">
-                      Bairro
-                    </label>
-                    <Input
-                      id="district"
-                      name="district"
-                      placeholder="Seu bairro"
-                      value={shippingInfo.district}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="reference" className="mb-1 block text-sm font-medium">
-                      Ponto de Referência
-                    </label>
-                    <Textarea
-                      id="reference"
-                      name="reference"
-                      placeholder="Próximo a..."
-                      value={shippingInfo.reference}
-                      onChange={handleInputChange}
-                      className="h-20"
-                    />
-                  </div>
-                </div>
-              </div>
+              <ShippingInfoForm 
+                shippingInfo={shippingInfo}
+                onChange={handleInputChange}
+              />
             )}
 
-            <div className="rounded-lg border bg-white p-6">
-              <h2 className="mb-4 text-lg font-medium">Método de Pagamento</h2>
-              <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="pix" id="pix" />
-                  <Label htmlFor="pix" className="flex items-center">
-                    <span className="ml-2">PIX</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="card" id="card" />
-                  <Label htmlFor="card" className="flex items-center">
-                    <span className="ml-2">Cartão</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="cash" id="cash" />
-                  <Label htmlFor="cash" className="flex items-center">
-                    <span className="ml-2">Dinheiro</span>
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
+            <PaymentMethodSelector 
+              value={paymentMethod}
+              onChange={setPaymentMethod}
+            />
           </div>
 
-          <div className="space-y-6">
-            <div className="rounded-lg border bg-white p-6">
-              <h2 className="mb-4 text-lg font-medium">Resumo do Pedido</h2>
-              
-              <div className="mb-4 max-h-64 space-y-3 overflow-y-auto">
-                {items.map((item) => (
-                  <CartItemCard key={item.product.id} item={item} allowEdit={false} />
-                ))}
-              </div>
-              
-              <Separator className="my-3" />
-              
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Subtotal</span>
-                  <span>R$ {subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Taxa de Entrega</span>
-                  <span>
-                    {deliveryMethod === "delivery" 
-                      ? (hasFreeDelivery 
-                        ? <span className="text-green-600">Grátis</span> 
-                        : `R$ ${deliveryFee.toFixed(2)}`)
-                      : "N/A"}
-                  </span>
-                </div>
-                <Separator />
-                <div className="flex justify-between font-medium">
-                  <span>Total</span>
-                  <span>R$ {total.toFixed(2)}</span>
-                </div>
-              </div>
-              
-              <Button
-                className="mt-6 w-full bg-green-600 hover:bg-green-700"
-                onClick={handleCheckout}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processando...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="mr-2 h-4 w-4" />
-                    Finalizar no WhatsApp
-                  </>
-                )}
-              </Button>
-              
-              <p className="mt-3 text-center text-xs text-gray-500">
-                Você será redirecionado para o WhatsApp para confirmar seu pedido
-              </p>
-            </div>
+          <div>
+            <OrderSummary 
+              items={items}
+              subtotal={subtotal}
+              deliveryFee={deliveryFee}
+              hasFreeDelivery={hasFreeDelivery}
+              total={total}
+              isDelivery={deliveryMethod === "delivery"}
+              isLoading={isLoading}
+              onCheckout={handleCheckout}
+            />
           </div>
         </div>
       </div>
