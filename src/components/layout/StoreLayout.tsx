@@ -1,6 +1,7 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, MapPin, Settings } from "lucide-react";
+import { ShoppingCart, Menu, MapPin } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
@@ -26,10 +27,15 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
 
   React.useEffect(() => {
     if (totalItems > 0) {
-      toast.success("Clique no carrinho para finalizar sua compra!", {
-        id: "cart-notification",
-        duration: 3000,
-      });
+      toast.success(
+        <div className="cursor-pointer" onClick={() => window.location.href = "/cart"}>
+          Produto adicionado! <span className="font-bold underline">Clique aqui</span> para finalizar sua compra!
+        </div>,
+        {
+          id: "cart-notification",
+          duration: 5000,
+        }
+      );
     }
   }, [totalItems]);
 
@@ -71,12 +77,6 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                     {totalItems}
                   </span>
                 )}
-              </Link>
-
-              <Link to="/login">
-                <Button variant="ghost" size="icon" className="text-white">
-                  <Settings className="h-5 w-5" />
-                </Button>
               </Link>
               
               {isMobile && (

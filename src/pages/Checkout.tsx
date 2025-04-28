@@ -25,6 +25,8 @@ const Checkout = () => {
     reference: "",
   });
   const [paymentMethod, setPaymentMethod] = useState("pix");
+  const [needChange, setNeedChange] = useState(false);
+  const [changeAmount, setChangeAmount] = useState("");
 
   const deliveryFee = settings.deliveryFee || 0;
   const hasFreeDelivery = settings.freeDeliveryThreshold && subtotal >= settings.freeDeliveryThreshold;
@@ -63,12 +65,25 @@ const Checkout = () => {
     
     message += `\n\n*💳 Método de Pagamento:* ${paymentMethod === "pix" ? "PIX" : paymentMethod === "card" ? "Cartão" : "Dinheiro"}`;
     
+    if (paymentMethod === "cash") {
+      if (needChange) {
+        message += `\n*🔄 Troco:* Sim, para ${changeAmount}`;
+      } else {
+        message += "\n*🔄 Troco:* Não precisa";
+      }
+    }
+    
     return encodeURIComponent(message);
   };
   
   const handleCheckout = () => {
     if (deliveryMethod === "delivery" && (!shippingInfo.address || !shippingInfo.district)) {
       toast.error("Por favor, preencha o endereço de entrega.");
+      return;
+    }
+    
+    if (paymentMethod === "cash" && needChange && !changeAmount) {
+      toast.error("Por favor, informe o valor para troco.");
       return;
     }
     
@@ -117,6 +132,10 @@ const Checkout = () => {
             <PaymentMethodSelector 
               value={paymentMethod}
               onChange={setPaymentMethod}
+              needChange={needChange}
+              changeAmount={changeAmount}
+              onChangeOptionChange={setNeedChange}
+              onChangeAmountChange={setChangeAmount}
             />
           </div>
 

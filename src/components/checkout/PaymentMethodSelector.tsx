@@ -1,14 +1,26 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface PaymentMethodSelectorProps {
   value: string;
   onChange: (value: string) => void;
+  needChange: boolean;
+  changeAmount: string;
+  onChangeOptionChange: (needChange: boolean) => void;
+  onChangeAmountChange: (amount: string) => void;
 }
 
-const PaymentMethodSelector = ({ value, onChange }: PaymentMethodSelectorProps) => {
+const PaymentMethodSelector = ({ 
+  value, 
+  onChange, 
+  needChange, 
+  changeAmount, 
+  onChangeOptionChange,
+  onChangeAmountChange 
+}: PaymentMethodSelectorProps) => {
   return (
     <div className="rounded-lg border bg-white p-6">
       <h2 className="mb-4 text-lg font-medium">Método de Pagamento</h2>
@@ -31,6 +43,48 @@ const PaymentMethodSelector = ({ value, onChange }: PaymentMethodSelectorProps) 
             <span className="ml-2">Dinheiro</span>
           </Label>
         </div>
+        
+        {value === "cash" && (
+          <div className="mt-3 border-t pt-3">
+            <p className="mb-2 text-sm font-medium">Precisa de troco?</p>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem 
+                  value="no-change" 
+                  id="no-change" 
+                  checked={!needChange} 
+                  onClick={() => onChangeOptionChange(false)} 
+                />
+                <Label htmlFor="no-change">Não</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem 
+                  value="need-change" 
+                  id="need-change" 
+                  checked={needChange} 
+                  onClick={() => onChangeOptionChange(true)} 
+                />
+                <Label htmlFor="need-change">Sim</Label>
+              </div>
+            </div>
+            
+            {needChange && (
+              <div className="mt-3">
+                <Label htmlFor="change-amount" className="mb-1 block text-sm">
+                  Para quanto?
+                </Label>
+                <Input
+                  id="change-amount"
+                  type="text"
+                  value={changeAmount}
+                  onChange={(e) => onChangeAmountChange(e.target.value)}
+                  placeholder="Ex: R$ 50,00"
+                  className="max-w-[200px]"
+                />
+              </div>
+            )}
+          </div>
+        )}
       </RadioGroup>
     </div>
   );
