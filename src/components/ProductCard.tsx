@@ -14,30 +14,31 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
 
   return (
-    <Card className="group relative overflow-hidden border-none bg-white shadow-sm transition-all hover:shadow-md">
-      <div className="aspect-square overflow-hidden bg-gray-50">
+    <Card className="apple-card group overflow-hidden bg-white border-none">
+      <div className="aspect-square overflow-hidden rounded-t-2xl">
         <img
           src={product.imageUrl || "https://placehold.co/400x400"}
           alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
-      <CardContent className="space-y-2 p-4">
-        <h3 className="font-medium text-gray-900 line-clamp-1">{product.name}</h3>
-        <p className="text-sm text-gray-500 line-clamp-2">
+      <CardContent className="space-y-3 p-5">
+        <h3 className="font-medium text-lg tracking-tight text-foreground line-clamp-1">{product.name}</h3>
+        <p className="text-sm text-muted-foreground line-clamp-2 tracking-wide">
           {product.description}
         </p>
-        <p className="text-lg font-bold text-store-pink">
+        <p className="text-lg font-semibold text-store-pink tracking-tight">
           R$ {product.price.toFixed(2)}
         </p>
       </CardContent>
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-5 pt-0">
         <Button
           onClick={() => addToCart(product)}
-          className="w-full rounded-full bg-store-pink text-sm font-medium hover:bg-store-pink/90"
+          className="w-full group-hover:scale-[1.02] transition-transform duration-300"
+          size="lg"
         >
           <ShoppingCart className="mr-2 h-4 w-4" />
-          Adicionar
+          <span className="tracking-wide">Adicionar</span>
         </Button>
       </CardFooter>
     </Card>
