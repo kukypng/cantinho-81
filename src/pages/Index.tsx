@@ -5,7 +5,7 @@ import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/context/ProductContext";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/context/StoreContext";
-import { MapPin } from "lucide-react";
+import { MapPin, Heart } from "lucide-react";
 
 const Index = () => {
   const { products } = useProducts();
