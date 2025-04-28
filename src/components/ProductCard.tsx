@@ -14,7 +14,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
 
   return (
-    <Card className="apple-card group overflow-hidden bg-white border-none">
+    <Card className="apple-card group overflow-hidden bg-white border-store-light-pink/20">
       <div className="aspect-square overflow-hidden rounded-t-2xl">
         <img
           src={product.imageUrl || "https://placehold.co/400x400"}
@@ -34,7 +34,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <CardFooter className="p-5 pt-0">
         <Button
           onClick={() => addToCart(product)}
-          className="w-full group-hover:scale-[1.02] transition-transform duration-300"
+          className="w-full bg-store-pink hover:bg-store-pink/90 group-hover:scale-[1.02] transition-transform duration-300"
           size="lg"
         >
           <ShoppingCart className="mr-2 h-4 w-4" />

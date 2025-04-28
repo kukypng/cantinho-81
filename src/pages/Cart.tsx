@@ -22,17 +22,17 @@ const Cart = () => {
   return (
     <StoreLayout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold">Carrinho</h1>
+        <h1 className="mb-6 text-2xl font-bold text-store-pink">Carrinho</h1>
 
         {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
-            <ShoppingCart className="mb-4 h-12 w-12 text-gray-300" />
-            <h2 className="mb-2 text-xl font-semibold">Seu carrinho está vazio</h2>
+          <div className="flex flex-col items-center justify-center rounded-lg border border-store-light-pink/30 p-12 text-center bg-white/50 backdrop-blur-sm">
+            <ShoppingCart className="mb-4 h-12 w-12 text-store-light-pink" />
+            <h2 className="mb-2 text-xl font-semibold text-store-pink">Seu carrinho está vazio</h2>
             <p className="mb-6 text-gray-500">
               Adicione alguns produtos para começar a comprar
             </p>
             <Link to="/">
-              <Button>Continuar Comprando</Button>
+              <Button className="bg-store-pink hover:bg-store-pink/90">Continuar Comprando</Button>
             </Link>
           </div>
         ) : (
@@ -47,7 +47,7 @@ const Cart = () => {
               <div className="mt-4 flex justify-between">
                 <Button
                   variant="outline"
-                  className="text-sm"
+                  className="text-sm border-store-pink/30 text-store-pink hover:text-store-pink hover:bg-store-pink/10"
                   onClick={() => navigate("/")}
                 >
                   Continuar Comprando
@@ -64,8 +64,8 @@ const Cart = () => {
             </div>
 
             <div>
-              <div className="rounded-lg border bg-white p-6">
-                <h2 className="mb-4 text-lg font-medium">Resumo do Pedido</h2>
+              <div className="rounded-lg border border-store-light-pink/20 bg-white p-6 shadow-sm">
+                <h2 className="mb-4 text-lg font-medium text-store-pink">Resumo do Pedido</h2>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Subtotal</span>
@@ -79,10 +79,10 @@ const Cart = () => {
                         : `R$ ${deliveryFee.toFixed(2)}`}
                     </span>
                   </div>
-                  <Separator />
+                  <Separator className="bg-store-light-pink/30" />
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
-                    <span>R$ {total.toFixed(2)}</span>
+                    <span className="text-store-pink">R$ {total.toFixed(2)}</span>
                   </div>
                 </div>
                 <Button

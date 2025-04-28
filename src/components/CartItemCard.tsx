@@ -16,7 +16,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, allowEdit = true }) =
   const { product, quantity } = item;
 
   return (
-    <Card className="mb-4">
+    <Card className="mb-4 border-store-light-pink/20 apple-shadow">
       <CardContent className="flex items-center p-4">
         <div className="mr-4 h-16 w-16 flex-shrink-0 overflow-hidden rounded">
           <img
@@ -30,7 +30,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, allowEdit = true }) =
           <p className="text-sm text-gray-500">
             R$ {product.price.toFixed(2)} x {quantity}
           </p>
-          <p className="font-bold text-primary">
+          <p className="font-bold text-store-pink">
             R$ {(product.price * quantity).toFixed(2)}
           </p>
         </div>
@@ -40,20 +40,20 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, allowEdit = true }) =
               <Button
                 variant="outline"
                 size="icon"
-                className="h-6 w-6 rounded-full p-0"
+                className="h-6 w-6 rounded-full p-0 border-store-pink/30"
                 onClick={() => updateQuantity(product.id, quantity - 1)}
                 disabled={quantity <= 1}
               >
-                <Minus className="h-3 w-3" />
+                <Minus className="h-3 w-3 text-store-pink" />
               </Button>
               <span className="mx-2 w-6 text-center">{quantity}</span>
               <Button
                 variant="outline"
                 size="icon"
-                className="h-6 w-6 rounded-full p-0"
+                className="h-6 w-6 rounded-full p-0 border-store-pink/30"
                 onClick={() => updateQuantity(product.id, quantity + 1)}
               >
-                <Plus className="h-3 w-3" />
+                <Plus className="h-3 w-3 text-store-pink" />
               </Button>
             </div>
             <Button

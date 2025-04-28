@@ -57,9 +57,9 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Link to="/cart" className="relative hover:scale-105 transition-transform duration-300">
-                  <ShoppingCart className="h-6 w-6 stroke-[1.5px]" />
+                  <ShoppingCart className="h-6 w-6 stroke-[1.5px] text-store-pink" />
                   {totalItems > 0 && (
-                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-pink text-xs font-bold text-white">
+                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-pink text-xs font-bold text-white pink-glow">
                       {totalItems}
                     </span>
                   )}
@@ -81,7 +81,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                       <Menu className="h-5 w-5 stroke-[1.5px]" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="right" className="apple-glass border-l border-border">
+                  <SheetContent side="right" className="apple-glass border-l border-store-light-pink/50">
                     <nav className="flex flex-col gap-6 pt-12">
                       {navigationItems.map((item) => (
                         <Link
@@ -100,7 +100,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
           </div>
 
           {settings.welcomeMessage && (
-            <div className="bg-store-light-pink/30 p-2 text-center text-sm font-medium tracking-wide text-store-pink">
+            <div className="transparent-welcome p-2 text-center text-sm font-medium tracking-wide text-store-pink">
               {settings.welcomeMessage}
             </div>
           )}
@@ -114,9 +114,9 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
       </main>
 
       {showFooter && (
-        <footer className="border-t border-border/40 bg-background py-8">
+        <footer className="border-t border-store-light-pink/40 bg-pink-50/50 backdrop-blur-sm py-8">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-sm text-foreground/80 tracking-wide">
+            <p className="text-sm text-store-pink tracking-wide">
               {settings.footerMessage}
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
