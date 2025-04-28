@@ -1,6 +1,7 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu } from "lucide-react";
+import { ShoppingCart, Menu, ArrowRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
@@ -31,11 +32,11 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
   return (
     <div className="flex min-h-screen flex-col">
       {showHeader && (
-        <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-lg border-b border-store-pink/10 shadow-sm">
+        <header className="sticky top-0 z-10 bg-gradient-to-r from-store-pink to-store-pink/90 text-white shadow-md">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center">
-                <span className="text-xl font-medium tracking-tight text-store-pink">{settings.storeName}</span>
+                <span className="text-xl font-bold">{settings.storeName}</span>
               </Link>
             </div>
             
@@ -45,7 +46,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                   <Link
                     key={item.name}
                     to={item.href}
-                    className="text-sm font-medium transition-colors hover:text-store-pink"
+                    className="text-sm font-medium transition-colors hover:text-white/80"
                   >
                     {item.name}
                   </Link>
@@ -54,23 +55,20 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
             )}
 
             <div className="flex items-center gap-4">
-              <Link to="/login" className="group flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-store-pink transition-colors">
-                Clique aqui
-              </Link>
-              
-              <div className="relative flex flex-col items-center">
+              <div className="relative">
                 <Link to="/cart" className="relative">
-                  <ShoppingCart className="h-6 w-6 text-gray-700 hover:text-store-pink transition-colors" />
+                  <ShoppingCart className="h-6 w-6" />
                   {totalItems > 0 && (
-                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-pink text-xs font-bold text-white">
+                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-yellow text-xs font-bold text-black">
                       {totalItems}
                     </span>
                   )}
                 </Link>
                 {totalItems > 0 && (
-                  <div className="absolute top-full mt-2 whitespace-nowrap">
-                    <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-1 text-store-pink shadow-lg animate-pulse border border-store-pink/10">
-                      <span className="text-sm font-medium">Clique aqui</span>
+                  <div className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
+                    <div className="flex items-center gap-2 bg-store-yellow text-black px-3 py-1 rounded-lg shadow-lg animate-pulse">
+                      <span className="text-sm font-medium">Clique aqui para continuar</span>
+                      <ArrowRight className="h-4 w-4" />
                     </div>
                   </div>
                 )}
@@ -79,17 +77,17 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
               {isMobile && (
                 <Sheet>
                   <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-gray-700 hover:text-store-pink">
+                    <Button variant="ghost" size="icon" className="text-white">
                       <Menu className="h-5 w-5" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="right" className="backdrop-blur-lg bg-white/95 border-store-pink/10">
+                  <SheetContent side="right">
                     <nav className="flex flex-col gap-4 pt-10">
                       {navigationItems.map((item) => (
                         <Link
                           key={item.name}
                           to={item.href}
-                          className="text-lg font-medium text-gray-700 hover:text-store-pink"
+                          className="text-lg font-medium"
                         >
                           {item.name}
                         </Link>
@@ -102,7 +100,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
           </div>
 
           {settings.welcomeMessage && (
-            <div className="bg-store-pink/5 p-2 text-center text-sm font-medium text-gray-700">
+            <div className="bg-white/10 p-2 text-center text-sm font-medium">
               {settings.welcomeMessage}
             </div>
           )}
@@ -114,12 +112,12 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
       </main>
 
       {showFooter && (
-        <footer className="border-t border-store-pink/10 bg-white py-6">
+        <footer className="border-t border-gray-100 bg-white py-6">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-500">
               {settings.footerMessage || "Produtos feitos com ❤️"}
             </p>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-gray-400">
               {settings.storeName} &copy; {new Date().getFullYear()}
             </p>
           </div>

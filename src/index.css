@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,43 +6,43 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 327 76% 47%;
+    --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 222.2 84% 4.9%;
 
     --primary: 327 76% 47%;
-    --primary-foreground: 0 0% 98%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 327 100% 96%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 327 100% 96%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 327 100% 96%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 327 76% 47%;
-    --input: 327 76% 47%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
     --ring: 327 76% 47%;
 
-    --radius: 0.8rem;
+    --radius: 0.5rem;
 
-    --sidebar-background: 327 100% 96%;
-    --sidebar-foreground: 327 76% 47%;
-    --sidebar-primary: 327 76% 47%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 327 100% 96%;
-    --sidebar-accent-foreground: 327 76% 47%;
-    --sidebar-border: 327 76% 47%;
-    --sidebar-ring: 327 76% 47%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -89,18 +90,6 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-  }
-
-  .glass-effect {
-    @apply backdrop-blur-lg bg-white/80 border border-store-pink/10 shadow-sm;
-  }
-
-  .smooth-transition {
-    @apply transition-all duration-300 ease-in-out;
-  }
-
-  .premium-button {
-    @apply bg-gradient-to-r from-store-pink to-store-light-pink text-white shadow-sm hover:shadow-md transition-all duration-300;
+    @apply bg-background text-foreground;
   }
 }
