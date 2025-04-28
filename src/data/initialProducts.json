@@ -2,36 +2,72 @@
 [
   {
     "id": "1",
-    "name": "Tênis Esportivo Premium",
-    "description": "Tênis esportivo de alta performance",
-    "price": 299.00,
-    "imageUrl": "/lovable-uploads/c565362a-b192-4b93-a158-887bb045b216.png",
+    "name": "Brigadeiro",
+    "description": "BMassa de chocolate macia com um recheio irresistível de brigadeiro cremoso, puro amor em cada colherada!",
+    "price": 14.00,
+    "imageUrl": "https://placehold.co/400x300/333/666",
     "featured": true,
-    "category": "Calçados"
+    "category": "Bolos no pote"
   },
   {
     "id": "2",
-    "name": "Mochila Executiva",
-    "description": "Mochila executiva com compartimento para laptop",
-    "price": 189.00,
-    "imageUrl": "https://placehold.co/400x300/eee/ccc",
-    "category": "Acessórios"
+    "name": "Prestígio",
+    "description": "Camadas fofinhas de chocolate, recheio cremoso de coco e muito sabor em cada colherada!",
+    "price": 14.00,
+    "imageUrl": "https://placehold.co/400x300/333/666",
+    "category": "Bolos no pote"
   },
   {
     "id": "3",
-    "name": "Relógio Smart",
-    "description": "Smartwatch com monitor cardíaco",
-    "price": 399.00,
+    "name": "Ninho com Nutella",
+    "description": "Combinação perfeita de massa leve, creme de leite Ninho e camadas generosas de Nutella!",
+    "price": 14.00,
     "imageUrl": "https://placehold.co/400x300/333/666",
-    "category": "Eletrônicos"
+    "category": "Bolos no pote"
   },
   {
     "id": "4",
-    "name": "Fone Bluetooth",
-    "description": "Fone de ouvido sem fio com cancelamento de ruído",
-    "price": 129.00,
-    "imageUrl": "https://placehold.co/400x300/ffff00/000000",
+    "name": "Abacaxi com Coco",
+    "description": "Massa fofinha, recheio de abacaxi fresco e creme de coco para uma explosão tropical de sabor!",
+    "price": 14.00,
+    "imageUrl": "https://placehold.co/400x300/333/666",
     "featured": true,
-    "category": "Eletrônicos"
+    "category": "Bolos no pote"
+  },
+  {
+    "id": "5",
+    "name": "Cenoura com Chocolate",
+    "description": "Massa de cenoura super macia com cobertura cremosa de chocolate, um clássico irresistível!",
+    "price": 14.00,
+    "imageUrl": "https://placehold.co/400x300/333/666",
+    "featured": true,
+    "category": "Bolos no pote"
+  },
+    {
+    "id": "6",
+    "name": "Maracujá Trufado",
+    "description": "Massa suave com recheio trufado de maracujá, equilíbrio perfeito entre o doce e o azedinho!",
+    "price": 14.00,
+    "imageUrl": "https://placehold.co/400x300/333/666",
+    "featured": true,
+    "category": "Bolos no pote"
+  },
+      {
+    "id": "7",
+    "name": "4 Leites",
+    "description": "Massa molhadinha e recheio cremoso feito com a mistura especial dos quatro leites, pura cremosidade!",
+    "price": 14.00,
+    "imageUrl": "https://placehold.co/400x300/333/666",
+    "featured": true,
+    "category": "Bolos no pote"
+  },
+  {
+    "id": "8",
+    "name": "Bolo de pote Limão",
+    "description": "Massa fofinha com recheio cremoso e o toque cítrico perfeito para refrescar seu dia!",
+    "price": 14.00,
+    "imageUrl": "https://placehold.co/400x300/333/666",
+    "featured": true,
+    "category": "Bolos no pote"
   }
 ]
