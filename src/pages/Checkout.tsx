@@ -40,22 +40,22 @@ const Checkout = () => {
   const formatWhatsAppMessage = () => {
     let message = `*Novo Pedido em ${settings.storeName}*\n\n`;
     
-    message += "*🛒 Produtos:*\n";
+    message += "*Produtos:*\n";
     items.forEach((item, index) => {
       message += `${index + 1}. ${item.product.name} - ${item.quantity}x R$ ${item.product.price.toFixed(2)} = R$ ${(item.product.price * item.quantity).toFixed(2)}\n`;
     });
     
-    message += `\n*💰 Subtotal:* R$ ${subtotal.toFixed(2)}`;
+    message += `\n*Subtotal:* R$ ${subtotal.toFixed(2)}`;
     
     if (deliveryMethod === "delivery") {
-      message += `\n*🚚 Taxa de Entrega:* ${hasFreeDelivery ? "Grátis" : `R$ ${deliveryFee.toFixed(2)}`}`;
+      message += `\n*Taxa de Entrega:* ${hasFreeDelivery ? "Grátis" : `R$ ${deliveryFee.toFixed(2)}`}`;
     }
     
-    message += `\n*💵 Valor Total:* R$ ${total.toFixed(2)}`;
-    message += `\n\n*📍 Método de Entrega:* ${deliveryMethod === "delivery" ? "Entrega" : "Retirada no Local"}`;
+    message += `\n*Valor Total:* R$ ${total.toFixed(2)}`;
+    message += `\n\n*Método de Entrega:* ${deliveryMethod === "delivery" ? "Entrega" : "Retirada no Local"}`;
     
     if (deliveryMethod === "delivery") {
-      message += `\n\n*📍 Dados de Entrega:*`;
+      message += `\n\n*Dados de Entrega:*`;
       message += `\nNome: ${shippingInfo.name}`;
       message += `\nEndereço: ${shippingInfo.address}`;
       message += `\nComplemento: ${shippingInfo.complement || "N/A"}`;
@@ -63,13 +63,13 @@ const Checkout = () => {
       message += `\nPonto de Referência: ${shippingInfo.reference || "N/A"}`;
     }
     
-    message += `\n\n*💳 Método de Pagamento:* ${paymentMethod === "pix" ? "PIX" : paymentMethod === "card" ? "Cartão" : "Dinheiro"}`;
+    message += `\n\n*Método de Pagamento:* ${paymentMethod === "pix" ? "PIX" : paymentMethod === "card" ? "Cartão" : "Dinheiro"}`;
     
     if (paymentMethod === "cash") {
       if (needChange) {
-        message += `\n*🔄 Troco:* Sim, para ${changeAmount}`;
+        message += `\n*Troco:* Sim, para ${changeAmount}`;
       } else {
-        message += "\n*🔄 Troco:* Não precisa";
+        message += "\n*Troco:* Não precisa";
       }
     }
     
