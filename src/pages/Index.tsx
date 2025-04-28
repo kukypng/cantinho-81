@@ -12,12 +12,10 @@ const Index = () => {
   const { settings } = useStore();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Get unique categories from products
   const categories = Array.from(
     new Set(products.map((product) => product.category).filter(Boolean))
   );
 
-  // Filter products by selected category
   const filteredProducts = selectedCategory
     ? products.filter((product) => product.category === selectedCategory)
     : products;
@@ -26,14 +24,14 @@ const Index = () => {
     <StoreLayout>
       <div className="container mx-auto p-4">
         {/* Store name and delivery info */}
-        <div className="mb-6 rounded-xl bg-gradient-to-r from-store-pink/5 to-store-pink/10 p-4">
-          <h1 className="text-center text-2xl font-bold text-gray-800">
+        <div className="mb-6 rounded-xl bg-gradient-to-r from-store-pink/5 to-store-pink/10 p-6">
+          <h1 className="text-center text-3xl font-bold text-gray-800">
             {settings.storeName}
           </h1>
           {settings.freeDeliveryThreshold && settings.freeDeliveryThreshold > 0 && (
-            <div className="mt-2 flex justify-center">
-              <div className="inline-flex items-center gap-1 rounded-full bg-store-yellow px-3 py-1 text-sm font-medium text-gray-900">
-                <MapPin className="h-4 w-4" />
+            <div className="mt-3 flex justify-center">
+              <div className="inline-flex items-center gap-2 rounded-full bg-store-yellow/10 px-4 py-2 text-sm font-medium text-gray-900">
+                <MapPin className="h-4 w-4 text-store-pink" />
                 Entrega Grátis acima de R$ {settings.freeDeliveryThreshold}
               </div>
             </div>
@@ -68,7 +66,7 @@ const Index = () => {
         )}
 
         {/* Products grid */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

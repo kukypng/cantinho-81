@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 
 interface StoreLayoutProps {
   children: React.ReactNode;
@@ -23,6 +24,15 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
   const { settings } = useStore();
   const isMobile = useIsMobile();
 
+  React.useEffect(() => {
+    if (totalItems > 0) {
+      toast.success("Clique no carrinho para finalizar sua compra!", {
+        id: "cart-notification",
+        duration: 3000,
+      });
+    }
+  }, [totalItems]);
+
   const navigationItems = [
     { name: "Início", href: "/" },
     { name: "Carrinho", href: "/cart" },
@@ -31,7 +41,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
   return (
     <div className="flex min-h-screen flex-col">
       {showHeader && (
-        <header className="sticky top-0 z-10 bg-store-pink text-white shadow-md">
+        <header className="sticky top-0 z-10 bg-gradient-to-r from-store-pink to-store-pink/90 text-white shadow-md">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center">

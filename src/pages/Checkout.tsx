@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StoreLayout from "@/components/layout/StoreLayout";
@@ -7,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { CheckCircle, Loader2, MapPin } from "lucide-react";
+import { CheckCircle, Loader2, MapPin, Store } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -20,6 +19,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   
   const [isLoading, setIsLoading] = useState(false);
+  const [deliveryMethod, setDeliveryMethod] = useState("delivery");
   const [shippingInfo, setShippingInfo] = useState({
     name: "",
     address: "",
@@ -27,12 +27,11 @@ const Checkout = () => {
     district: "",
     reference: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState("pix"); // Default payment method
+  const [paymentMethod, setPaymentMethod] = useState("pix");
 
-  // Calculate totals
   const deliveryFee = settings.deliveryFee || 0;
   const hasFreeDelivery = settings.freeDeliveryThreshold && subtotal >= settings.freeDeliveryThreshold;
-  const total = subtotal + (hasFreeDelivery ? 0 : deliveryFee);
+  const total = subtotal + (deliveryMethod === "delivery" && !hasFreeDelivery ? deliveryFee : 0);
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -40,7 +39,6 @@ const Checkout = () => {
   };
   
   const formatWhatsAppMessage = () => {
-    // Format the order for WhatsApp
     let message = `*Novo Pedido em ${settings.storeName}*\n\n`;
     
     message += "*🛒 Produtos:*\n";
@@ -49,42 +47,43 @@ const Checkout = () => {
     });
     
     message += `\n*💰 Subtotal:* R$ ${subtotal.toFixed(2)}`;
-    message += `\n*🚚 Taxa de Entrega:* ${hasFreeDelivery ? "Grátis" : `R$ ${deliveryFee.toFixed(2)}`}`;
+    
+    if (deliveryMethod === "delivery") {
+      message += `\n*🚚 Taxa de Entrega:* ${hasFreeDelivery ? "Grátis" : `R$ ${deliveryFee.toFixed(2)}`}`;
+    }
+    
     message += `\n*💵 Valor Total:* R$ ${total.toFixed(2)}`;
-    message += `\n\n*📍 Dados de Entrega:*`;
-    message += `\nNome: ${shippingInfo.name}`;
-    message += `\nEndereço: ${shippingInfo.address}`;
-    message += `\nComplemento: ${shippingInfo.complement || "N/A"}`;
-    message += `\nBairro: ${shippingInfo.district}`;
-    message += `\nPonto de Referência: ${shippingInfo.reference || "N/A"}`;
+    message += `\n\n*📍 Método de Entrega:* ${deliveryMethod === "delivery" ? "Entrega" : "Retirada no Local"}`;
+    
+    if (deliveryMethod === "delivery") {
+      message += `\n\n*📍 Dados de Entrega:*`;
+      message += `\nNome: ${shippingInfo.name}`;
+      message += `\nEndereço: ${shippingInfo.address}`;
+      message += `\nComplemento: ${shippingInfo.complement || "N/A"}`;
+      message += `\nBairro: ${shippingInfo.district}`;
+      message += `\nPonto de Referência: ${shippingInfo.reference || "N/A"}`;
+    }
+    
     message += `\n\n*💳 Método de Pagamento:* ${paymentMethod === "pix" ? "PIX" : paymentMethod === "card" ? "Cartão" : "Dinheiro"}`;
     
     return encodeURIComponent(message);
   };
   
   const handleCheckout = () => {
-    if (!shippingInfo.name || !shippingInfo.address || !shippingInfo.district) {
-      toast.error("Por favor, preencha todos os campos obrigatórios.");
+    if (deliveryMethod === "delivery" && (!shippingInfo.address || !shippingInfo.district)) {
+      toast.error("Por favor, preencha o endereço de entrega.");
       return;
     }
     
     setIsLoading(true);
     
     try {
-      // Format WhatsApp number (remove any non-digit characters)
       const whatsappNumber = settings.whatsappNumber.replace(/\D/g, "");
       const message = formatWhatsAppMessage();
-      
-      // Create the WhatsApp link
       const whatsappLink = `https://wa.me/${whatsappNumber}?text=${message}`;
       
-      // Clear cart before leaving
       clearCart();
-      
-      // Open WhatsApp in a new tab
       window.open(whatsappLink, "_blank");
-      
-      // Show success message and redirect back to home
       toast.success("Seu pedido foi enviado para o WhatsApp!");
       navigate("/");
     } catch (error) {
@@ -94,16 +93,9 @@ const Checkout = () => {
       setIsLoading(false);
     }
   };
-  
-  // Redirect to cart if empty
-  React.useEffect(() => {
-    if (items.length === 0) {
-      navigate("/cart");
-    }
-  }, [items, navigate]);
 
   if (items.length === 0) {
-    return null; // Prevent flash before redirect
+    return null;
   }
 
   return (
@@ -112,83 +104,102 @@ const Checkout = () => {
         <h1 className="mb-6 text-2xl font-bold">Finalizar Pedido</h1>
 
         <div className="grid gap-8 md:grid-cols-3">
-          {/* Order Details */}
           <div className="md:col-span-2 space-y-8">
-            {/* Shipping Information */}
             <div className="rounded-lg border bg-white p-6">
               <h2 className="mb-4 flex items-center text-lg font-medium">
-                <MapPin className="mr-2 h-5 w-5 text-store-pink" />
-                Informações de Entrega
+                <Truck className="mr-2 h-5 w-5 text-store-pink" />
+                Método de Entrega
               </h2>
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="mb-1 block text-sm font-medium">
-                    Nome*
-                  </label>
-                  <Input
-                    id="name"
-                    name="name"
-                    placeholder="Seu nome completo"
-                    value={shippingInfo.name}
-                    onChange={handleInputChange}
-                    required
-                  />
+              <RadioGroup value={deliveryMethod} onValueChange={setDeliveryMethod} className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="delivery" id="delivery" />
+                  <Label htmlFor="delivery" className="flex items-center">
+                    <span className="ml-2">Entrega a Domicílio</span>
+                  </Label>
                 </div>
-                <div>
-                  <label htmlFor="address" className="mb-1 block text-sm font-medium">
-                    Endereço*
-                  </label>
-                  <Input
-                    id="address"
-                    name="address"
-                    placeholder="Rua, número"
-                    value={shippingInfo.address}
-                    onChange={handleInputChange}
-                    required
-                  />
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="pickup" id="pickup" />
+                  <Label htmlFor="pickup" className="flex items-center">
+                    <span className="ml-2">Retirada no Local</span>
+                  </Label>
                 </div>
-                <div>
-                  <label htmlFor="complement" className="mb-1 block text-sm font-medium">
-                    Complemento
-                  </label>
-                  <Input
-                    id="complement"
-                    name="complement"
-                    placeholder="Apartamento, bloco, etc."
-                    value={shippingInfo.complement}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="district" className="mb-1 block text-sm font-medium">
-                    Bairro*
-                  </label>
-                  <Input
-                    id="district"
-                    name="district"
-                    placeholder="Seu bairro"
-                    value={shippingInfo.district}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="reference" className="mb-1 block text-sm font-medium">
-                    Ponto de Referência
-                  </label>
-                  <Textarea
-                    id="reference"
-                    name="reference"
-                    placeholder="Próximo a..."
-                    value={shippingInfo.reference}
-                    onChange={handleInputChange}
-                    className="h-20"
-                  />
-                </div>
-              </div>
+              </RadioGroup>
             </div>
 
-            {/* Payment Method */}
+            {deliveryMethod === "delivery" && (
+              <div className="rounded-lg border bg-white p-6">
+                <h2 className="mb-4 flex items-center text-lg font-medium">
+                  <MapPin className="mr-2 h-5 w-5 text-store-pink" />
+                  Informações de Entrega
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="mb-1 block text-sm font-medium">
+                      Nome
+                    </label>
+                    <Input
+                      id="name"
+                      name="name"
+                      placeholder="Seu nome completo"
+                      value={shippingInfo.name}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="address" className="mb-1 block text-sm font-medium">
+                      Endereço
+                    </label>
+                    <Input
+                      id="address"
+                      name="address"
+                      placeholder="Rua, número"
+                      value={shippingInfo.address}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="complement" className="mb-1 block text-sm font-medium">
+                      Complemento
+                    </label>
+                    <Input
+                      id="complement"
+                      name="complement"
+                      placeholder="Apartamento, bloco, etc."
+                      value={shippingInfo.complement}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="district" className="mb-1 block text-sm font-medium">
+                      Bairro
+                    </label>
+                    <Input
+                      id="district"
+                      name="district"
+                      placeholder="Seu bairro"
+                      value={shippingInfo.district}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="reference" className="mb-1 block text-sm font-medium">
+                      Ponto de Referência
+                    </label>
+                    <Textarea
+                      id="reference"
+                      name="reference"
+                      placeholder="Próximo a..."
+                      value={shippingInfo.reference}
+                      onChange={handleInputChange}
+                      className="h-20"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="rounded-lg border bg-white p-6">
               <h2 className="mb-4 text-lg font-medium">Método de Pagamento</h2>
               <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
@@ -214,12 +225,10 @@ const Checkout = () => {
             </div>
           </div>
 
-          {/* Order Summary */}
           <div className="space-y-6">
             <div className="rounded-lg border bg-white p-6">
               <h2 className="mb-4 text-lg font-medium">Resumo do Pedido</h2>
               
-              {/* Order Items */}
               <div className="mb-4 max-h-64 space-y-3 overflow-y-auto">
                 {items.map((item) => (
                   <CartItemCard key={item.product.id} item={item} allowEdit={false} />
@@ -228,7 +237,6 @@ const Checkout = () => {
               
               <Separator className="my-3" />
               
-              {/* Order Totals */}
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Subtotal</span>
@@ -237,9 +245,11 @@ const Checkout = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-500">Taxa de Entrega</span>
                   <span>
-                    {hasFreeDelivery 
-                      ? <span className="text-green-600">Grátis</span> 
-                      : `R$ ${deliveryFee.toFixed(2)}`}
+                    {deliveryMethod === "delivery" 
+                      ? (hasFreeDelivery 
+                        ? <span className="text-green-600">Grátis</span> 
+                        : `R$ ${deliveryFee.toFixed(2)}`)
+                      : "N/A"}
                   </span>
                 </div>
                 <Separator />
@@ -249,7 +259,6 @@ const Checkout = () => {
                 </div>
               </div>
               
-              {/* Checkout Button */}
               <Button
                 className="mt-6 w-full bg-green-600 hover:bg-green-700"
                 onClick={handleCheckout}
