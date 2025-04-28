@@ -32,7 +32,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
   return (
     <div className="flex min-h-screen flex-col">
       {showHeader && (
-        <header className="sticky top-0 z-10 bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-lg backdrop-blur-lg">
+        <header className="sticky top-0 z-10 bg-gradient-to-r from-store-pink to-store-light-pink text-white shadow-lg backdrop-blur-lg">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center">
@@ -60,18 +60,18 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                 <span>Admin</span>
               </Link>
               
-              <div className="relative">
+              <div className="relative flex flex-col items-center">
                 <Link to="/cart" className="relative">
                   <ShoppingCart className="h-6 w-6" />
                   {totalItems > 0 && (
-                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-bold text-gray-900">
+                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs font-bold text-store-pink">
                       {totalItems}
                     </span>
                   )}
                 </Link>
                 {totalItems > 0 && (
-                  <div className="absolute right-full top-1/2 mr-2 -translate-y-1/2 whitespace-nowrap">
-                    <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-1 text-gray-900 shadow-lg animate-pulse">
+                  <div className="absolute top-full mt-2 whitespace-nowrap">
+                    <div className="flex items-center gap-2 rounded-lg bg-white px-3 py-1 text-store-pink shadow-lg animate-pulse">
                       <span className="text-sm font-medium">Clique aqui</span>
                       <ArrowRight className="h-4 w-4" />
                     </div>
@@ -121,12 +121,12 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
       </main>
 
       {showFooter && (
-        <footer className="border-t border-gray-800/10 bg-gray-50 py-6">
+        <footer className="border-t border-store-pink/10 bg-gradient-to-r from-store-pink/5 to-store-light-pink/5 py-6">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-store-pink">
               {settings.footerMessage || "Produtos feitos com ❤️"}
             </p>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-store-pink/70">
               {settings.storeName} &copy; {new Date().getFullYear()}
             </p>
           </div>
