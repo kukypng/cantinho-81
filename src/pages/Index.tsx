@@ -23,7 +23,7 @@ const Index = () => {
             {settings.storeName}
           </h1>
           {settings.freeDeliveryThreshold && settings.freeDeliveryThreshold > 0 && <div className="mt-3 flex justify-center">
-              <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-gray-900 bg-store-yellow">
+              <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-gray-900 bg-[#fec832]">
                 <MapPin className="h-4 w-4 text-store-pink" />
                 Entrega Grátis acima de R$ {settings.freeDeliveryThreshold}
               </div>
