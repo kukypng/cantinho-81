@@ -9,6 +9,8 @@ import DeliveryMethodSelector from "@/components/checkout/DeliveryMethodSelector
 import ShippingInfoForm from "@/components/checkout/ShippingInfoForm";
 import PaymentMethodSelector from "@/components/checkout/PaymentMethodSelector";
 import OrderSummary from "@/components/checkout/OrderSummary";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 const Checkout = () => {
   const { items, subtotal, clearCart } = useCart();
@@ -27,7 +29,12 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("pix");
   const [needChange, setNeedChange] = useState(false);
   const [changeAmount, setChangeAmount] = useState("");
+  const [customCakeDetails, setCustomCakeDetails] = useState("");
 
+  const hasCustomCakeItem = items.some(item => 
+    item.product.category === "Bolos Personalizados"
+  );
+  
   const deliveryFee = settings.deliveryFee || 0;
   const hasFreeDelivery = settings.freeDeliveryThreshold && subtotal >= settings.freeDeliveryThreshold;
   const total = subtotal + (deliveryMethod === "delivery" && !hasFreeDelivery ? deliveryFee : 0);
@@ -43,6 +50,11 @@ const Checkout = () => {
     message += "*Produtos:*\n";
     items.forEach((item, index) => {
       message += `${index + 1}. ${item.product.name} - ${item.quantity}x R$ ${item.product.price.toFixed(2)} = R$ ${(item.product.price * item.quantity).toFixed(2)}\n`;
+      
+      // Add custom cake details if this item is a custom cake
+      if (item.product.category === "Bolos Personalizados" && customCakeDetails) {
+        message += `   *Detalhes do Bolo Personalizado:* ${customCakeDetails}\n`;
+      }
     });
     
     message += `\n*Subtotal:* R$ ${subtotal.toFixed(2)}`;
@@ -86,6 +98,11 @@ const Checkout = () => {
       toast.error("Por favor, informe o valor para troco.");
       return;
     }
+
+    if (hasCustomCakeItem && !customCakeDetails.trim()) {
+      toast.error("Por favor, descreva os detalhes do seu bolo personalizado.");
+      return;
+    }
     
     setIsLoading(true);
     
@@ -127,6 +144,25 @@ const Checkout = () => {
                 shippingInfo={shippingInfo}
                 onChange={handleInputChange}
               />
+            )}
+
+            {hasCustomCakeItem && (
+              <div className="rounded-lg border bg-white p-6 space-y-4">
+                <h2 className="text-lg font-medium">Detalhes do Bolo Personalizado</h2>
+                <div className="space-y-2">
+                  <Label htmlFor="customCakeDetails" className="font-medium">
+                    Descreva como deseja seu bolo personalizado:
+                  </Label>
+                  <Textarea
+                    id="customCakeDetails"
+                    placeholder="Ex: Bolo para aniversário de 15 anos, tema floral, cobertura de chocolate e decoração em tons de rosa..."
+                    value={customCakeDetails}
+                    onChange={(e) => setCustomCakeDetails(e.target.value)}
+                    className="min-h-[120px]"
+                    required
+                  />
+                </div>
+              </div>
             )}
 
             <PaymentMethodSelector 
