@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu, ArrowRight, Instagram, Phone } from "lucide-react";
@@ -8,31 +7,32 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 interface StoreLayoutProps {
   children: React.ReactNode;
   showHeader?: boolean;
   showFooter?: boolean;
 }
-
 const StoreLayout: React.FC<StoreLayoutProps> = ({
   children,
   showHeader = true,
-  showFooter = true,
+  showFooter = true
 }) => {
-  const { totalItems } = useCart();
-  const { settings } = useStore();
+  const {
+    totalItems
+  } = useCart();
+  const {
+    settings
+  } = useStore();
   const isMobile = useIsMobile();
-
-  const navigationItems = [
-    { name: "Início", href: "/" },
-    { name: "Carrinho", href: "/cart" }
-  ];
-
-  return (
-    <div className="flex min-h-screen flex-col">
-      {showHeader && (
-        <header className="sticky top-0 z-10 bg-store-pink shadow-md">
+  const navigationItems = [{
+    name: "Início",
+    href: "/"
+  }, {
+    name: "Carrinho",
+    href: "/cart"
+  }];
+  return <div className="flex min-h-screen flex-col">
+      {showHeader && <header className="sticky top-0 z-10 bg-store-pink shadow-md">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center">
@@ -40,42 +40,29 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
               </Link>
             </div>
             
-            {!isMobile && (
-              <nav className="hidden space-x-6 md:flex">
-                {navigationItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className="text-sm font-medium text-white transition-colors hover:text-white/80"
-                  >
+            {!isMobile && <nav className="hidden space-x-6 md:flex">
+                {navigationItems.map(item => <Link key={item.name} to={item.href} className="text-sm font-medium text-white transition-colors hover:text-white/80">
                     {item.name}
-                  </Link>
-                ))}
-              </nav>
-            )}
+                  </Link>)}
+              </nav>}
 
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Link to="/cart" className="relative">
                   <ShoppingCart className="h-6 w-6 text-white" />
-                  {totalItems > 0 && (
-                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-yellow text-xs font-bold text-black">
+                  {totalItems > 0 && <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-yellow text-xs font-bold text-black">
                       {totalItems}
-                    </span>
-                  )}
+                    </span>}
                 </Link>
-                {totalItems > 0 && (
-                  <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
-                    <div className="flex items-center gap-2 bg-store-yellow/10 px-3 py-1 rounded-lg shadow-lg animate-pulse">
+                {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
+                    <div className="flex items-center gap-2 px-3 py-1 shadow-lg animate-pulse bg-[#ff0000]/[0.28] rounded-lg">
                       <span className="text-sm font-medium text-white">Clique Aqui</span>
                       <ArrowRight className="h-4 w-4 text-white" />
                     </div>
-                  </Link>
-                )}
+                  </Link>}
               </div>
               
-              {isMobile && (
-                <Sheet>
+              {isMobile && <Sheet>
                   <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" className="text-white">
                       <Menu className="h-5 w-5" />
@@ -83,36 +70,25 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
                   </SheetTrigger>
                   <SheetContent side="right">
                     <nav className="flex flex-col gap-4 pt-10">
-                      {navigationItems.map((item) => (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          className="text-lg font-medium"
-                        >
+                      {navigationItems.map(item => <Link key={item.name} to={item.href} className="text-lg font-medium">
                           {item.name}
-                        </Link>
-                      ))}
+                        </Link>)}
                     </nav>
                   </SheetContent>
-                </Sheet>
-              )}
+                </Sheet>}
             </div>
           </div>
 
-          {settings.welcomeMessage && (
-            <div className="bg-transparent p-2 text-center text-sm font-medium text-white">
+          {settings.welcomeMessage && <div className="bg-transparent p-2 text-center text-sm font-medium text-white">
               {settings.welcomeMessage}
-            </div>
-          )}
-        </header>
-      )}
+            </div>}
+        </header>}
 
       <main className={cn("flex-1 bg-white", !showHeader && "pt-0")}>
         {children}
       </main>
 
-      {showFooter && (
-        <footer className="border-t border-gray-100 bg-white py-6">
+      {showFooter && <footer className="border-t border-gray-100 bg-white py-6">
           <div className="container mx-auto px-4 text-center">
             <p className="text-sm text-gray-500">
               {settings.footerMessage}
@@ -123,34 +99,15 @@ const StoreLayout: React.FC<StoreLayoutProps> = ({
             
             {/* Social Media Links */}
             <div className="mt-4 flex justify-center space-x-4">
-              {settings.socialMedia?.instagram && (
-                <a 
-                  href={settings.socialMedia.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full bg-store-pink p-2 text-white hover:bg-store-pink/90 transition-colors"
-                  aria-label="Instagram"
-                >
+              {settings.socialMedia?.instagram && <a href={settings.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="rounded-full bg-store-pink p-2 text-white hover:bg-store-pink/90 transition-colors" aria-label="Instagram">
                   <Instagram size={20} />
-                </a>
-              )}
-              {settings.socialMedia?.whatsapp && (
-                <a
-                  href={settings.socialMedia.whatsapp}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full bg-green-600 p-2 text-white hover:bg-green-700 transition-colors"
-                  aria-label="WhatsApp"
-                >
+                </a>}
+              {settings.socialMedia?.whatsapp && <a href={settings.socialMedia.whatsapp} target="_blank" rel="noopener noreferrer" className="rounded-full bg-green-600 p-2 text-white hover:bg-green-700 transition-colors" aria-label="WhatsApp">
                   <Phone size={20} />
-                </a>
-              )}
+                </a>}
             </div>
           </div>
-        </footer>
-      )}
-    </div>
-  );
+        </footer>}
+    </div>;
 };
-
 export default StoreLayout;
