@@ -43,7 +43,7 @@
     "featured": true,
     "category": "Bolos no pote"
   },
-    {
+  {
     "id": "6",
     "name": "Maracujá Trufado",
     "description": "Massa suave com recheio trufado de maracujá, equilíbrio perfeito entre o doce e o azedinho!",
@@ -52,7 +52,7 @@
     "featured": true,
     "category": "Bolos no pote"
   },
-      {
+  {
     "id": "7",
     "name": "4 Leites",
     "description": "Massa molhadinha e recheio cremoso feito com a mistura especial dos quatro leites, pura cremosidade!",
@@ -69,5 +69,14 @@
     "imageUrl": "https://placehold.co/400x300/333/666",
     "featured": true,
     "category": "Bolos no pote"
+  },
+  {
+    "id": "9",
+    "name": "Bolo Personalizado",
+    "description": "Bolo feito sob medida de acordo com suas preferências. Descreva o sabor, tamanho, decoração e ocasião no pedido para receber um orçamento personalizado.",
+    "price": 0.00,
+    "imageUrl": "https://placehold.co/400x300/333/666",
+    "featured": true,
+    "category": "Bolos Personalizados"
   }
 ]
