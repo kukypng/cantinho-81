@@ -37,21 +37,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Desktop Sidebar */}
       {!isMobile && (
-        <div className="hidden w-64 flex-shrink-0 border-r bg-white md:block">
+        <div className="hidden w-64 flex-shrink-0 border-r glass-morphism md:block animate-slide-in-right">
           <div className="flex h-16 items-center justify-center border-b">
-            <h2 className="text-lg font-bold text-gray-900">{settings.storeName}</h2>
+            <h2 className="text-lg font-bold text-gradient">{settings.storeName}</h2>
           </div>
           <nav className="flex flex-col p-4">
             {navigationItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`mb-1 flex items-center rounded-md px-3 py-2 text-sm font-medium ${
+                className={`mb-1 flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200
+                  ${
                   isActive(item.href)
-                    ? "bg-primary text-white"
+                    ? "bg-gradient-to-r from-store-pink to-store-pink/90 text-white shadow-md"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
@@ -60,14 +61,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
               </Link>
             ))}
             
-            <Link to="/" className="mt-2 flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
+            <Link to="/" className="mt-2 flex items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
               <ChevronLeft className="mr-2 h-4 w-4" />
               Voltar para Loja
             </Link>
             
             <button
               onClick={() => logout()}
-              className="mt-4 flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+              className="mt-4 flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
             >
               <LogOut className="mr-2 h-4 w-4" />
               Sair
@@ -79,7 +80,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
       {/* Main Content */}
       <div className="flex w-full flex-1 flex-col">
         {/* Mobile Header */}
-        <header className="flex h-16 items-center justify-between border-b bg-white px-4">
+        <header className="flex h-16 items-center justify-between border-b glass-morphism px-4">
           <div className="flex items-center">
             {isMobile && (
               <Sheet>
@@ -88,16 +89,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left">
+                <SheetContent side="left" className="glass-morphism border-r border-gray-100">
                   <div className="flex flex-col py-6">
-                    <h2 className="mb-6 text-lg font-bold text-gray-900">{settings.storeName}</h2>
+                    <h2 className="mb-6 text-lg font-bold text-gradient">{settings.storeName}</h2>
                     {navigationItems.map((item) => (
                       <Link
                         key={item.name}
                         to={item.href}
-                        className={`mb-1 flex items-center rounded-md px-3 py-2 text-sm font-medium ${
+                        className={`mb-1 flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200
+                          ${
                           isActive(item.href)
-                            ? "bg-primary text-white"
+                            ? "bg-gradient-to-r from-store-pink to-store-pink/90 text-white shadow-md"
                             : "text-gray-700 hover:bg-gray-100"
                         }`}
                       >
@@ -106,14 +108,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                       </Link>
                     ))}
                     
-                    <Link to="/" className="mt-2 flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
+                    <Link to="/" className="mt-2 flex items-center rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
                       <ChevronLeft className="mr-2 h-4 w-4" />
                       Voltar para Loja
                     </Link>
                     
                     <button
                       onClick={() => logout()}
-                      className="mt-4 flex w-full items-center rounded-md px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                      className="mt-4 flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
                     >
                       <LogOut className="mr-2 h-4 w-4" />
                       Sair
@@ -123,12 +125,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
               </Sheet>
             )}
             
-            <h1 className="ml-2 text-xl font-bold text-gray-900">{title}</h1>
+            <h1 className="ml-2 text-xl font-bold text-gradient">{title}</h1>
           </div>
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-auto p-4 md:p-8">{children}</main>
+        <main className="flex-1 overflow-auto p-4 md:p-8 animate-fade-in">{children}</main>
       </div>
     </div>
   );
