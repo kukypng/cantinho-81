@@ -23,6 +23,7 @@ export interface StoreSettings {
   address?: string;
   welcomeMessage?: string;
   footerMessage?: string;
+  customCakeMessage?: string;
   socialMedia?: {
     instagram?: string;
     whatsapp?: string;

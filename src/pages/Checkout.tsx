@@ -163,6 +163,15 @@ const Checkout = () => {
     return null;
   }
 
+  // Type-safe handlers for component props
+  const handleDeliveryMethodChange = (value: string) => {
+    setDeliveryMethod(value as DeliveryMethodType);
+  };
+
+  const handlePaymentMethodChange = (value: string) => {
+    setPaymentMethod(value as PaymentMethodType);
+  };
+
   return (
     <StoreLayout>
       <div className="container mx-auto px-4 py-8">
@@ -172,7 +181,7 @@ const Checkout = () => {
           <div className="md:col-span-2 space-y-8">
             <DeliveryMethodSelector 
               value={deliveryMethod}
-              onChange={setDeliveryMethod}
+              onChange={handleDeliveryMethodChange}
             />
 
             {deliveryMethod === "delivery" && (
@@ -203,7 +212,7 @@ const Checkout = () => {
 
             <PaymentMethodSelector 
               value={paymentMethod}
-              onChange={setPaymentMethod}
+              onChange={handlePaymentMethodChange}
               needChange={needChange}
               changeAmount={changeAmount}
               onChangeOptionChange={setNeedChange}
