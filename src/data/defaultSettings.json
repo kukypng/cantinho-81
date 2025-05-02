@@ -6,9 +6,19 @@
   "freeDeliveryThreshold": 28,
   "welcomeMessage": "",
   "footerMessage": "Feito com amor❤️",
+  "customCakeMessage": "Descreva seu bolo personalizado e entraremos em contato com um orçamento.",
   "socialMedia": {
     "instagram": "https://instagram.com/cantinhoda.ysa",
     "whatsapp": "https://wa.me/5564999421093"
   },
-  "customCakeMessage": "Descreva seu bolo personalizado e entraremos em contato com um orçamento."
+  "__comentários__": {
+    "storeName": "Nome da sua loja que aparece no site",
+    "whatsappNumber": "Número com código do país (55) + DDD + número, sem espaços ou caracteres especiais",
+    "deliveryFee": "Valor da taxa de entrega em reais (não use vírgulas, apenas números)",
+    "freeDeliveryThreshold": "Valor mínimo para entrega grátis (coloque 0 para desativar)",
+    "welcomeMessage": "Mensagem de boas-vindas que aparece na página inicial (pode ficar vazio)",
+    "footerMessage": "Mensagem que aparece no rodapé de todas as páginas",
+    "customCakeMessage": "Texto que aparece no formulário de pedidos de bolos personalizados",
+    "socialMedia": "Links para suas redes sociais (deixe em branco se não tiver)"
+  }
 }
