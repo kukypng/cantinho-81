@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import StoreLayout from "@/components/layout/StoreLayout";
 import { useCart } from "@/context/CartContext";
@@ -12,41 +12,57 @@ import OrderSummary from "@/components/checkout/OrderSummary";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
+type DeliveryMethodType = "delivery" | "pickup";
+type PaymentMethodType = "pix" | "card" | "cash";
+
+interface ShippingInfoType {
+  name: string;
+  address: string;
+  complement: string;
+  district: string;
+  reference: string;
+}
+
 const Checkout = () => {
   const { items, subtotal, clearCart } = useCart();
   const { settings } = useStore();
   const navigate = useNavigate();
   
   const [isLoading, setIsLoading] = useState(false);
-  const [deliveryMethod, setDeliveryMethod] = useState("delivery");
-  const [shippingInfo, setShippingInfo] = useState({
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethodType>("delivery");
+  const [shippingInfo, setShippingInfo] = useState<ShippingInfoType>({
     name: "",
     address: "",
     complement: "",
     district: "",
     reference: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState("pix");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>("pix");
   const [needChange, setNeedChange] = useState(false);
   const [changeAmount, setChangeAmount] = useState("");
   const [customCakeDetails, setCustomCakeDetails] = useState("");
 
+  // Check if any item is a custom cake
   const hasCustomCakeItem = items.some(item => 
     item.product.category === "Bolos Personalizados"
   );
   
+  // Calculate total with delivery fee logic
   const deliveryFee = settings.deliveryFee || 0;
   const hasFreeDelivery = settings.freeDeliveryThreshold && subtotal >= settings.freeDeliveryThreshold;
   const total = subtotal + (deliveryMethod === "delivery" && !hasFreeDelivery ? deliveryFee : 0);
   
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Handle shipping form input changes
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setShippingInfo((prev) => ({ ...prev, [name]: value }));
-  };
+  }, []);
   
-  const formatWhatsAppMessage = () => {
+  // Format WhatsApp message with all order details
+  const formatWhatsAppMessage = useCallback(() => {
     let message = `*Novo Pedido em ${settings.storeName}*\n\n`;
     
+    // Add products
     message += "*Produtos:*\n";
     items.forEach((item, index) => {
       message += `${index + 1}. ${item.product.name} - ${item.quantity}x R$ ${item.product.price.toFixed(2)} = R$ ${(item.product.price * item.quantity).toFixed(2)}\n`;
@@ -57,6 +73,7 @@ const Checkout = () => {
       }
     });
     
+    // Add pricing information
     message += `\n*Subtotal:* R$ ${subtotal.toFixed(2)}`;
     
     if (deliveryMethod === "delivery") {
@@ -66,6 +83,7 @@ const Checkout = () => {
     message += `\n*Valor Total:* R$ ${total.toFixed(2)}`;
     message += `\n\n*Método de Entrega:* ${deliveryMethod === "delivery" ? "Entrega" : "Retirada no Local"}`;
     
+    // Add delivery information if applicable
     if (deliveryMethod === "delivery") {
       message += `\n\n*Dados de Entrega:*`;
       message += `\nNome: ${shippingInfo.name}`;
@@ -75,6 +93,7 @@ const Checkout = () => {
       message += `\nPonto de Referência: ${shippingInfo.reference || "N/A"}`;
     }
     
+    // Add payment information
     message += `\n\n*Método de Pagamento:* ${paymentMethod === "pix" ? "PIX" : paymentMethod === "card" ? "Cartão" : "Dinheiro"}`;
     
     if (paymentMethod === "cash") {
@@ -86,9 +105,11 @@ const Checkout = () => {
     }
     
     return encodeURIComponent(message);
-  };
+  }, [items, subtotal, deliveryMethod, hasFreeDelivery, deliveryFee, total, shippingInfo, paymentMethod, needChange, changeAmount, customCakeDetails, settings.storeName]);
   
-  const handleCheckout = () => {
+  // Handle checkout process
+  const handleCheckout = useCallback(() => {
+    // Form validation
     if (deliveryMethod === "delivery" && (!shippingInfo.address || !shippingInfo.district)) {
       toast.error("Por favor, preencha o endereço de entrega.");
       return;
@@ -107,10 +128,12 @@ const Checkout = () => {
     setIsLoading(true);
     
     try {
+      // Format phone number and create WhatsApp link
       const whatsappNumber = settings.whatsappNumber.replace(/\D/g, "");
       const message = formatWhatsAppMessage();
       const whatsappLink = `https://wa.me/${whatsappNumber}?text=${message}`;
       
+      // Clear cart, send to WhatsApp, and redirect
       clearCart();
       window.open(whatsappLink, "_blank");
       toast.success("Seu pedido foi enviado para o WhatsApp!");
@@ -121,8 +144,21 @@ const Checkout = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [
+    deliveryMethod, 
+    shippingInfo, 
+    paymentMethod, 
+    needChange, 
+    changeAmount, 
+    hasCustomCakeItem, 
+    customCakeDetails, 
+    settings.whatsappNumber, 
+    formatWhatsAppMessage, 
+    clearCart, 
+    navigate
+  ]);
 
+  // Early return if cart is empty
   if (items.length === 0) {
     return null;
   }
@@ -151,7 +187,7 @@ const Checkout = () => {
                 <h2 className="text-lg font-medium">Detalhes do Bolo Personalizado</h2>
                 <div className="space-y-2">
                   <Label htmlFor="customCakeDetails" className="font-medium">
-                    Descreva como deseja seu bolo personalizado:
+                    {settings.customCakeMessage || "Descreva como deseja seu bolo personalizado:"}
                   </Label>
                   <Textarea
                     id="customCakeDetails"

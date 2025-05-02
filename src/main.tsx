@@ -3,8 +3,14 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-// Use createRoot API for concurrent mode rendering
-const root = createRoot(document.getElementById("root")!);
+// Create a root for concurrent mode rendering
+const rootElement = document.getElementById("root");
 
-// Render with better performance characteristics
+if (!rootElement) {
+  throw new Error("Root element not found");
+}
+
+const root = createRoot(rootElement);
+
+// Render with StrictMode disabled in production for better performance
 root.render(<App />);
