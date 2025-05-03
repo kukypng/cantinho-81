@@ -1,4 +1,3 @@
-
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu, ArrowRight, Instagram, Phone } from "lucide-react";
@@ -8,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 interface StoreLayoutProps {
   children: React.ReactNode;
   showHeader?: boolean;
@@ -85,7 +83,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                 </Link>
                 {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
                     <div className="flex items-center gap-2 px-3 py-1 shadow-lg animate-pulse rounded-full bg-gradient-to-r from-store-pink/90 to-store-pink/70">
-                      <span className="text-sm font-medium text-white">Clique Aqui</span>
+                      <span className="text-sm font-medium text-white">Aqui</span>
                       <ArrowRight className="h-4 w-4 text-white" />
                     </div>
                   </Link>}
