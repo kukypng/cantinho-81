@@ -1,5 +1,5 @@
 
-# 🧁 Cantinho da Ysa - Loja Virtual
+# 🧁 Loja Virtual
 
 ## 🎉 Bem-vindo à sua loja online!
 
