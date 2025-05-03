@@ -38,7 +38,7 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({
           <div>
             <Label htmlFor="welcomeMessage" className="flex items-center gap-2">
               Mensagem de Boas-vindas
-              <HelpTooltip content="Esta mensagem aparece na barra superior do site" />
+              <HelpTooltip text="Esta mensagem aparece na barra superior do site" />
             </Label>
             <Input
               id="welcomeMessage"
@@ -52,7 +52,7 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({
           <div>
             <Label htmlFor="footerMessage" className="flex items-center gap-2">
               Mensagem no Rodapé
-              <HelpTooltip content="Esta mensagem aparece no rodapé de todas as páginas" />
+              <HelpTooltip text="Esta mensagem aparece no rodapé de todas as páginas" />
             </Label>
             <Input
               id="footerMessage"
@@ -66,7 +66,7 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({
           <div>
             <Label htmlFor="customCakeMessage" className="flex items-center gap-2">
               Texto para Bolos Personalizados
-              <HelpTooltip content="Esta mensagem aparece no formulário de pedido de bolos personalizados" />
+              <HelpTooltip text="Esta mensagem aparece no formulário de pedido de bolos personalizados" />
             </Label>
             <Textarea
               id="customCakeMessage"
@@ -82,7 +82,7 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({
             <div className="flex items-center justify-between mb-2">
               <Label className="flex items-center gap-2">
                 Avisos na Página Inicial
-                <HelpTooltip content="Estes avisos aparecerão no topo da página inicial" />
+                <HelpTooltip text="Estes avisos aparecerão no topo da página inicial" />
               </Label>
               <Button 
                 type="button" 
