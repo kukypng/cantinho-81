@@ -14,12 +14,12 @@ interface HelpTooltipProps {
 
 const HelpTooltip = ({ text }: HelpTooltipProps) => (
   <TooltipProvider>
-    <Tooltip>
+    <Tooltip delayDuration={300}>
       <TooltipTrigger asChild>
-        <HelpCircle className="h-4 w-4 text-primary/60 ml-2 cursor-help transition-colors hover:text-primary" />
+        <HelpCircle className="h-4 w-4 text-primary/60 ml-2 cursor-help transition-colors hover:text-primary hover:scale-110" />
       </TooltipTrigger>
-      <TooltipContent className="glass-morphism border-none shadow-lg animate-scale-in">
-        <p className="max-w-xs text-sm">{text}</p>
+      <TooltipContent className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-none shadow-xl text-white animate-scale-in max-w-xs rounded-lg p-3">
+        <p className="text-sm">{text}</p>
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>
