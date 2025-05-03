@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import CartItemCard from "@/components/CartItemCard";
 import { CheckCircle, Loader2 } from "lucide-react";
+import CouponForm from "./CouponForm";
 
 interface OrderSummaryProps {
   items: CartItem[];
@@ -14,6 +15,7 @@ interface OrderSummaryProps {
   total: number;
   isDelivery: boolean;
   isLoading: boolean;
+  discountAmount?: number;
   onCheckout: () => void;
 }
 
@@ -25,6 +27,7 @@ const OrderSummary = ({
   total,
   isDelivery,
   isLoading,
+  discountAmount = 0,
   onCheckout,
 }: OrderSummaryProps) => {
   return (
@@ -38,6 +41,11 @@ const OrderSummary = ({
       </div>
       
       <Separator className="my-3" />
+      
+      {/* Coupon Form */}
+      <div className="mb-4">
+        <CouponForm />
+      </div>
       
       <div className="space-y-3">
         <div className="flex justify-between">
@@ -54,6 +62,14 @@ const OrderSummary = ({
               : "N/A"}
           </span>
         </div>
+        
+        {discountAmount > 0 && (
+          <div className="flex justify-between text-green-600">
+            <span>Desconto</span>
+            <span>-R$ {discountAmount.toFixed(2)}</span>
+          </div>
+        )}
+        
         <Separator />
         <div className="flex justify-between font-medium">
           <span>Total</span>

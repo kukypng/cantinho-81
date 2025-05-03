@@ -26,6 +26,7 @@ const Checkout = () => {
     changeAmount,
     customCakeDetails,
     hasCustomCakeItem,
+    discountAmount,
     handleInputChange,
     handleDeliveryMethodChange,
     handlePaymentMethodChange,
@@ -116,6 +117,7 @@ const Checkout = () => {
                 total={total}
                 isDelivery={deliveryMethod === "delivery"}
                 isLoading={isLoading}
+                discountAmount={discountAmount}
                 onCheckout={handleCheckout}
               />
               

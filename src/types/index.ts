@@ -36,6 +36,30 @@ export interface CartItem {
 }
 
 /**
+ * Representa um cupom de desconto
+ * @example
+ * {
+ *   code: "BEMVINDO10",
+ *   discountType: "percentage",
+ *   discountValue: 10,
+ *   minOrderValue: 0,
+ *   active: true,
+ *   description: "10% de desconto na primeira compra"
+ * }
+ */
+export interface Coupon {
+  code: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  minOrderValue: number;
+  active: boolean;
+  description: string;
+  expiryDate?: string;
+  usageLimit?: number;
+  usageCount?: number;
+}
+
+/**
  * Configurações da loja que podem ser editadas pelo administrador
  * @example
  * {

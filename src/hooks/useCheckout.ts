@@ -3,8 +3,8 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
+import { useCoupon } from "@/context/CouponContext";
 import { toast } from "sonner";
-import { CartItem } from "@/types";
 
 export type DeliveryMethodType = "delivery" | "pickup";
 export type PaymentMethodType = "pix" | "card" | "cash";
@@ -20,6 +20,7 @@ export interface ShippingInfoType {
 const useCheckout = () => {
   const { items, subtotal, clearCart } = useCart();
   const { settings } = useStore();
+  const { appliedCoupon, calculateDiscount } = useCoupon();
   const navigate = useNavigate();
   
   const [isLoading, setIsLoading] = useState(false);
@@ -35,16 +36,23 @@ const useCheckout = () => {
   const [needChange, setNeedChange] = useState(false);
   const [changeAmount, setChangeAmount] = useState("");
   const [customCakeDetails, setCustomCakeDetails] = useState("");
+  const [couponCode, setCouponCode] = useState("");
 
   // Check if any item is a custom cake
   const hasCustomCakeItem = items.some(item => 
     item.product.category === "Bolos Personalizados"
   );
   
-  // Calculate total with delivery fee logic
+  // Calculate total with delivery fee and discount logic
   const deliveryFee = settings.deliveryFee || 0;
   const hasFreeDelivery = settings.freeDeliveryThreshold && subtotal >= settings.freeDeliveryThreshold;
-  const total = subtotal + (deliveryMethod === "delivery" && !hasFreeDelivery ? deliveryFee : 0);
+  const calculatedDeliveryFee = (deliveryMethod === "delivery" && !hasFreeDelivery) ? deliveryFee : 0;
+  
+  // Calculate discount amount
+  const discountAmount = calculateDiscount(subtotal, calculatedDeliveryFee);
+  
+  // Calculate final total
+  const total = subtotal + calculatedDeliveryFee - discountAmount;
   
   // Handle shipping form input changes
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -79,6 +87,12 @@ const useCheckout = () => {
       message += `\n*Taxa de Entrega:* ${hasFreeDelivery ? "Grátis" : `R$ ${deliveryFee.toFixed(2)}`}`;
     }
     
+    // Add discount information if a coupon is applied
+    if (appliedCoupon && discountAmount > 0) {
+      message += `\n*Cupom Aplicado:* ${appliedCoupon.code}`;
+      message += `\n*Desconto:* -R$ ${discountAmount.toFixed(2)}`;
+    }
+    
     message += `\n*Valor Total:* R$ ${total.toFixed(2)}`;
     message += `\n\n*Método de Entrega:* ${deliveryMethod === "delivery" ? "Entrega" : "Retirada no Local"}`;
     
@@ -104,7 +118,7 @@ const useCheckout = () => {
     }
     
     return encodeURIComponent(message);
-  }, [items, subtotal, deliveryMethod, hasFreeDelivery, deliveryFee, total, shippingInfo, paymentMethod, needChange, changeAmount, customCakeDetails, settings.storeName]);
+  }, [items, subtotal, deliveryMethod, hasFreeDelivery, deliveryFee, total, shippingInfo, paymentMethod, needChange, changeAmount, customCakeDetails, settings.storeName, appliedCoupon, discountAmount]);
   
   // Type-safe handlers for component props
   const handleDeliveryMethodChange = (value: string) => {
@@ -163,7 +177,8 @@ const useCheckout = () => {
     settings.whatsappNumber, 
     formatWhatsAppMessage, 
     clearCart, 
-    navigate
+    navigate,
+    appliedCoupon
   ]);
 
   return {
@@ -180,13 +195,17 @@ const useCheckout = () => {
     changeAmount,
     customCakeDetails,
     hasCustomCakeItem,
+    appliedCoupon,
+    discountAmount,
     handleInputChange,
     handleDeliveryMethodChange,
     handlePaymentMethodChange,
     setNeedChange,
     setChangeAmount,
     handleCustomCakeDetailsChange,
-    handleCheckout
+    handleCheckout,
+    couponCode,
+    setCouponCode
   };
 };
 

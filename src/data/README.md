@@ -11,6 +11,9 @@ Este arquivo contém as **configurações gerais da sua loja** como nome, númer
 ### 📄 initialProducts.json
 Este arquivo contém todos os **produtos** que serão exibidos na sua loja.
 
+### 📄 defaultCoupons.json
+Este arquivo contém a lista de **cupons de desconto** disponíveis na sua loja.
+
 ## ✏️ Como Editar os Arquivos
 
 1. Clique no arquivo que deseja alterar
@@ -65,6 +68,42 @@ Copie este modelo, altere as informações e adicione ao arquivo initialProducts
   "imageUrl": "https://placehold.co/400x300/333/666", // Link para imagem
   "featured": false,
   "category": "Bolos no pote"  // Use categoria existente ou crie nova
+}
+```
+
+## 🎟️ Cupons de Desconto (defaultCoupons.json)
+
+Cada cupom segue este formato:
+
+```json
+{
+  "code": "BEMVINDO10",                 // Código que o cliente vai digitar
+  "discountType": "percentage",         // "percentage" (%) ou "fixed" (valor fixo)
+  "discountValue": 10,                  // 10% ou R$10,00 (dependendo do tipo)
+  "minOrderValue": 0,                   // Valor mínimo para usar (0 = sem mínimo)
+  "active": true,                       // true = ativo, false = inativo
+  "description": "10% de desconto",     // Descrição do cupom
+  "expiryDate": "2025-12-31",           // Data de expiração (YYYY-MM-DD) (vazio = sem expiração)
+  "usageLimit": 0,                      // Limite de uso (0 = ilimitado)
+  "usageCount": 0                       // Contador de uso (não altere)
+}
+```
+
+### 🌟 Como Adicionar um Novo Cupom:
+
+Copie este modelo, altere as informações e adicione ao arquivo defaultCoupons.json:
+
+```json
+{
+  "code": "DESCONTO20", 
+  "discountType": "percentage",
+  "discountValue": 20,
+  "minOrderValue": 30.00,
+  "active": true,
+  "description": "20% de desconto em compras acima de R$30",
+  "expiryDate": "2025-12-31",
+  "usageLimit": 100,
+  "usageCount": 0
 }
 ```
 

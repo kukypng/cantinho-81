@@ -13,6 +13,7 @@ Este projeto foi criado com ajuda de IA para facilitar a venda de seus produtos 
 2. Lá você encontrará os arquivos:
    - `initialProducts.json` - Lista de produtos
    - `defaultSettings.json` - Configurações da loja
+   - `defaultCoupons.json` - Cupons de desconto
 
 3. Abra o arquivo README.md nessa pasta para instruções detalhadas
 
@@ -40,6 +41,17 @@ Este projeto é construído com:
 - ✅ Integração com WhatsApp
 - ✅ Painel administrativo
 - ✅ Design responsivo (funciona em celulares e computadores)
+- ✅ Cupons de desconto
+
+## 💰 Sistema de Cupons
+
+A loja possui um sistema completo de cupons de desconto:
+
+- Criar cupons com desconto percentual ou valor fixo
+- Definir valor mínimo de compra para o cupom
+- Limite de uso e data de expiração
+- Ativar/desativar cupons
+- Fácil gerenciamento no painel administrativo
 
 ## 📱 Redes Sociais
 

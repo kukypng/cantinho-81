@@ -1,0 +1,36 @@
+
+[
+  {
+    "code": "BEMVINDO10",
+    "discountType": "percentage",
+    "discountValue": 10,
+    "minOrderValue": 0,
+    "active": true,
+    "description": "10% de desconto na primeira compra",
+    "expiryDate": "2025-12-31",
+    "usageLimit": 0,
+    "usageCount": 0
+  },
+  {
+    "code": "FRETEGRATIS",
+    "discountType": "fixed",
+    "discountValue": 9,
+    "minOrderValue": 15,
+    "active": true,
+    "description": "Frete grátis para compras acima de R$15",
+    "expiryDate": "",
+    "usageLimit": 0,
+    "usageCount": 0
+  },
+  {
+    "code": "DESCONTO5",
+    "discountType": "fixed",
+    "discountValue": 5,
+    "minOrderValue": 25,
+    "active": true,
+    "description": "R$5 de desconto para compras acima de R$25",
+    "expiryDate": "2025-06-30",
+    "usageLimit": 100,
+    "usageCount": 0
+  }
+]

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/context/StoreContext";
+import { useCoupon } from "@/context/CouponContext";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
 import BeginnersGuide from "@/components/settings/BeginnersGuide";
@@ -10,9 +11,12 @@ import StoreInfoSection from "@/components/settings/StoreInfoSection";
 import DeliverySettingsSection from "@/components/settings/DeliverySettingsSection";
 import MessagesSection from "@/components/settings/MessagesSection";
 import SocialMediaSection from "@/components/settings/SocialMediaSection";
+import CouponsSection from "@/components/settings/CouponsSection";
+import { Coupon } from "@/types";
 
 const Settings = () => {
   const { settings, updateSettings } = useStore();
+  const { coupons, updateCoupon, addCoupon, deleteCoupon } = useCoupon();
   const [formData, setFormData] = useState({
     storeName: settings.storeName,
     whatsappNumber: settings.whatsappNumber,
@@ -97,6 +101,23 @@ const Settings = () => {
     toast.success("Configurações salvas com sucesso!");
   };
 
+  const handleCouponAdd = (coupon: Coupon) => {
+    addCoupon(coupon);
+    toast.success(`Cupom ${coupon.code} criado com sucesso!`);
+  };
+
+  const handleCouponUpdate = (coupon: Coupon) => {
+    updateCoupon(coupon);
+    toast.success(`Cupom ${coupon.code} atualizado com sucesso!`);
+  };
+
+  const handleCouponDelete = (code: string) => {
+    if (window.confirm(`Tem certeza que deseja excluir o cupom ${code}?`)) {
+      deleteCoupon(code);
+      toast.success(`Cupom ${code} excluído com sucesso!`);
+    }
+  };
+
   return (
     <AdminLayout title="Configurações da Loja">
       <div className="space-y-6">
@@ -114,6 +135,13 @@ const Settings = () => {
               deliveryFee={formData.deliveryFee}
               freeDeliveryThreshold={formData.freeDeliveryThreshold}
               onInputChange={handleInputChange}
+            />
+
+            <CouponsSection 
+              coupons={coupons}
+              onCouponAdd={handleCouponAdd}
+              onCouponUpdate={handleCouponUpdate}
+              onCouponDelete={handleCouponDelete}
             />
 
             <MessagesSection

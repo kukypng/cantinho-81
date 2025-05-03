@@ -8,16 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ArrowRight, ShoppingCart, Trash2 } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
+import { useCoupon } from "@/context/CouponContext";
+import CouponForm from "@/components/checkout/CouponForm";
 
 const Cart = () => {
   const { items, clearCart, subtotal } = useCart();
   const { settings } = useStore();
+  const { calculateDiscount } = useCoupon();
   const navigate = useNavigate();
 
   // Calculate totals
   const deliveryFee = settings.deliveryFee || 0;
   const hasFreeDelivery = settings.freeDeliveryThreshold && subtotal >= settings.freeDeliveryThreshold;
-  const total = subtotal + (hasFreeDelivery ? 0 : deliveryFee);
+  const calculatedDeliveryFee = hasFreeDelivery ? 0 : deliveryFee;
+  const discountAmount = calculateDiscount(subtotal, calculatedDeliveryFee);
+  const total = subtotal + calculatedDeliveryFee - discountAmount;
 
   return (
     <StoreLayout>
@@ -66,6 +71,11 @@ const Cart = () => {
             <div>
               <div className="rounded-lg border bg-white p-6">
                 <h2 className="mb-4 text-lg font-medium">Resumo do Pedido</h2>
+                
+                <div className="mb-4">
+                  <CouponForm />
+                </div>
+                
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Subtotal</span>
@@ -79,6 +89,12 @@ const Cart = () => {
                         : `R$ ${deliveryFee.toFixed(2)}`}
                     </span>
                   </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Desconto</span>
+                      <span>-R$ {discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <Separator />
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
