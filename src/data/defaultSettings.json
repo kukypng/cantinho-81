@@ -11,14 +11,15 @@
     "instagram": "https://instagram.com/cantinhoda.ysa",
     "whatsapp": "https://wa.me/5564999421093"
   },
-  "__comentários__": {
-    "storeName": "Nome da sua loja que aparece no site",
-    "whatsappNumber": "Número com código do país (55) + DDD + número, sem espaços ou caracteres especiais",
-    "deliveryFee": "Valor da taxa de entrega em reais (não use vírgulas, apenas números)",
+  
+  "___INSTRUÇÕES___": {
+    "storeName": "Nome da sua loja que aparece no site e nos pedidos",
+    "whatsappNumber": "Seu número de WhatsApp com código do país (55) + DDD + número, sem espaços",
+    "deliveryFee": "Taxa de entrega em reais (use números inteiros ou decimais com ponto)",
     "freeDeliveryThreshold": "Valor mínimo para entrega grátis (coloque 0 para desativar)",
-    "welcomeMessage": "Mensagem de boas-vindas que aparece na página inicial (pode ficar vazio)",
+    "welcomeMessage": "Mensagem que aparece no topo da página inicial (pode ficar vazio)",
     "footerMessage": "Mensagem que aparece no rodapé de todas as páginas",
-    "customCakeMessage": "Texto que aparece no formulário de pedidos de bolos personalizados",
+    "customCakeMessage": "Texto que aparece no formulário de bolos personalizados",
     "socialMedia": "Links para suas redes sociais (deixe em branco se não tiver)"
   }
 }

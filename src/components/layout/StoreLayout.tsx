@@ -1,3 +1,4 @@
+
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu, ArrowRight, Instagram, Phone } from "lucide-react";
@@ -7,13 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+// Interface que define as propriedades do componente StoreLayout
 interface StoreLayoutProps {
   children: React.ReactNode;
   showHeader?: boolean;
   showFooter?: boolean;
 }
 
-// Navigation items defined outside component to prevent recreation on each render
+// Itens de navegação definidos fora do componente para melhorar performance
 const navigationItems = [{
   name: "Início",
   href: "/"
@@ -22,7 +25,7 @@ const navigationItems = [{
   href: "/cart"
 }];
 
-// Memoize navigation links to prevent unnecessary re-renders
+// Componente de links de navegação (memoizado para melhor performance)
 const NavigationLinks = memo(({
   isMobile
 }: {
@@ -34,7 +37,7 @@ const NavigationLinks = memo(({
     </nav>);
 NavigationLinks.displayName = "NavigationLinks";
 
-// Memoize social media links to prevent unnecessary re-renders
+// Componente de links para redes sociais (memoizado para melhor performance)
 const SocialMediaLinks = memo(({
   socialMedia
 }: {
@@ -49,31 +52,46 @@ const SocialMediaLinks = memo(({
   </div>);
 SocialMediaLinks.displayName = "SocialMediaLinks";
 
-// Main component - memoized to prevent unnecessary re-renders
+/**
+ * Componente principal de layout da loja
+ * Este componente contém o cabeçalho e rodapé da loja
+ * É usado em todas as páginas públicas do site
+ */
 const StoreLayout: React.FC<StoreLayoutProps> = memo(({
   children,
   showHeader = true,
   showFooter = true
 }) => {
+  // Obtém informações do carrinho (número de itens)
   const {
     totalItems
   } = useCart();
+  
+  // Obtém configurações da loja (nome, mensagens, redes sociais)
   const {
     settings
   } = useStore();
+  
+  // Verifica se o dispositivo é móvel para adaptar o layout
   const isMobile = useIsMobile();
+  
   return <div className="flex min-h-screen flex-col bg-gradient-to-br from-white to-gray-50">
+      {/* Cabeçalho da loja - pode ser ocultado com a prop showHeader=false */}
       {showHeader && <header className="sticky top-0 z-10 glass-morphism animate-fade-in">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
+            {/* Logo e nome da loja */}
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center transition-transform duration-300 hover:scale-105">
                 <span className="text-xl font-bold text-gradient">{settings.storeName}</span>
               </Link>
             </div>
             
+            {/* Links de navegação - aparece apenas em desktop */}
             <NavigationLinks isMobile={isMobile} />
 
+            {/* Carrinho e menu móvel */}
             <div className="flex items-center gap-4">
+              {/* Ícone do carrinho com contador */}
               <div className="relative">
                 <Link to="/cart" className="relative hover-scale">
                   <ShoppingCart className="h-6 w-6 text-primary" />
@@ -81,6 +99,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                       {totalItems}
                     </span>}
                 </Link>
+                {/* Dica visual quando há itens no carrinho */}
                 {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
                     <div className="flex items-center gap-2 px-3 py-1 shadow-lg animate-pulse rounded-full bg-gradient-to-r from-store-pink/90 to-store-pink/70">
                       <span className="text-sm font-medium text-white">Aqui</span>
@@ -89,6 +108,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                   </Link>}
               </div>
               
+              {/* Menu móvel - aparece apenas em dispositivos móveis */}
               {isMobile && <Sheet>
                   <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10">
@@ -106,17 +126,20 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
             </div>
           </div>
 
+          {/* Mensagem de boas-vindas - configurada nas configurações da loja */}
           {settings.welcomeMessage && <div className="bg-gradient-to-r from-store-pink/10 to-store-blue/10 p-3 text-center text-sm font-medium text-gray-800 animate-fade-in shadow-sm">
               {settings.welcomeMessage}
             </div>}
         </header>}
 
+      {/* Conteúdo principal */}
       <main className={cn("flex-1", !showHeader && "pt-0")}>
         <div className="animate-fade-in">
           {children}
         </div>
       </main>
 
+      {/* Rodapé da loja - pode ser ocultado com a prop showFooter=false */}
       {showFooter && <footer className="border-t border-gray-100 py-8 glass-morphism">
           <div className="container mx-auto px-4 text-center">
             <p className="text-gradient text-lg font-medium">
@@ -129,6 +152,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
               &copy; {new Date().getFullYear()}
             </p>
             
+            {/* Links para redes sociais - configurados nas configurações da loja */}
             <SocialMediaLinks socialMedia={settings.socialMedia} />
           </div>
         </footer>}

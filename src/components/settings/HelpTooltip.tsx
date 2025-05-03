@@ -8,6 +8,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+/**
+ * Componente HelpTooltip - Exibe uma dica de ajuda quando o usuário passa o mouse sobre o ícone
+ * 
+ * Este componente é usado nas páginas de configuração para fornecer explicações
+ * adicionais sobre campos e funcionalidades.
+ * 
+ * @param {string} text - O texto de ajuda que será exibido no tooltip
+ * @example
+ * <HelpTooltip text="Este é o nome da sua loja que será exibido no cabeçalho" />
+ */
 interface HelpTooltipProps {
   text: string;
 }
