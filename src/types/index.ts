@@ -46,6 +46,7 @@ export interface CartItem {
  *   welcomeMessage: "Bem-vindo!",
  *   footerMessage: "Feito com amor",
  *   customCakeMessage: "Descreva seu bolo personalizado:",
+ *   announcements: ["Feriado: 30% OFF", "Entrega grátis acima de R$50"],
  *   socialMedia: { 
  *     instagram: "https://instagram.com/minhaloja",
  *     whatsapp: "https://wa.me/5511999999999"
@@ -62,6 +63,7 @@ export interface StoreSettings {
   welcomeMessage?: string;
   footerMessage?: string;
   customCakeMessage?: string;
+  announcements?: string[];
   socialMedia?: {
     instagram?: string;
     whatsapp?: string;

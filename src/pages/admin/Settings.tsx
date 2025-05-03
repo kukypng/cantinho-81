@@ -21,6 +21,7 @@ const Settings = () => {
     welcomeMessage: settings.welcomeMessage || "",
     footerMessage: settings.footerMessage || "",
     customCakeMessage: settings.customCakeMessage || "",
+    announcements: settings.announcements || [],
     instagram: settings.socialMedia?.instagram || "",
     whatsapp: settings.socialMedia?.whatsapp || ""
   });
@@ -43,6 +44,30 @@ const Settings = () => {
     }
   };
 
+  const handleAnnouncementAdd = () => {
+    setFormData({
+      ...formData,
+      announcements: [...formData.announcements, ""]
+    });
+  };
+
+  const handleAnnouncementChange = (index: number, value: string) => {
+    const updatedAnnouncements = [...formData.announcements];
+    updatedAnnouncements[index] = value;
+    setFormData({
+      ...formData,
+      announcements: updatedAnnouncements
+    });
+  };
+
+  const handleAnnouncementRemove = (index: number) => {
+    const updatedAnnouncements = formData.announcements.filter((_, i) => i !== index);
+    setFormData({
+      ...formData,
+      announcements: updatedAnnouncements
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -51,6 +76,9 @@ const Settings = () => {
       instagram: formData.instagram,
       whatsapp: formData.whatsapp
     };
+    
+    // Filter out empty announcements
+    const filteredAnnouncements = formData.announcements.filter(ann => ann.trim() !== "");
     
     // Update settings
     updateSettings({
@@ -62,6 +90,7 @@ const Settings = () => {
       welcomeMessage: formData.welcomeMessage,
       footerMessage: formData.footerMessage,
       customCakeMessage: formData.customCakeMessage,
+      announcements: filteredAnnouncements,
       socialMedia
     });
     
@@ -91,7 +120,11 @@ const Settings = () => {
               welcomeMessage={formData.welcomeMessage}
               footerMessage={formData.footerMessage}
               customCakeMessage={formData.customCakeMessage}
+              announcements={formData.announcements}
               onInputChange={handleInputChange}
+              onAnnouncementAdd={handleAnnouncementAdd}
+              onAnnouncementChange={handleAnnouncementChange}
+              onAnnouncementRemove={handleAnnouncementRemove}
             />
 
             <SocialMediaSection
