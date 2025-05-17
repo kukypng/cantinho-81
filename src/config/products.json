@@ -4,7 +4,7 @@
     "id": "1",
     "name": "Bolo de Brigadeiro",
     "description": "Delicioso bolo de Pote de brigadeiro caseiro",
-    "price": 35.90,
+    "price": 5.90,
     "imageUrl": "public/bolospote/brigadeiro.jpg",
     "featured": true,
     "category": "Bolos",
