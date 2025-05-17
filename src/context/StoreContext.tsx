@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { StoreSettings } from "@/types";
-import defaultSettingsData from "@/data/defaultSettings.json";
+import defaultSettingsData from "@/config/defaultSettings.json";
 import configStore from "@/config/store.json";
 
 interface StoreContextType {

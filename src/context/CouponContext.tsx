@@ -1,26 +1,22 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Coupon } from "@/types";
-import defaultCoupons from "@/data/defaultCoupons.json";
+import defaultCoupons from "@/config/defaultCoupons.json";
 
 interface CouponContextType {
   coupons: Coupon[];
-  activeCouponCode: string;
-  appliedCoupon: Coupon | null;
-  applyCoupon: (code: string) => { success: boolean; message: string };
-  removeCoupon: () => void;
-  updateCoupon: (coupon: Coupon) => void;
   addCoupon: (coupon: Coupon) => void;
+  updateCoupon: (coupon: Coupon) => void;
   deleteCoupon: (code: string) => void;
-  calculateDiscount: (subtotal: number, deliveryFee: number) => number;
+  validateCoupon: (code: string, orderTotal: number) => { valid: boolean; message?: string; coupon?: Coupon };
+  isLoaded: boolean;
 }
 
 const CouponContext = createContext<CouponContextType | undefined>(undefined);
 
 export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [activeCouponCode, setActiveCouponCode] = useState<string>("");
-  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Load coupons from localStorage on mount
   useEffect(() => {
@@ -29,126 +25,89 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (savedCoupons) {
         setCoupons(JSON.parse(savedCoupons));
       } else {
-        // If no coupons in localStorage, use default ones
-        setCoupons(defaultCoupons as Coupon[]);
+        // Use default coupons if none found
+        setCoupons(defaultCoupons);
+        localStorage.setItem("coupons", JSON.stringify(defaultCoupons));
       }
+      setIsLoaded(true);
     } catch (error) {
       console.error("Failed to load coupons:", error);
-      setCoupons(defaultCoupons as Coupon[]);
+      setCoupons(defaultCoupons);
+      setIsLoaded(true);
     }
   }, []);
 
   // Save coupons to localStorage whenever they change
   useEffect(() => {
-    try {
-      localStorage.setItem("coupons", JSON.stringify(coupons));
-    } catch (error) {
-      console.error("Failed to save coupons:", error);
+    if (isLoaded) {
+      try {
+        localStorage.setItem("coupons", JSON.stringify(coupons));
+      } catch (error) {
+        console.error("Failed to save coupons:", error);
+      }
     }
-  }, [coupons]);
+  }, [coupons, isLoaded]);
 
-  // Apply coupon
-  const applyCoupon = (code: string) => {
-    const upperCode = code.toUpperCase();
-    const coupon = coupons.find((c) => c.code.toUpperCase() === upperCode);
-
-    if (!coupon) {
-      return { success: false, message: "Cupom não encontrado" };
-    }
-
-    if (!coupon.active) {
-      return { success: false, message: "Este cupom não está mais ativo" };
-    }
-
-    // Check expiry date
-    if (coupon.expiryDate && new Date(coupon.expiryDate) < new Date()) {
-      return { success: false, message: "Este cupom expirou" };
-    }
-
-    // Check usage limit
-    if (coupon.usageLimit && coupon.usageCount && coupon.usageCount >= coupon.usageLimit) {
-      return { success: false, message: "Este cupom atingiu o limite de uso" };
-    }
-
-    setActiveCouponCode(coupon.code);
-    setAppliedCoupon(coupon);
-    
-    return { success: true, message: "Cupom aplicado com sucesso!" };
-  };
-
-  // Remove coupon
-  const removeCoupon = () => {
-    setActiveCouponCode("");
-    setAppliedCoupon(null);
-  };
-
-  // Calculate discount
-  const calculateDiscount = (subtotal: number, deliveryFee: number) => {
-    if (!appliedCoupon) return 0;
-
-    // Check minimum order value
-    if (subtotal < appliedCoupon.minOrderValue) {
-      return 0;
-    }
-
-    let discount = 0;
-    
-    if (appliedCoupon.discountType === "percentage") {
-      discount = subtotal * (appliedCoupon.discountValue / 100);
-    } else if (appliedCoupon.discountType === "fixed") {
-      discount = appliedCoupon.discountValue;
-    }
-
-    // Don't allow discount to exceed the total
-    const total = subtotal + deliveryFee;
-    if (discount > total) {
-      discount = total;
-    }
-
-    return discount;
-  };
-
-  // Update coupon
-  const updateCoupon = (coupon: Coupon) => {
-    setCoupons(prevCoupons => 
-      prevCoupons.map(c => c.code === coupon.code ? coupon : c)
-    );
-    
-    // If this is the currently applied coupon, update it
-    if (appliedCoupon && appliedCoupon.code === coupon.code) {
-      setAppliedCoupon(coupon);
-    }
-  };
-
-  // Add new coupon
   const addCoupon = (coupon: Coupon) => {
-    setCoupons(prevCoupons => [...prevCoupons, coupon]);
+    const normalizedCode = coupon.code.toUpperCase();
+    const exists = coupons.some(c => c.code.toUpperCase() === normalizedCode);
+    
+    if (exists) {
+      throw new Error(`Cupom com código ${coupon.code} já existe`);
+    }
+
+    setCoupons([...coupons, { ...coupon, code: normalizedCode }]);
   };
 
-  // Delete coupon
+  const updateCoupon = (coupon: Coupon) => {
+    const normalizedCode = coupon.code.toUpperCase();
+    setCoupons(coupons.map(c => c.code.toUpperCase() === normalizedCode ? { ...coupon, code: normalizedCode } : c));
+  };
+
   const deleteCoupon = (code: string) => {
-    setCoupons(prevCoupons => prevCoupons.filter(c => c.code !== code));
+    const normalizedCode = code.toUpperCase();
+    setCoupons(coupons.filter(c => c.code.toUpperCase() !== normalizedCode));
+  };
+
+  const validateCoupon = (code: string, orderTotal: number) => {
+    const normalizedCode = code.toUpperCase();
+    const coupon = coupons.find(c => c.code.toUpperCase() === normalizedCode);
     
-    // If this was the currently applied coupon, remove it
-    if (activeCouponCode === code) {
-      removeCoupon();
+    if (!coupon) {
+      return { valid: false, message: "Cupom inválido" };
     }
+    
+    if (!coupon.active) {
+      return { valid: false, message: "Este cupom não está mais ativo" };
+    }
+    
+    if (coupon.minOrderValue && orderTotal < coupon.minOrderValue) {
+      return { 
+        valid: false, 
+        message: `Este cupom é válido apenas para compras acima de R$${coupon.minOrderValue.toFixed(2)}` 
+      };
+    }
+    
+    if (coupon.expiryDate && new Date() > new Date(coupon.expiryDate)) {
+      return { valid: false, message: "Este cupom está expirado" };
+    }
+    
+    if (coupon.usageLimit && coupon.usageCount && coupon.usageCount >= coupon.usageLimit) {
+      return { valid: false, message: "Este cupom atingiu o limite de uso" };
+    }
+    
+    return { valid: true, coupon };
   };
 
   return (
-    <CouponContext.Provider
-      value={{
-        coupons,
-        activeCouponCode,
-        appliedCoupon,
-        applyCoupon,
-        removeCoupon,
-        calculateDiscount,
-        updateCoupon,
-        addCoupon,
-        deleteCoupon
-      }}
-    >
+    <CouponContext.Provider value={{ 
+      coupons, 
+      addCoupon, 
+      updateCoupon, 
+      deleteCoupon, 
+      validateCoupon,
+      isLoaded 
+    }}>
       {children}
     </CouponContext.Provider>
   );

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import storeConfig from '@/config/store.json';
 import appearanceConfig from '@/config/appearance.json';
+import defaultCoupons from '@/config/defaultCoupons.json';
 
 /**
  * Hook para acessar e gerenciar as configurações do site
@@ -62,11 +63,28 @@ export function useConfig() {
     });
   };
 
+  /**
+   * Restaura configurações para os valores padrão
+   * @param configType Tipo de configuração ('store' ou 'appearance')
+   */
+  const resetToDefault = (configType: 'store' | 'appearance' | 'all') => {
+    if (configType === 'store' || configType === 'all') {
+      setStore(storeConfig);
+      localStorage.setItem('storeConfig', JSON.stringify(storeConfig));
+    }
+    
+    if (configType === 'appearance' || configType === 'all') {
+      setAppearance(appearanceConfig);
+      localStorage.setItem('appearanceConfig', JSON.stringify(appearanceConfig));
+    }
+  };
+
   return {
     store,
     appearance,
     updateStoreConfig,
     updateAppearanceConfig,
+    resetToDefault,
     isLoaded
   };
 }

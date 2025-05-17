@@ -8,14 +8,17 @@ Este diretório contém arquivos de configuração que permitem editar facilment
 ### ⚙️ `store.json`
 Contém as configurações básicas da loja como nome, taxa de entrega, etc.
 
-### 🛒 `products.json`
-Lista de produtos que serão exibidos na loja.
-
-### 🎟️ `coupons.json`
-Cupons de desconto disponíveis na loja.
-
-### 🖼️ `appearance.json`
+### 🎨 `appearance.json`
 Configurações de aparência como cores, fontes, etc.
+
+### 🛒 `initialProducts.json`
+Lista de produtos iniciais que serão exibidos na loja ao iniciar pela primeira vez.
+
+### 🎟️ `defaultCoupons.json`
+Cupons de desconto padrão disponíveis na loja ao iniciar pela primeira vez.
+
+### ⚙️ `defaultSettings.json`
+Configurações padrão da loja ao iniciar pela primeira vez.
 
 ## ✏️ Como Editar
 
@@ -29,3 +32,27 @@ Configurações de aparência como cores, fontes, etc.
 - Não altere as chaves à esquerda dos dois pontos (`:`)
 - Apenas modifique os valores à direita dos dois pontos
 - Use ponto (`.`) para números decimais, não vírgula
+
+### 🎨 Editando Cores (appearance.json)
+```json
+"colors": {
+  "primary": "#ff7eb9",  // Cor dos botões principais e destaques
+  "secondary": "#f2c0d5", // Cor dos elementos secundários
+  "accent": "#fec832",   // Cor de destaque para chamar atenção
+  "background": "#ffffff", // Cor de fundo do site
+  "text": "#333333"      // Cor do texto principal
+}
+```
+
+### 🏪 Editando Informações da Loja (store.json)
+```json
+"storeName": "Minha Loja", // Nome da sua loja
+"whatsappNumber": "5511999999999", // Seu WhatsApp com código do país
+"deliveryFee": 10, // Taxa de entrega em reais
+```
+
+### 🛒 Adicionando um Novo Produto (via painel admin)
+1. Faça login no painel administrativo
+2. Vá para a seção "Produtos"
+3. Clique em "Adicionar Produto"
+4. Preencha as informações e salve

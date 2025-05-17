@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Product } from "@/types";
 import { toast } from "sonner";
-import initialProductsData from "@/data/initialProducts.json";
+import initialProductsData from "@/config/initialProducts.json";
 
 interface ProductContextType {
   products: Product[];
