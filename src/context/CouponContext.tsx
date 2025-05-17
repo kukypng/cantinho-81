@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Coupon } from "@/types";
 import configCoupons from "@/config/coupons.json";
+import { toast } from "sonner";
 
 interface CouponContextType {
   coupons: Coupon[];
@@ -11,6 +12,9 @@ interface CouponContextType {
   removeCoupon: () => void;
   calculateDiscount: (subtotal: number, deliveryFee: number) => number;
   isLoaded: boolean;
+  updateCoupon: (coupon: Coupon) => void;
+  addCoupon: (coupon: Omit<Coupon, "active" | "usageCount">) => void;
+  deleteCoupon: (code: string) => void;
 }
 
 const CouponContext = createContext<CouponContextType | undefined>(undefined);
@@ -46,6 +50,13 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, []);
 
+  // Save coupons to localStorage whenever they change
+  useEffect(() => {
+    if (isLoaded && coupons.length > 0) {
+      localStorage.setItem("coupons", JSON.stringify(coupons));
+    }
+  }, [coupons, isLoaded]);
+
   // Save applied coupon to localStorage whenever it changes
   useEffect(() => {
     if (isLoaded) {
@@ -60,6 +71,44 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     }
   }, [appliedCoupon, isLoaded]);
+
+  // Add a new coupon
+  const addCoupon = (coupon: Omit<Coupon, "active" | "usageCount">) => {
+    const newCoupon: Coupon = {
+      ...coupon,
+      active: true,
+      usageCount: 0
+    };
+    
+    setCoupons(prev => [...prev, newCoupon]);
+    toast.success(`Cupom "${coupon.code}" adicionado com sucesso!`);
+  };
+
+  // Update an existing coupon
+  const updateCoupon = (coupon: Coupon) => {
+    setCoupons(prev => 
+      prev.map(c => c.code === coupon.code ? coupon : c)
+    );
+    
+    // If this is the currently applied coupon, update it too
+    if (appliedCoupon && appliedCoupon.code === coupon.code) {
+      setAppliedCoupon(coupon);
+    }
+    
+    toast.success(`Cupom "${coupon.code}" atualizado com sucesso!`);
+  };
+
+  // Delete a coupon
+  const deleteCoupon = (code: string) => {
+    setCoupons(prev => prev.filter(c => c.code !== code));
+    
+    // If this is the currently applied coupon, remove it
+    if (appliedCoupon && appliedCoupon.code === code) {
+      setAppliedCoupon(null);
+    }
+    
+    toast.success(`Cupom "${code}" removido com sucesso!`);
+  };
 
   const validateCoupon = (code: string, orderTotal: number) => {
     const normalizedCode = code.toUpperCase();
@@ -164,7 +213,10 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       applyCoupon,
       removeCoupon,
       calculateDiscount,
-      isLoaded 
+      isLoaded,
+      updateCoupon,
+      addCoupon,
+      deleteCoupon
     }}>
       {children}
     </CouponContext.Provider>
