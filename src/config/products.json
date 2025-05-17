@@ -4,7 +4,7 @@
     "id": "1",
     "name": "Bolo de Brigadeiro",
     "description": "Delicioso bolo de Pote de brigadeiro caseiro",
-    "price": 5.90,
+    "price": 14.00,
     "imageUrl": "https://cdn.glitch.global/fe6a551e-ecc6-4a89-8b13-a725f164e224/brigadeiro.png?v=1747494069195",
     "featured": true,
     "category": "Bolos",
@@ -13,19 +13,19 @@
   },
   {
     "id": "2",
-    "name": "Cupcake de Baunilha",
-    "description": "Cupcake de baunilha com cobertura de buttercream",
-    "price": 8.90,
-    "imageUrl": "/placeholder.svg",
+    "name": "Bolo de Ninho com Nutella", 
+    "description": "Cupcake de ninho com cobertura de Nutella",
+    "price": 14.90,
+    "imageUrl": "https://cdn.glitch.global/fe6a551e-ecc6-4a89-8b13-a725f164e224/brigadeiro.png?v=1747494069195",
     "featured": false,
-    "category": "Cupcakes"
+    "category": "Bolos"
   },
   {
     "id": "3",
-    "name": "Bolo de Morango",
-    "description": "Bolo de baunilha com recheio de morango fresco",
-    "price": 39.90,
-    "imageUrl": "/placeholder.svg",
+    "name": "Bolo de Prestígio",
+    "description": "Bolo de Prestígio delicioso coco e chocolate",
+    "price": 14.00,
+    "imageUrl": "https://cdn.glitch.global/fe6a551e-ecc6-4a89-8b13-a725f164e224/prestigio.png?v=1747494069195",
     "featured": true,
     "category": "Bolos"
   },
@@ -33,8 +33,8 @@
     "id": "4",
     "name": "Brownie",
     "description": "Brownie super chocolatudo com nozes",
-    "price": 6.90,
-    "imageUrl": "/placeholder.svg",
+    "price": 14.00,
+    "imageUrl": "https://cdn.glitch.global/fe6a551e-ecc6-4a89-8b13-a725f164e224/brigadeiro.png?v=1747494069195",
     "featured": false,
     "category": "Doces"
   }
