@@ -31,7 +31,7 @@ const NavigationLinks = memo(({
 }: {
   isMobile: boolean;
 }) => !isMobile && <nav className="hidden space-x-6 md:flex">
-      {navigationItems.map(item => <Link key={item.name} to={item.href} className="text-sm font-medium text-white transition-all hover:text-white/80 hover-scale">
+      {navigationItems.map(item => <Link key={item.name} to={item.href} className="text-sm font-medium text-white transition-colors hover:text-white/80">
           {item.name}
         </Link>)}
     </nav>);
@@ -43,10 +43,10 @@ const SocialMediaLinks = memo(({
 }: {
   socialMedia: any;
 }) => <div className="mt-6 flex justify-center space-x-4">
-    {socialMedia?.instagram && <a href={socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="rounded-full bg-gradient-to-tr from-store-pink to-store-blue p-2 text-white hover:opacity-90 transition-all shadow-md bounce-subtle" aria-label="Instagram">
+    {socialMedia?.instagram && <a href={socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="rounded-full bg-gradient-to-tr from-store-pink to-store-blue p-2 text-white hover:opacity-90 transition-all shadow-md" aria-label="Instagram">
         <Instagram size={20} />
       </a>}
-    {socialMedia?.whatsapp && <a href={socialMedia.whatsapp} target="_blank" rel="noopener noreferrer" className="rounded-full bg-gradient-to-tr from-green-500 to-green-700 p-2 text-white hover:opacity-90 transition-all shadow-md bounce-subtle" aria-label="WhatsApp">
+    {socialMedia?.whatsapp && <a href={socialMedia.whatsapp} target="_blank" rel="noopener noreferrer" className="rounded-full bg-gradient-to-tr from-green-500 to-green-700 p-2 text-white hover:opacity-90 transition-all shadow-md" aria-label="WhatsApp">
         <Phone size={20} />
       </a>}
   </div>);
@@ -77,59 +77,52 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
   
   return <div className="flex min-h-screen flex-col bg-gradient-to-br from-white to-gray-50">
       {/* Cabeçalho da loja - pode ser ocultado com a prop showHeader=false */}
-      {showHeader && <header className="sticky top-0 z-10 animate-fade-in shadow-md">
-          <div className="header-gradient py-4">
-            <div className="container mx-auto flex items-center justify-between px-4">
-              {/* Logo e nome da loja */}
-              <div className="flex items-center gap-2">
-                <Link to="/" className="flex items-center transition-transform duration-300 hover:scale-105">
-                  <span className="text-xl md:text-2xl font-bold text-white">{settings.storeName}</span>
+      {showHeader && <header className="sticky top-0 z-10 glass-morphism animate-fade-in">
+          <div className="container mx-auto flex h-16 items-center justify-between px-4">
+            {/* Logo e nome da loja */}
+            <div className="flex items-center gap-2">
+              <Link to="/" className="flex items-center transition-transform duration-300 hover:scale-105">
+                <span className="text-xl font-bold text-gradient">{settings.storeName}</span>
+              </Link>
+            </div>
+            
+            {/* Links de navegação - aparece apenas em desktop */}
+            <NavigationLinks isMobile={isMobile} />
+
+            {/* Carrinho e menu móvel */}
+            <div className="flex items-center gap-4">
+              {/* Ícone do carrinho com contador */}
+              <div className="relative">
+                <Link to="/cart" className="relative hover-scale">
+                  <ShoppingCart className="h-6 w-6 text-primary" />
+                  {totalItems > 0 && <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-yellow text-xs font-bold text-black shadow-sm">
+                      {totalItems}
+                    </span>}
                 </Link>
+                {/* Dica visual quando há itens no carrinho */}
+                {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
+                    <div className="flex items-center gap-2 px-3 py-1 shadow-lg animate-pulse rounded-full bg-gradient-to-r from-store-pink/90 to-store-pink/70">
+                      <span className="text-sm font-medium text-white">Aqui</span>
+                      <ArrowRight className="h-4 w-4 text-white" />
+                    </div>
+                  </Link>}
               </div>
               
-              {/* Links de navegação - aparece apenas em desktop */}
-              <NavigationLinks isMobile={isMobile} />
-
-              {/* Carrinho e menu móvel */}
-              <div className="flex items-center gap-4">
-                {/* Ícone do carrinho com contador */}
-                <div className="relative">
-                  <Link to="/cart" className="relative hover-scale">
-                    <ShoppingCart className="h-6 w-6 text-white" />
-                    {totalItems > 0 && <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-yellow text-xs font-bold text-black shadow-sm pulse-soft">
-                        {totalItems}
-                      </span>}
-                  </Link>
-                  {/* Dica visual quando há itens no carrinho */}
-                  {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap hidden md:block">
-                      <div className="flex items-center gap-2 px-3 py-1 shadow-lg animate-pulse rounded-full bg-gradient-to-r from-store-yellow to-store-yellow/80">
-                        <span className="text-sm font-medium text-black">Finalizar</span>
-                        <ArrowRight className="h-4 w-4 text-black" />
-                      </div>
-                    </Link>}
-                </div>
-                
-                {/* Menu móvel - aparece apenas em dispositivos móveis */}
-                {isMobile && <Sheet>
-                    <SheetTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                        <Menu className="h-5 w-5" />
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent side="right" className="glass-morphism border-l border-gray-100">
-                      <nav className="flex flex-col gap-4 pt-10">
-                        {navigationItems.map(item => <Link key={item.name} to={item.href} className="text-lg font-medium text-gradient hover-scale slide-in">
-                            {item.name}
-                          </Link>)}
-                      </nav>
-                      
-                      {/* Add social media links in mobile menu too */}
-                      <div className="mt-8">
-                        <SocialMediaLinks socialMedia={settings.socialMedia} />
-                      </div>
-                    </SheetContent>
-                  </Sheet>}
-              </div>
+              {/* Menu móvel - aparece apenas em dispositivos móveis */}
+              {isMobile && <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10">
+                      <Menu className="h-5 w-5" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="right" className="glass-morphism border-l border-gray-100">
+                    <nav className="flex flex-col gap-4 pt-10">
+                      {navigationItems.map(item => <Link key={item.name} to={item.href} className="text-lg font-medium text-gradient hover-scale">
+                          {item.name}
+                        </Link>)}
+                    </nav>
+                  </SheetContent>
+                </Sheet>}
             </div>
           </div>
 
