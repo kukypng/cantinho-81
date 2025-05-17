@@ -7,15 +7,22 @@ Este projeto foi criado com ajuda de IA para facilitar a venda de seus produtos 
 
 ## 📝 Como editar seu site
 
-### Para editar os produtos e configurações básicas:
+### Maneira mais simples (pasta config):
+
+1. Navegue até a pasta `src/config`
+2. Lá você encontrará arquivos simples para editar:
+   - `store.json` - Configurações básicas da loja
+   - `appearance.json` - Aparência do site (cores, fontes)
+   
+3. Abra o arquivo README.md nessa pasta para instruções detalhadas
+
+### Maneira alternativa (arquivos de dados):
 
 1. Navegue até a pasta `src/data`
 2. Lá você encontrará os arquivos:
    - `initialProducts.json` - Lista de produtos
    - `defaultSettings.json` - Configurações da loja
    - `defaultCoupons.json` - Cupons de desconto
-
-3. Abra o arquivo README.md nessa pasta para instruções detalhadas
 
 ### Para editar usando o painel administrativo:
 
@@ -59,4 +66,4 @@ Você pode conectar suas redes sociais através do arquivo de configurações ou
 
 ## 📞 Suporte
 
-Se tiver dificuldades para editar seu site, consulte o guia na pasta `src/data` ou entre em contato com o suporte técnico.
+Se tiver dificuldades para editar seu site, consulte o guia na pasta `src/config` ou entre em contato com o suporte técnico.

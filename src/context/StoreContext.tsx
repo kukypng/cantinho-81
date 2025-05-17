@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { StoreSettings } from "@/types";
 import defaultSettingsData from "@/data/defaultSettings.json";
+import configStore from "@/config/store.json";
 
 interface StoreContextType {
   settings: StoreSettings;
@@ -12,7 +13,10 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<StoreSettings>(defaultSettingsData);
+  // Combine default settings with config settings, prioritizing localStorage
+  const initialSettings = { ...defaultSettingsData, ...configStore };
+  
+  const [settings, setSettings] = useState<StoreSettings>(initialSettings);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load settings from localStorage on mount
