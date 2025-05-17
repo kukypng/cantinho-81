@@ -2,10 +2,10 @@
 [
   {
     "id": "1",
-    "name": "Bolo de Chocolate",
-    "description": "Delicioso bolo de chocolate caseiro com cobertura de ganache",
+    "name": "Bolo de Brigadeiro",
+    "description": "Delicioso bolo de Pote de brigadeiro caseiro",
     "price": 35.90,
-    "imageUrl": "/placeholder.svg",
+    "imageUrl": "public\bolospote\brigadeiro.jpg",
     "featured": true,
     "category": "Bolos",
     
