@@ -2,15 +2,17 @@
 import { useState, useEffect } from 'react';
 import storeConfig from '@/config/store.json';
 import appearanceConfig from '@/config/appearance.json';
-import defaultCoupons from '@/config/defaultCoupons.json';
+import productsConfig from '@/config/products.json';
+import couponsConfig from '@/config/coupons.json';
 
 /**
- * Hook para acessar e gerenciar as configurações do site
- * Simplifica o acesso às configurações para uso em componentes
+ * Hook para acessar as configurações do site de forma centralizada
  */
 export function useConfig() {
   const [store, setStore] = useState(storeConfig);
   const [appearance, setAppearance] = useState(appearanceConfig);
+  const [products, setProducts] = useState(productsConfig);
+  const [coupons, setCoupons] = useState(couponsConfig);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Carrega configurações ao inicializar
@@ -19,10 +21,14 @@ export function useConfig() {
       // Primeiro carrega das configurações padrão
       const configStore = storeConfig;
       const configAppearance = appearanceConfig;
+      const configProducts = productsConfig;
+      const configCoupons = couponsConfig;
       
       // Depois verifica se há configurações salvas no localStorage
       const savedStoreConfig = localStorage.getItem('storeConfig');
       const savedAppearanceConfig = localStorage.getItem('appearanceConfig');
+      const savedProductsConfig = localStorage.getItem('products');
+      const savedCouponsConfig = localStorage.getItem('coupons');
       
       if (savedStoreConfig) {
         setStore(JSON.parse(savedStoreConfig));
@@ -32,6 +38,14 @@ export function useConfig() {
         setAppearance(JSON.parse(savedAppearanceConfig));
       }
       
+      if (savedProductsConfig) {
+        setProducts(JSON.parse(savedProductsConfig));
+      }
+      
+      if (savedCouponsConfig) {
+        setCoupons(JSON.parse(savedCouponsConfig));
+      }
+      
       setIsLoaded(true);
     } catch (error) {
       console.error("Erro ao carregar configurações:", error);
@@ -39,52 +53,11 @@ export function useConfig() {
     }
   }, []);
 
-  /**
-   * Atualiza as configurações da loja
-   * @param newConfig Novas configurações
-   */
-  const updateStoreConfig = (newConfig: any) => {
-    setStore(prevConfig => {
-      const updatedConfig = { ...prevConfig, ...newConfig };
-      localStorage.setItem('storeConfig', JSON.stringify(updatedConfig));
-      return updatedConfig;
-    });
-  };
-
-  /**
-   * Atualiza as configurações de aparência
-   * @param newConfig Novas configurações
-   */
-  const updateAppearanceConfig = (newConfig: any) => {
-    setAppearance(prevConfig => {
-      const updatedConfig = { ...prevConfig, ...newConfig };
-      localStorage.setItem('appearanceConfig', JSON.stringify(updatedConfig));
-      return updatedConfig;
-    });
-  };
-
-  /**
-   * Restaura configurações para os valores padrão
-   * @param configType Tipo de configuração ('store' ou 'appearance')
-   */
-  const resetToDefault = (configType: 'store' | 'appearance' | 'all') => {
-    if (configType === 'store' || configType === 'all') {
-      setStore(storeConfig);
-      localStorage.setItem('storeConfig', JSON.stringify(storeConfig));
-    }
-    
-    if (configType === 'appearance' || configType === 'all') {
-      setAppearance(appearanceConfig);
-      localStorage.setItem('appearanceConfig', JSON.stringify(appearanceConfig));
-    }
-  };
-
   return {
     store,
     appearance,
-    updateStoreConfig,
-    updateAppearanceConfig,
-    resetToDefault,
+    products,
+    coupons,
     isLoaded
   };
 }

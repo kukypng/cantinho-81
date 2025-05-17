@@ -2,15 +2,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Product } from "@/types";
 import { toast } from "sonner";
-import initialProductsData from "@/config/initialProducts.json";
+import configProducts from "@/config/products.json";
 
 interface ProductContextType {
   products: Product[];
-  addProduct: (product: Omit<Product, "id">) => void;
-  updateProduct: (product: Product) => void;
-  deleteProduct: (productId: string) => void;
-  getProductById: (id: string) => Product | undefined;
   featuredProducts: Product[];
+  getProductById: (id: string) => Product | undefined;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -18,53 +15,23 @@ const ProductContext = createContext<ProductContextType | undefined>(undefined);
 export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [products, setProducts] = useState<Product[]>([]);
 
-  // Load products from localStorage on mount
+  // Load products from localStorage on mount, falling back to config file
   useEffect(() => {
     try {
       const savedProducts = localStorage.getItem("products");
       if (savedProducts) {
         setProducts(JSON.parse(savedProducts));
       } else {
-        // Use sample products if none found
-        setProducts(initialProductsData);
-        localStorage.setItem("products", JSON.stringify(initialProductsData));
+        // Use products from config file if none found in localStorage
+        setProducts(configProducts as Product[]);
+        localStorage.setItem("products", JSON.stringify(configProducts));
       }
     } catch (error) {
       console.error("Failed to load products:", error);
-      // Fall back to initial products
-      setProducts(initialProductsData);
+      // Fall back to config products
+      setProducts(configProducts as Product[]);
     }
   }, []);
-
-  // Save products to localStorage whenever they change
-  useEffect(() => {
-    try {
-      localStorage.setItem("products", JSON.stringify(products));
-    } catch (error) {
-      console.error("Failed to save products:", error);
-    }
-  }, [products]);
-
-  const addProduct = (product: Omit<Product, "id">) => {
-    const newProduct: Product = {
-      ...product,
-      id: Date.now().toString(),
-    };
-    setProducts(prevProducts => [...prevProducts, newProduct]);
-    toast.success(`Produto ${product.name} adicionado com sucesso!`);
-  };
-
-  const updateProduct = (product: Product) => {
-    setProducts(prevProducts =>
-      prevProducts.map(p => (p.id === product.id ? product : p))
-    );
-    toast.success(`Produto ${product.name} atualizado com sucesso!`);
-  };
-
-  const deleteProduct = (productId: string) => {
-    setProducts(prevProducts => prevProducts.filter(p => p.id !== productId));
-    toast.success("Produto removido com sucesso!");
-  };
 
   const getProductById = (id: string) => {
     return products.find(p => p.id === id);
@@ -76,9 +43,6 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     <ProductContext.Provider
       value={{
         products,
-        addProduct,
-        updateProduct,
-        deleteProduct,
         getProductById,
         featuredProducts,
       }}

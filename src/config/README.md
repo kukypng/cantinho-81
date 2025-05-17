@@ -1,58 +1,83 @@
 
-# 📝 Configurações do Site
+# 📄 Configurações do Site
 
-Este diretório contém arquivos de configuração que permitem editar facilmente os elementos do site **sem precisar saber programação avançada**.
+Este diretório contém os arquivos de configuração do site. Você pode editar estes arquivos para personalizar sua loja sem precisar saber programação.
 
-## 📋 Arquivos de Configuração
+## 📋 Como Editar os Arquivos
 
-### ⚙️ `store.json`
-Contém as configurações básicas da loja como nome, taxa de entrega, etc.
+1. Clique no arquivo que deseja editar
+2. Clique no botão "Editar" ou no ícone de lápis
+3. Faça suas alterações seguindo o formato existente
+4. Salve o arquivo
 
-### 🎨 `appearance.json`
-Configurações de aparência como cores, fontes, etc.
+⚠️ **Importante:** Mantenha o formato JSON dos arquivos. Não remova as vírgulas, chaves ou aspas, pois isso pode fazer o site parar de funcionar.
 
-### 🛒 `initialProducts.json`
-Lista de produtos iniciais que serão exibidos na loja ao iniciar pela primeira vez.
+## 📁 Arquivos de Configuração
 
-### 🎟️ `defaultCoupons.json`
-Cupons de desconto padrão disponíveis na loja ao iniciar pela primeira vez.
+### 🏪 `store.json` - Configurações da Loja
+Contém informações básicas como nome da loja, número de WhatsApp, taxa de entrega, etc.
 
-### ⚙️ `defaultSettings.json`
-Configurações padrão da loja ao iniciar pela primeira vez.
+### 🛒 `products.json` - Produtos da Loja
+Lista completa dos produtos disponíveis na loja. Para adicionar um novo produto:
+- Copie um bloco existente (tudo entre `{` e `}`, incluindo as chaves)
+- Cole ao final da lista (antes do `]` final)
+- Adicione uma vírgula após o produto anterior
+- Atualize as informações do novo produto
 
-## ✏️ Como Editar
+### 🎟️ `coupons.json` - Cupons de Desconto
+Cupons de desconto disponíveis na loja. Para adicionar um novo cupom:
+- Copie um bloco existente (tudo entre `{` e `}`, incluindo as chaves)
+- Cole ao final da lista (antes do `]` final)
+- Adicione uma vírgula após o cupom anterior
+- Atualize as informações do novo cupom
 
-1. **Abra** o arquivo que deseja editar
-2. **Modifique** os valores seguindo o formato existente
-3. **Salve** o arquivo
-4. **Atualize** a página para ver as mudanças
+### 🎨 `appearance.json` - Aparência do Site
+Configurações visuais como cores, fontes e layout.
 
-### ⚠️ Dicas Importantes:
-- Mantenha o formato do arquivo (não remova vírgulas, aspas, etc.)
-- Não altere as chaves à esquerda dos dois pontos (`:`)
-- Apenas modifique os valores à direita dos dois pontos
-- Use ponto (`.`) para números decimais, não vírgula
+## 📝 Exemplos
 
-### 🎨 Editando Cores (appearance.json)
+### Adicionando um Produto:
 ```json
-"colors": {
-  "primary": "#ff7eb9",  // Cor dos botões principais e destaques
-  "secondary": "#f2c0d5", // Cor dos elementos secundários
-  "accent": "#fec832",   // Cor de destaque para chamar atenção
-  "background": "#ffffff", // Cor de fundo do site
-  "text": "#333333"      // Cor do texto principal
-}
+[
+  {
+    "id": "1",
+    "name": "Produto Existente",
+    "price": 10.50,
+    ...
+  },
+  {
+    "id": "2", 
+    "name": "Novo Produto",
+    "description": "Descrição do novo produto",
+    "price": 25.90,
+    "imageUrl": "/placeholder.svg",
+    "featured": false,
+    "category": "Categoria"
+  }
+]
 ```
 
-### 🏪 Editando Informações da Loja (store.json)
+### Adicionando um Cupom:
 ```json
-"storeName": "Minha Loja", // Nome da sua loja
-"whatsappNumber": "5511999999999", // Seu WhatsApp com código do país
-"deliveryFee": 10, // Taxa de entrega em reais
+[
+  {
+    "code": "CUPOM1",
+    "discountType": "percentage",
+    ...
+  },
+  {
+    "code": "NOVO10",
+    "discountType": "percentage",
+    "discountValue": 10,
+    "minOrderValue": 0,
+    "active": true,
+    "description": "10% de desconto"
+  }
+]
 ```
 
-### 🛒 Adicionando um Novo Produto (via painel admin)
-1. Faça login no painel administrativo
-2. Vá para a seção "Produtos"
-3. Clique em "Adicionar Produto"
-4. Preencha as informações e salve
+## 📱 Configuração do WhatsApp
+
+No arquivo `store.json`, você pode configurar seu número de WhatsApp:
+- Use o formato: `5511999999999` (55 = Brasil, seguido do DDD e número)
+- Não use espaços, parênteses ou traços

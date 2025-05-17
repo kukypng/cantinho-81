@@ -1,13 +1,10 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Coupon } from "@/types";
-import defaultCoupons from "@/config/defaultCoupons.json";
+import configCoupons from "@/config/coupons.json";
 
 interface CouponContextType {
   coupons: Coupon[];
-  addCoupon: (coupon: Coupon) => void;
-  updateCoupon: (coupon: Coupon) => void;
-  deleteCoupon: (code: string) => void;
   validateCoupon: (code: string, orderTotal: number) => { valid: boolean; message?: string; coupon?: Coupon };
   appliedCoupon: Coupon | null;
   applyCoupon: (code: string) => { success: boolean; message: string };
@@ -23,17 +20,16 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load coupons from localStorage on mount
+  // Load coupons from localStorage on mount, falling back to config file
   useEffect(() => {
     try {
       const savedCoupons = localStorage.getItem("coupons");
       if (savedCoupons) {
         setCoupons(JSON.parse(savedCoupons));
       } else {
-        // Use default coupons if none found
-        // Cast defaultCoupons to Coupon[] to ensure type safety
-        setCoupons(defaultCoupons as Coupon[]);
-        localStorage.setItem("coupons", JSON.stringify(defaultCoupons));
+        // Use coupons from config file if none found in localStorage
+        setCoupons(configCoupons as Coupon[]);
+        localStorage.setItem("coupons", JSON.stringify(configCoupons));
       }
       
       // Load applied coupon from localStorage if exists
@@ -45,21 +41,10 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setIsLoaded(true);
     } catch (error) {
       console.error("Failed to load coupons:", error);
-      setCoupons(defaultCoupons as Coupon[]);
+      setCoupons(configCoupons as Coupon[]);
       setIsLoaded(true);
     }
   }, []);
-
-  // Save coupons to localStorage whenever they change
-  useEffect(() => {
-    if (isLoaded) {
-      try {
-        localStorage.setItem("coupons", JSON.stringify(coupons));
-      } catch (error) {
-        console.error("Failed to save coupons:", error);
-      }
-    }
-  }, [coupons, isLoaded]);
 
   // Save applied coupon to localStorage whenever it changes
   useEffect(() => {
@@ -75,32 +60,6 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     }
   }, [appliedCoupon, isLoaded]);
-
-  const addCoupon = (coupon: Coupon) => {
-    const normalizedCode = coupon.code.toUpperCase();
-    const exists = coupons.some(c => c.code.toUpperCase() === normalizedCode);
-    
-    if (exists) {
-      throw new Error(`Cupom com código ${coupon.code} já existe`);
-    }
-
-    setCoupons([...coupons, { ...coupon, code: normalizedCode }]);
-  };
-
-  const updateCoupon = (coupon: Coupon) => {
-    const normalizedCode = coupon.code.toUpperCase();
-    setCoupons(coupons.map(c => c.code.toUpperCase() === normalizedCode ? { ...coupon, code: normalizedCode } : c));
-  };
-
-  const deleteCoupon = (code: string) => {
-    const normalizedCode = code.toUpperCase();
-    setCoupons(coupons.filter(c => c.code.toUpperCase() !== normalizedCode));
-    
-    // If the deleted coupon was applied, remove it
-    if (appliedCoupon && appliedCoupon.code.toUpperCase() === normalizedCode) {
-      setAppliedCoupon(null);
-    }
-  };
 
   const validateCoupon = (code: string, orderTotal: number) => {
     const normalizedCode = code.toUpperCase();
@@ -162,15 +121,6 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Apply the coupon
     setAppliedCoupon(coupon);
     
-    // If this coupon has usage tracking
-    if (coupon.usageLimit) {
-      const updatedCoupon = {
-        ...coupon,
-        usageCount: (coupon.usageCount || 0) + 1
-      };
-      updateCoupon(updatedCoupon);
-    }
-    
     return { 
       success: true, 
       message: `Cupom "${coupon.code}" aplicado com sucesso: ${coupon.description}` 
@@ -185,7 +135,7 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!appliedCoupon) return 0;
     
     // Check if the minimum order value is met
-    if (subtotal < appliedCoupon.minOrderValue) return 0;
+    if (appliedCoupon.minOrderValue && subtotal < appliedCoupon.minOrderValue) return 0;
     
     let discountAmount = 0;
     
@@ -209,9 +159,6 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   return (
     <CouponContext.Provider value={{ 
       coupons, 
-      addCoupon, 
-      updateCoupon, 
-      deleteCoupon, 
       validateCoupon,
       appliedCoupon,
       applyCoupon,

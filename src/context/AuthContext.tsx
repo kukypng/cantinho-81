@@ -1,8 +1,7 @@
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { User } from "@/types";
 import { toast } from "sonner";
-import defaultCredentialsData from "@/data/userCredentials.json";
 
 interface AuthContextType {
   currentUser: User | null;
@@ -13,82 +12,29 @@ interface AuthContextType {
   isLoading: boolean;
 }
 
-interface UserCredentials {
-  email: string;
-  password: string;
-  isAdmin: boolean;
-}
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Default admin credentials
-const DEFAULT_ADMIN: UserCredentials = defaultCredentialsData[0];
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Since we're removing the admin system, we'll make everyone a regular user
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Check if user is logged in on mount
-  useEffect(() => {
-    try {
-      const savedUser = localStorage.getItem("currentUser");
-      if (savedUser) {
-        setCurrentUser(JSON.parse(savedUser));
-      }
-    } catch (error) {
-      console.error("Failed to load user:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  // Mock login function
+  // Simplified login function - no longer needed for admin access
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Check for default admin first
-    if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
-      const user: User = {
-        id: "admin-1",
-        email: DEFAULT_ADMIN.email,
-        isAdmin: true
-      };
-      setCurrentUser(user);
-      localStorage.setItem("currentUser", JSON.stringify(user));
-      toast.success("Login realizado com sucesso!");
-      return true;
-    }
+    // Create a regular user profile - no admin privileges
+    const user: User = {
+      id: "user-1",
+      email: email,
+      isAdmin: false // No one is admin now
+    };
     
-    // Check for user credentials stored in localStorage
-    try {
-      const savedCredentials = localStorage.getItem("userCredentials");
-      if (savedCredentials) {
-        const credentials: UserCredentials[] = JSON.parse(savedCredentials);
-        const matchedUser = credentials.find(
-          cred => cred.email === email && cred.password === password
-        );
-        
-        if (matchedUser) {
-          const user: User = {
-            id: email, // Use email as ID
-            email: email,
-            isAdmin: matchedUser.isAdmin
-          };
-          setCurrentUser(user);
-          localStorage.setItem("currentUser", JSON.stringify(user));
-          toast.success("Login realizado com sucesso!");
-          return true;
-        }
-      }
-    } catch (error) {
-      console.error("Failed during login:", error);
-    }
+    setCurrentUser(user);
     
-    toast.error("Email ou senha inválidos");
-    return false;
+    return true;
   };
 
   const logout = () => {
     setCurrentUser(null);
-    localStorage.removeItem("currentUser");
     toast.info("Logout realizado com sucesso");
   };
 
@@ -99,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         logout,
         isAuthenticated: !!currentUser,
-        isAdmin: currentUser?.isAdmin || false,
+        isAdmin: false, // Always false since we're removing admin functionality
         isLoading
       }}
     >
