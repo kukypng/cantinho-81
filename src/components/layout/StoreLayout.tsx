@@ -75,14 +75,14 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
   // Verifica se o dispositivo é móvel para adaptar o layout
   const isMobile = useIsMobile();
   
-  return <div className="flex min-h-screen flex-col bg-gradient-to-br from-white to-gray-50">
+  return <div className="flex min-h-screen flex-col bg-gradient-to-br from-white to-gray-100">
       {/* Cabeçalho da loja - pode ser ocultado com a prop showHeader=false */}
-      {showHeader && <header className="sticky top-0 z-10 glass-morphism animate-fade-in">
+      {showHeader && <header className="sticky top-0 z-10 animate-fade-in shadow-md bg-gradient-to-r from-store-pink to-store-pink/90">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             {/* Logo e nome da loja */}
             <div className="flex items-center gap-2">
               <Link to="/" className="flex items-center transition-transform duration-300 hover:scale-105">
-                <span className="text-xl font-bold text-gradient">{settings.storeName}</span>
+                <span className="text-xl font-bold text-white">{settings.storeName}</span>
               </Link>
             </div>
             
@@ -94,16 +94,16 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
               {/* Ícone do carrinho com contador */}
               <div className="relative">
                 <Link to="/cart" className="relative hover-scale">
-                  <ShoppingCart className="h-6 w-6 text-primary" />
+                  <ShoppingCart className="h-6 w-6 text-white" />
                   {totalItems > 0 && <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-yellow text-xs font-bold text-black shadow-sm">
                       {totalItems}
                     </span>}
                 </Link>
                 {/* Dica visual quando há itens no carrinho */}
                 {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
-                    <div className="flex items-center gap-2 px-3 py-1 shadow-lg animate-pulse rounded-full bg-gradient-to-r from-store-pink/90 to-store-pink/70">
-                      <span className="text-sm font-medium text-white">Aqui</span>
-                      <ArrowRight className="h-4 w-4 text-white" />
+                    <div className="flex items-center gap-2 px-3 py-1 shadow-lg animate-pulse rounded-full bg-white">
+                      <span className="text-sm font-medium text-store-pink">Ver Carrinho</span>
+                      <ArrowRight className="h-4 w-4 text-store-pink" />
                     </div>
                   </Link>}
               </div>
@@ -111,7 +111,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
               {/* Menu móvel - aparece apenas em dispositivos móveis */}
               {isMobile && <Sheet>
                   <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10">
+                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                       <Menu className="h-5 w-5" />
                     </Button>
                   </SheetTrigger>
@@ -127,7 +127,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
           </div>
 
           {/* Mensagem de boas-vindas - configurada nas configurações da loja */}
-          {settings.welcomeMessage && <div className="bg-gradient-to-r from-store-pink/10 to-store-blue/10 p-3 text-center text-sm font-medium text-gray-800 animate-fade-in shadow-sm">
+          {settings.welcomeMessage && <div className="bg-white/20 p-3 text-center text-sm font-medium text-white animate-fade-in shadow-sm backdrop-blur-sm">
               {settings.welcomeMessage}
             </div>}
         </header>}
@@ -140,16 +140,16 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
       </main>
 
       {/* Rodapé da loja - pode ser ocultado com a prop showFooter=false */}
-      {showFooter && <footer className="border-t border-gray-100 py-8 glass-morphism">
+      {showFooter && <footer className="border-t border-gray-200 py-8 bg-gradient-to-b from-white to-gray-50 shadow-inner">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-gradient text-lg font-medium">
+            <p className="text-gradient text-2xl font-bold">
               {settings.storeName}
             </p>
             <p className="mt-2 text-sm text-gray-600">
               {settings.footerMessage}
             </p>
             <p className="mt-1 text-xs text-gray-500">
-              &copy; {new Date().getFullYear()}
+              &copy; {new Date().getFullYear()} - Todos os direitos reservados
             </p>
             
             {/* Links para redes sociais - configurados nas configurações da loja */}

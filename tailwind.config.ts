@@ -24,7 +24,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -71,10 +71,10 @@ export default {
           ring: 'hsl(var(--sidebar-ring))'
         },
         store: {
-          pink: '#d9367c',
+          pink: '#ff5ea2',
           'light-pink': '#f2a0c4',
-          yellow: '#f9d949',
-          blue: '#297bf9',
+          yellow: '#fec832',
+          blue: '#38bdf8',
         }
       },
       borderRadius: {
