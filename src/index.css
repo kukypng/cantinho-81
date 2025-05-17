@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -93,15 +94,10 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
-    font-family: 'Poppins', sans-serif;
   }
 
   html {
     @apply scroll-smooth;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-medium;
   }
 }
 
@@ -116,11 +112,11 @@
   }
 
   .glass-morphism {
-    @apply backdrop-blur-md bg-white/90 border border-white/50 shadow-lg;
+    @apply backdrop-blur-md bg-white/80 border border-white/20 shadow-lg;
   }
   
   .text-gradient {
-    @apply bg-gradient-to-r from-store-pink to-store-blue bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary to-store-blue bg-clip-text text-transparent;
   }
   
   .card-gradient {
@@ -162,29 +158,6 @@
 
   .slow-spin {
     animation: slow-spin 8s linear infinite;
-  }
-  
-  .btn-shine {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .btn-shine::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-      to right,
-      transparent,
-      rgba(255, 255, 255, 0.3),
-      transparent
-    );
-    transform: rotate(30deg);
-    animation: btn-shine 3s infinite;
-    pointer-events: none;
   }
 }
 
@@ -230,20 +203,5 @@
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
-  }
-}
-
-@keyframes btn-shine {
-  0% {
-    left: -100%;
-    transform: rotate(30deg);
-  }
-  20% {
-    left: 100%;
-    transform: rotate(30deg);
-  }
-  100% {
-    left: 100%;
-    transform: rotate(30deg);
   }
 }

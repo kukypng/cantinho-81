@@ -14,18 +14,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
 
   return (
-    <Card className="group relative overflow-hidden border-none rounded-xl bg-white/90 backdrop-blur-sm shadow-md transition-all hover:shadow-lg hover:scale-[1.02]">
-      {product.featured && (
-        <div className="absolute top-0 left-0 w-full bg-gradient-to-r from-store-pink to-store-pink/80 py-1 text-center">
-          <span className="text-xs font-bold text-white">Destaque</span>
-        </div>
-      )}
-      <div className="aspect-square overflow-hidden bg-gray-50">
+    <Card className="group relative overflow-hidden border-none bg-white/80 backdrop-blur-sm shadow-sm transition-all hover:shadow-md hover:scale-[1.02]">
+      <div className="aspect-square overflow-hidden bg-gray-50 rounded-t-xl">
         <img
           src={product.imageUrl || "https://placehold.co/400x400"}
           alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
+        {product.featured && (
+          <div className="absolute top-2 left-2 bg-gradient-to-r from-store-pink to-store-pink/90 text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm">
+            Destaque
+          </div>
+        )}
       </div>
       <CardContent className="space-y-2 p-4">
         <h3 className="font-medium text-gray-900 line-clamp-1">{product.name}</h3>
@@ -39,10 +39,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <CardFooter className="p-4 pt-0">
         <Button
           onClick={() => addToCart(product)}
-          className="w-full rounded-full bg-gradient-to-r from-store-pink to-store-pink/80 text-sm font-medium hover:shadow-md hover:opacity-90"
+          className="w-full rounded-full bg-store-pink text-sm font-medium hover:bg-store-pink/90"
         >
           <ShoppingCart className="mr-2 h-4 w-4" />
-          Adicionar ao Carrinho
+          Adicionar
         </Button>
       </CardFooter>
     </Card>

@@ -1,7 +1,7 @@
 
 {
   "colors": {
-    "primary": "#ff5ea2",
+    "primary": "#ff7eb9",
     "secondary": "#f2c0d5",
     "accent": "#fec832",
     "background": "#ffffff",
@@ -13,7 +13,7 @@
   },
   "layout": {
     "maxWidth": "1200px",
-    "borderRadius": "12px"
+    "borderRadius": "8px"
   },
   
   "___AJUDA___": {
