@@ -1,9 +1,9 @@
 
 {
   "colors": {
-    "primary": "#ff7eb9",
-    "secondary": "#f2c0d5",
-    "accent": "#fec832",
+    "primary": "#FF4B91",
+    "secondary": "#FFB6C1",
+    "accent": "#FFC93C",
     "background": "#ffffff",
     "text": "#333333"
   },
@@ -13,7 +13,7 @@
   },
   "layout": {
     "maxWidth": "1200px",
-    "borderRadius": "8px"
+    "borderRadius": "12px"
   },
   
   "___AJUDA___": {
