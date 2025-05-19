@@ -83,7 +83,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
               {/* Logo e nome da loja */}
               <div className="flex items-center gap-2">
                 <Link to="/" className="flex items-center transition-transform duration-300 hover:scale-105">
-                  <span className="text-lg sm:text-xl font-bold text-store-pink drop-shadow-sm">{settings.storeName}</span>
+                  <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[#FF1B8D] to-[#9747FF] bg-clip-text text-transparent drop-shadow-sm">{settings.storeName}</span>
                 </Link>
               </div>
               
@@ -102,8 +102,8 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                         {totalItems}
                       </span>}
                   </Link>
-                  {/* Dica visual quando há itens no carrinho */}
-                  {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap hidden sm:block">
+                  {/* Dica visual quando há itens no carrinho - Visível em TODOS os dispositivos */}
+                  {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
                       <div className="flex items-center gap-2 px-2 sm:px-3 py-0.5 sm:py-1 shadow-lg animate-pulse rounded-full bg-store-pink">
                         <span className="text-xs sm:text-sm font-medium text-white">Finalizar</span>
                         <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
@@ -146,7 +146,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
       {/* Rodapé da loja - pode ser ocultado com a prop showFooter=false */}
       {showFooter && <footer className="border-t border-gray-100 py-6 sm:py-8 glass-morphism">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-store-pink text-base sm:text-lg font-medium">
+            <p className="bg-gradient-to-r from-[#FF1B8D] to-[#9747FF] bg-clip-text text-transparent text-base sm:text-lg font-medium">
               {settings.storeName}
             </p>
             <p className="mt-2 text-xs sm:text-sm text-gray-600">
