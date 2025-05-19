@@ -103,7 +103,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                   {/* Dica visual quando há itens no carrinho - Visível em TODOS os dispositivos */}
                   {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
                       <div className="flex items-center gap-2 px-2 sm:px-3 py-0.5 sm:py-1 shadow-lg animate-pulse rounded-full bg-store-pink">
-                        <span className="text-xs sm:text-sm font-medium text-white">Aqui</span>
+                        <span className="text-xs sm:text-sm font-medium text-white">Finalizar</span>
                         <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                       </div>
                     </Link>}
