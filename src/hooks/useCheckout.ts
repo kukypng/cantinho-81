@@ -1,24 +1,4 @@
-// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;// filepath: d:\PROTOCOLO K\Cantinho2\cantinho\src\hooks\useCheckout.ts
-let message = `*Novo Pedido ${settings.storeName}*\n\n`;
+
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
@@ -87,7 +67,7 @@ const useCheckout = () => {
   
   // Format WhatsApp message with all order details
   const formatWhatsAppMessage = useCallback(() => {
-    let message = `*Novo Pedido ${settings.storeName}*\n\n`;
+    let message = `*Novo Pedido em ${settings.storeName}*\n\n`;
     
     // Add products
     message += "*Produtos:*\n";
