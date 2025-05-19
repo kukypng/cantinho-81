@@ -14,22 +14,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
 
   return (
-    <Card className="group relative overflow-hidden border-none bg-white/80 backdrop-blur-sm shadow-sm transition-all hover:shadow-md hover:scale-[1.02]">
+    <Card className="group relative overflow-hidden border-none bg-white/90 backdrop-blur-sm shadow-md transition-all hover:shadow-lg shine-effect">
       <div className="aspect-square overflow-hidden bg-gray-50 rounded-t-xl">
         <img
           src={product.imageUrl || "https://placehold.co/400x400"}
           alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          loading="lazy"
         />
         {product.featured && (
-          <div className="absolute top-2 left-2 bg-gradient-to-r from-store-pink to-store-pink/90 text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm">
+          <div className="absolute top-2 left-2 bg-gradient-to-r from-store-pink to-store-purple text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse">
             Destaque
           </div>
         )}
       </div>
       <CardContent className="space-y-2 p-4">
-        <h3 className="font-medium text-gray-900 line-clamp-1">{product.name}</h3>
-        <p className="text-sm text-gray-500 line-clamp-2">
+        <h3 className="font-semibold text-gray-900 line-clamp-1">{product.name}</h3>
+        <p className="text-sm text-gray-500 line-clamp-2 min-h-[40px]">
           {product.description}
         </p>
         <p className="text-lg font-bold text-store-pink">
@@ -39,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <CardFooter className="p-4 pt-0">
         <Button
           onClick={() => addToCart(product)}
-          className="w-full rounded-full bg-store-pink text-sm font-medium hover:bg-store-pink/90"
+          className="w-full rounded-full bg-gradient-to-r from-store-pink to-store-purple text-sm font-medium hover:shadow-lg"
         >
           <ShoppingCart className="mr-2 h-4 w-4" />
           Adicionar
