@@ -79,11 +79,11 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
       {/* Cabeçalho da loja - pode ser ocultado com a prop showHeader=false */}
       {showHeader && <header className="sticky top-0 z-10 animate-fade-in shadow-md">
           <div className="bg-white py-1 border-b">
-            <div className="container mx-auto flex h-16 items-center justify-between px-4">
+            <div className="container mx-auto flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
               {/* Logo e nome da loja */}
               <div className="flex items-center gap-2">
                 <Link to="/" className="flex items-center transition-transform duration-300 hover:scale-105">
-                  <span className="text-xl sm:text-2xl font-bold text-store-pink drop-shadow-sm">{settings.storeName}</span>
+                  <span className="text-lg sm:text-xl font-bold text-store-pink drop-shadow-sm">{settings.storeName}</span>
                 </Link>
               </div>
               
@@ -91,22 +91,22 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
               <NavigationLinks isMobile={isMobile} />
 
               {/* Carrinho e menu móvel */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 sm:gap-4">
                 {/* Ícone do carrinho com contador */}
                 <div className="relative">
                   <Link to="/cart" className="relative btn-pop">
-                    <div className="bg-gray-100 p-2 rounded-full shadow-sm">
-                      <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-store-pink" />
+                    <div className="bg-gray-100 p-1.5 sm:p-2 rounded-full shadow-sm">
+                      <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 text-store-pink" />
                     </div>
-                    {totalItems > 0 && <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-pink text-xs font-bold text-white shadow-sm animate-bounce-subtle">
+                    {totalItems > 0 && <span className="absolute -right-1 -top-1 sm:-right-2 sm:-top-2 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-store-pink text-[0.65rem] sm:text-xs font-bold text-white shadow-sm animate-bounce-subtle">
                         {totalItems}
                       </span>}
                   </Link>
                   {/* Dica visual quando há itens no carrinho */}
-                  {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
-                      <div className="flex items-center gap-2 px-3 py-1 shadow-lg animate-pulse rounded-full bg-store-pink">
-                        <span className="text-sm font-medium text-white">Finalizar</span>
-                        <ArrowRight className="h-4 w-4 text-white" />
+                  {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap hidden sm:block">
+                      <div className="flex items-center gap-2 px-2 sm:px-3 py-0.5 sm:py-1 shadow-lg animate-pulse rounded-full bg-store-pink">
+                        <span className="text-xs sm:text-sm font-medium text-white">Finalizar</span>
+                        <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                       </div>
                     </Link>}
                 </div>
@@ -114,8 +114,8 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                 {/* Menu móvel - aparece apenas em dispositivos móveis */}
                 {isMobile && <Sheet>
                     <SheetTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-store-pink hover:bg-gray-100 btn-pop">
-                        <Menu className="h-5 w-5" />
+                      <Button variant="ghost" size="icon" className="text-store-pink hover:bg-gray-100 btn-pop p-1.5">
+                        <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
                       </Button>
                     </SheetTrigger>
                     <SheetContent side="right" className="glass-morphism border-l border-gray-100">
@@ -131,7 +131,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
           </div>
 
           {/* Mensagem de boas-vindas - configurada nas configurações da loja */}
-          {settings.welcomeMessage && <div className="bg-gray-100 p-3 text-center text-sm font-medium text-gray-800 animate-fade-in shadow-sm">
+          {settings.welcomeMessage && <div className="bg-gray-100 p-2 sm:p-3 text-center text-xs sm:text-sm font-medium text-gray-800 animate-fade-in shadow-sm">
               {settings.welcomeMessage}
             </div>}
         </header>}
@@ -144,15 +144,15 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
       </main>
 
       {/* Rodapé da loja - pode ser ocultado com a prop showFooter=false */}
-      {showFooter && <footer className="border-t border-gray-100 py-8 glass-morphism">
+      {showFooter && <footer className="border-t border-gray-100 py-6 sm:py-8 glass-morphism">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-store-pink text-lg font-medium">
+            <p className="text-store-pink text-base sm:text-lg font-medium">
               {settings.storeName}
             </p>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-xs sm:text-sm text-gray-600">
               {settings.footerMessage}
             </p>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-[0.65rem] sm:text-xs text-gray-500">
               &copy; {new Date().getFullYear()}
             </p>
             

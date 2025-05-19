@@ -50,29 +50,29 @@ const Index = () => {
   });
   
   return <StoreLayout>
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-3 py-4 sm:py-6">
         {/* Barra de pesquisa */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               type="text"
               placeholder="Pesquisar produtos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 rounded-full shadow-md hover:shadow-lg transition-shadow"
+              className="pl-10 rounded-full shadow-md hover:shadow-lg transition-shadow text-sm h-10"
             />
           </div>
         </div>
         
         {/* Área de avisos personalizados */}
-        <div className="mb-6 rounded-xl bg-gray-50 p-4 space-y-3">
+        <div className="mb-4 sm:mb-6 rounded-xl bg-gray-50 p-3 sm:p-4 space-y-3">
           {settings.announcements && settings.announcements.length > 0 ? (
             settings.announcements.map((announcement, index) => (
               <Alert key={index} className="bg-white border-store-pink/20 animate-fade-in hover-scale transition-all shadow-pop">
                 <BellRing className="h-4 w-4 text-store-pink animate-bounce-subtle" />
                 <AlertTitle className="text-store-pink font-medium">Aviso</AlertTitle>
-                <AlertDescription className="text-gray-700">
+                <AlertDescription className="text-gray-700 text-sm">
                   {announcement}
                 </AlertDescription>
               </Alert>
@@ -91,12 +91,12 @@ const Index = () => {
         </div>
 
         {/* Filtro de categorias - aparece apenas se houver categorias definidas */}
-        {categories.length > 0 && <div className="mb-6 -mx-1 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+        {categories.length > 0 && <div className="mb-4 sm:mb-6 -mx-1 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
             <Button 
               variant={selectedCategory === null ? "default" : "outline"} 
               size="sm" 
               onClick={() => setSelectedCategory(null)} 
-              className={selectedCategory === null ? "whitespace-nowrap shadow-md bg-store-pink" : "whitespace-nowrap"}
+              className={`whitespace-nowrap text-xs px-3 h-8 ${selectedCategory === null ? "shadow-md bg-store-pink" : ""}`}
             >
               Todos
             </Button>
@@ -105,19 +105,19 @@ const Index = () => {
                 variant={selectedCategory === category ? "default" : "outline"} 
                 size="sm" 
                 onClick={() => setSelectedCategory(category)} 
-                className={`${selectedCategory === category ? "shadow-md bg-store-pink" : ""} whitespace-nowrap`}
+                className={`whitespace-nowrap text-xs px-3 h-8 ${selectedCategory === category ? "shadow-md bg-store-pink" : ""}`}
               >
                 {category}
               </Button>)}
           </div>}
 
-        {/* Grade de produtos - atualizada para se parecer mais com a referência */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {/* Grade de produtos */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
           {filteredProducts.map(product => <ProductCard key={product.id} product={product} />)}
         </div>
 
         {/* Mensagem quando não há produtos na categoria selecionada */}
-        {filteredProducts.length === 0 && <div className="mt-12 text-center py-8">
+        {filteredProducts.length === 0 && <div className="mt-8 sm:mt-12 text-center py-6 sm:py-8">
             <p className="text-lg text-gray-500">Nenhum produto encontrado.</p>
             <Button 
               variant="outline" 
