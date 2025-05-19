@@ -50,7 +50,7 @@ const Index = () => {
   });
   
   return <StoreLayout>
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto px-4 py-6">
         {/* Barra de pesquisa */}
         <div className="mb-6">
           <div className="relative">
@@ -66,10 +66,10 @@ const Index = () => {
         </div>
         
         {/* Área de avisos personalizados */}
-        <div className="mb-6 rounded-xl bg-gradient-to-r from-store-pink/5 to-store-blue/10 p-4 space-y-3">
+        <div className="mb-6 rounded-xl bg-gray-50 p-4 space-y-3">
           {settings.announcements && settings.announcements.length > 0 ? (
             settings.announcements.map((announcement, index) => (
-              <Alert key={index} className="bg-white/70 backdrop-blur-sm border-store-pink/20 animate-fade-in hover-scale transition-all shadow-pop">
+              <Alert key={index} className="bg-white border-store-pink/20 animate-fade-in hover-scale transition-all shadow-pop">
                 <BellRing className="h-4 w-4 text-store-pink animate-bounce-subtle" />
                 <AlertTitle className="text-store-pink font-medium">Aviso</AlertTitle>
                 <AlertDescription className="text-gray-700">
@@ -96,7 +96,7 @@ const Index = () => {
               variant={selectedCategory === null ? "default" : "outline"} 
               size="sm" 
               onClick={() => setSelectedCategory(null)} 
-              className={selectedCategory === null ? "whitespace-nowrap shadow-md" : "whitespace-nowrap"}
+              className={selectedCategory === null ? "whitespace-nowrap shadow-md bg-store-pink" : "whitespace-nowrap"}
             >
               Todos
             </Button>
@@ -105,14 +105,14 @@ const Index = () => {
                 variant={selectedCategory === category ? "default" : "outline"} 
                 size="sm" 
                 onClick={() => setSelectedCategory(category)} 
-                className={`${selectedCategory === category ? "shadow-md" : ""} whitespace-nowrap`}
+                className={`${selectedCategory === category ? "shadow-md bg-store-pink" : ""} whitespace-nowrap`}
               >
                 {category}
               </Button>)}
           </div>}
 
-        {/* Grade de produtos */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* Grade de produtos - atualizada para se parecer mais com a referência */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {filteredProducts.map(product => <ProductCard key={product.id} product={product} />)}
         </div>
 

@@ -1,7 +1,7 @@
 
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, ArrowRight, Instagram, Phone, Search } from "lucide-react";
+import { ShoppingCart, Menu, ArrowRight, Instagram, Phone } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ const NavigationLinks = memo(({
 }: {
   isMobile: boolean;
 }) => !isMobile && <nav className="hidden space-x-6 md:flex">
-      {navigationItems.map(item => <Link key={item.name} to={item.href} className="text-sm font-medium text-white transition-colors hover:text-white/80 hover:underline py-1 btn-pop">
+      {navigationItems.map(item => <Link key={item.name} to={item.href} className="text-sm font-medium text-store-pink transition-colors hover:text-store-pink/80 hover:underline py-1 btn-pop">
           {item.name}
         </Link>)}
     </nav>);
@@ -43,10 +43,10 @@ const SocialMediaLinks = memo(({
 }: {
   socialMedia: any;
 }) => <div className="mt-6 flex justify-center space-x-4">
-    {socialMedia?.instagram && <a href={socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="rounded-full bg-gradient-to-tr from-store-pink to-store-purple p-2 text-white hover:opacity-90 transition-all shadow-md hover:scale-105" aria-label="Instagram">
+    {socialMedia?.instagram && <a href={socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="rounded-full bg-store-pink p-2 text-white hover:opacity-90 transition-all shadow-md hover:scale-105" aria-label="Instagram">
         <Instagram size={20} />
       </a>}
-    {socialMedia?.whatsapp && <a href={socialMedia.whatsapp} target="_blank" rel="noopener noreferrer" className="rounded-full bg-gradient-to-tr from-green-500 to-green-700 p-2 text-white hover:opacity-90 transition-all shadow-md hover:scale-105" aria-label="WhatsApp">
+    {socialMedia?.whatsapp && <a href={socialMedia.whatsapp} target="_blank" rel="noopener noreferrer" className="rounded-full bg-green-500 p-2 text-white hover:opacity-90 transition-all shadow-md hover:scale-105" aria-label="WhatsApp">
         <Phone size={20} />
       </a>}
   </div>);
@@ -78,12 +78,12 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
   return <div className="flex min-h-screen flex-col bg-gradient-to-br from-white to-gray-50">
       {/* Cabeçalho da loja - pode ser ocultado com a prop showHeader=false */}
       {showHeader && <header className="sticky top-0 z-10 animate-fade-in shadow-md">
-          <div className="header-gradient py-1">
+          <div className="bg-white py-1 border-b">
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
               {/* Logo e nome da loja */}
               <div className="flex items-center gap-2">
                 <Link to="/" className="flex items-center transition-transform duration-300 hover:scale-105">
-                  <span className="text-xl sm:text-2xl font-bold text-white drop-shadow-md">{settings.storeName}</span>
+                  <span className="text-xl sm:text-2xl font-bold text-store-pink drop-shadow-sm">{settings.storeName}</span>
                 </Link>
               </div>
               
@@ -95,16 +95,16 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                 {/* Ícone do carrinho com contador */}
                 <div className="relative">
                   <Link to="/cart" className="relative btn-pop">
-                    <div className="bg-white p-2 rounded-full shadow-md">
+                    <div className="bg-gray-100 p-2 rounded-full shadow-sm">
                       <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-store-pink" />
                     </div>
-                    {totalItems > 0 && <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-yellow text-xs font-bold text-black shadow-sm animate-bounce-subtle">
+                    {totalItems > 0 && <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-store-pink text-xs font-bold text-white shadow-sm animate-bounce-subtle">
                         {totalItems}
                       </span>}
                   </Link>
                   {/* Dica visual quando há itens no carrinho */}
                   {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
-                      <div className="flex items-center gap-2 px-3 py-1 shadow-lg animate-pulse rounded-full bg-gradient-to-r from-store-pink to-store-purple">
+                      <div className="flex items-center gap-2 px-3 py-1 shadow-lg animate-pulse rounded-full bg-store-pink">
                         <span className="text-sm font-medium text-white">Finalizar</span>
                         <ArrowRight className="h-4 w-4 text-white" />
                       </div>
@@ -114,7 +114,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                 {/* Menu móvel - aparece apenas em dispositivos móveis */}
                 {isMobile && <Sheet>
                     <SheetTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 btn-pop">
+                      <Button variant="ghost" size="icon" className="text-store-pink hover:bg-gray-100 btn-pop">
                         <Menu className="h-5 w-5" />
                       </Button>
                     </SheetTrigger>
@@ -131,7 +131,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
           </div>
 
           {/* Mensagem de boas-vindas - configurada nas configurações da loja */}
-          {settings.welcomeMessage && <div className="bg-gradient-to-r from-store-pink/10 to-store-blue/10 p-3 text-center text-sm font-medium text-gray-800 animate-fade-in shadow-sm">
+          {settings.welcomeMessage && <div className="bg-gray-100 p-3 text-center text-sm font-medium text-gray-800 animate-fade-in shadow-sm">
               {settings.welcomeMessage}
             </div>}
         </header>}
@@ -146,7 +146,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
       {/* Rodapé da loja - pode ser ocultado com a prop showFooter=false */}
       {showFooter && <footer className="border-t border-gray-100 py-8 glass-morphism">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-gradient text-lg font-medium">
+            <p className="text-store-pink text-lg font-medium">
               {settings.storeName}
             </p>
             <p className="mt-2 text-sm text-gray-600">
