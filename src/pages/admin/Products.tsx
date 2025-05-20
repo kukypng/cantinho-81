@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -99,11 +100,16 @@ const ProductsPage = () => {
       return false;
     }
     
-    // Fixed: Properly check price based on its type
+    // Fixed: Correctly handle different price types
+    const priceValue = typeof currentProduct.price === 'string' 
+      ? parseFloat(currentProduct.price) 
+      : currentProduct.price;
+      
+    // Check if price is valid
     if (
-      currentProduct.price === 0 || 
-      currentProduct.price === "" || 
-      typeof currentProduct.price === "string" && currentProduct.price.trim() === ""
+      priceValue === 0 || 
+      isNaN(priceValue) || 
+      (typeof currentProduct.price === 'string' && !currentProduct.price.trim())
     ) {
       setInputError({field: "price", message: "Preço deve ser maior que zero"});
       return false;
