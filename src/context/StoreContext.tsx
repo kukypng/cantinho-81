@@ -41,6 +41,8 @@ const fetchStoreSettings = async (): Promise<StoreSettings> => {
     footerMessage: data.footer_message,
     customCakeMessage: data.custom_cake_message,
     logoUrl: data.logo_url,
+    freeDeliveryMessage: data.free_delivery_message,
+    showFreeDeliveryBanner: data.show_free_delivery_banner,
     socialMedia: data.social_media || {}
   } as StoreSettings;
 };
@@ -81,6 +83,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         footer_message: newSettings.footerMessage,
         custom_cake_message: newSettings.customCakeMessage,
         logo_url: newSettings.logoUrl,
+        free_delivery_message: newSettings.freeDeliveryMessage,
+        show_free_delivery_banner: newSettings.showFreeDeliveryBanner,
         social_media: newSettings.socialMedia || {}
       };
 

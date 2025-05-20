@@ -75,6 +75,8 @@ export interface Coupon {
  *   footerMessage: "Feito com amor",
  *   customCakeMessage: "Descreva seu bolo personalizado:",
  *   announcements: ["Feriado: 30% OFF", "Entrega grátis acima de R$50"],
+ *   freeDeliveryMessage: "Entrega Grátis acima de R$ 50",
+ *   showFreeDeliveryBanner: true,
  *   socialMedia: { 
  *     instagram: "https://instagram.com/minhaloja",
  *     whatsapp: "https://wa.me/5511999999999"
@@ -92,6 +94,8 @@ export interface StoreSettings {
   footerMessage?: string;
   customCakeMessage?: string;
   announcements?: string[];
+  freeDeliveryMessage?: string;
+  showFreeDeliveryBanner?: boolean;
   socialMedia?: {
     instagram?: string;
     whatsapp?: string;

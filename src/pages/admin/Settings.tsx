@@ -26,6 +26,8 @@ const Settings = () => {
     footerMessage: settings.footerMessage || "",
     customCakeMessage: settings.customCakeMessage || "",
     announcements: settings.announcements || [],
+    freeDeliveryMessage: settings.freeDeliveryMessage || `Entrega Grátis acima de R$ ${settings.freeDeliveryThreshold || 0}`,
+    showFreeDeliveryBanner: settings.showFreeDeliveryBanner !== false, // Default to true if not set
     instagram: settings.socialMedia?.instagram || "",
     whatsapp: settings.socialMedia?.whatsapp || ""
   });
@@ -49,6 +51,13 @@ const Settings = () => {
         [name]: value,
       }));
     }
+  };
+
+  const handleSwitchChange = (name: string, checked: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: checked
+    }));
   };
 
   const handleAnnouncementAdd = () => {
@@ -102,6 +111,8 @@ const Settings = () => {
       footerMessage: formData.footerMessage,
       customCakeMessage: formData.customCakeMessage,
       announcements: filteredAnnouncements,
+      freeDeliveryMessage: formData.freeDeliveryMessage,
+      showFreeDeliveryBanner: formData.showFreeDeliveryBanner,
       socialMedia
     });
     
@@ -156,10 +167,13 @@ const Settings = () => {
               footerMessage={formData.footerMessage}
               customCakeMessage={formData.customCakeMessage}
               announcements={formData.announcements}
+              freeDeliveryMessage={formData.freeDeliveryMessage}
+              showFreeDeliveryBanner={formData.showFreeDeliveryBanner}
               onInputChange={handleInputChange}
               onAnnouncementAdd={handleAnnouncementAdd}
               onAnnouncementChange={handleAnnouncementChange}
               onAnnouncementRemove={handleAnnouncementRemove}
+              onSwitchChange={handleSwitchChange}
             />
 
             <SocialMediaSection
