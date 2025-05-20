@@ -36,6 +36,19 @@ const MobileMenu = memo(() => {
             </Link>
           </SheetClose>
           
+          {/* Botão para Área Administrativa - adicionado exatamente onde está circulado na imagem */}
+          {isAdmin && (
+            <SheetClose asChild>
+              <Link 
+                to="/admin" 
+                className="flex items-center gap-2 py-2 px-3 rounded-md bg-store-pink/10 text-store-pink hover:bg-store-pink/20 transition-colors"
+              >
+                <Lock className="w-5 h-5" />
+                <span>Área Administrativa</span>
+              </Link>
+            </SheetClose>
+          )}
+          
           <SheetClose asChild>
             <Link to="/cart" className="flex items-center gap-2 py-2 px-3 rounded-md hover:bg-gray-100 transition-colors">
               <ShoppingCart className="w-5 h-5 text-store-pink" />
@@ -49,16 +62,6 @@ const MobileMenu = memo(() => {
               
               {isAdmin && (
                 <>
-                  <SheetClose asChild>
-                    <Link 
-                      to="/admin" 
-                      className="flex items-center gap-2 py-2 px-3 rounded-md text-store-pink hover:bg-gray-100 transition-colors"
-                    >
-                      <Lock className="w-5 h-5" />
-                      <span>Área Administrativa</span>
-                    </Link>
-                  </SheetClose>
-                  
                   <SheetClose asChild>
                     <Link 
                       to="/admin/settings" 
