@@ -93,7 +93,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                 <SheetContent 
                   side="left" 
                   className="glass-morphism border-r border-gray-100 w-[75vw] max-w-xs"
-                  showCloseButton={true}
                 >
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-bold text-gradient">{settings.storeName}</h2>

@@ -30,17 +30,20 @@ const Settings = () => {
     whatsapp: settings.socialMedia?.whatsapp || ""
   });
 
+  // Corrigindo o manipulador de eventos para tratar corretamente diferentes tipos de inputs
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type } = e.target as HTMLInputElement;
+    const { name, value } = e.target;
     
-    if (type === "number") {
+    // Verifica se é um campo numérico
+    if (e.target instanceof HTMLInputElement && e.target.type === "number") {
       setFormData({
         ...formData,
-        [name]: parseFloat(value) || 0,
+        [name]: value === "" ? "" : parseFloat(value) || 0,
       });
     } else {
+      // Para campos de texto normais
       setFormData({
         ...formData,
         [name]: value,
@@ -84,16 +87,23 @@ const Settings = () => {
     // Filter out empty announcements
     const filteredAnnouncements = formData.announcements.filter(ann => ann.trim() !== "");
     
+    // Converter valores vazios de campos numéricos para 0
+    const processedData = {
+      ...formData,
+      deliveryFee: formData.deliveryFee === "" ? 0 : Number(formData.deliveryFee),
+      freeDeliveryThreshold: formData.freeDeliveryThreshold === "" ? 0 : Number(formData.freeDeliveryThreshold)
+    };
+    
     // Update settings
     updateSettings({
       ...settings,
-      storeName: formData.storeName,
-      whatsappNumber: formData.whatsappNumber,
-      deliveryFee: formData.deliveryFee,
-      freeDeliveryThreshold: formData.freeDeliveryThreshold,
-      welcomeMessage: formData.welcomeMessage,
-      footerMessage: formData.footerMessage,
-      customCakeMessage: formData.customCakeMessage,
+      storeName: processedData.storeName,
+      whatsappNumber: processedData.whatsappNumber,
+      deliveryFee: processedData.deliveryFee,
+      freeDeliveryThreshold: processedData.freeDeliveryThreshold,
+      welcomeMessage: processedData.welcomeMessage,
+      footerMessage: processedData.footerMessage,
+      customCakeMessage: processedData.customCakeMessage,
       announcements: filteredAnnouncements,
       socialMedia
     });
