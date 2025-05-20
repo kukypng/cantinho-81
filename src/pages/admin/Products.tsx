@@ -109,7 +109,7 @@ const ProductsPage = () => {
     if (
       priceValue === 0 || 
       isNaN(priceValue) || 
-      (typeof currentProduct.price === 'string' && !currentProduct.price.trim())
+      (typeof currentProduct.price === 'string' && currentProduct.price.trim() === '')
     ) {
       setInputError({field: "price", message: "Preço deve ser maior que zero"});
       return false;
@@ -547,3 +547,4 @@ const ProductsPage = () => {
 };
 
 export default ProductsPage;
+
