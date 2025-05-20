@@ -8,7 +8,7 @@ import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
 
 const MobileMenu = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
   const { settings } = useStore();
 
   return (
@@ -37,7 +37,7 @@ const MobileMenu = () => {
             </Link>
           </SheetClose>
           
-          {isAuthenticated && user?.isAdmin && (
+          {isAuthenticated && isAdmin && (
             <SheetClose asChild>
               <Link 
                 to="/admin" 
