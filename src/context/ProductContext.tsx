@@ -117,6 +117,35 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Mutação para deletar produto
   const deleteProductMutation = useMutation({
     mutationFn: async (id: string) => {
+      // Primeiro, tentamos obter o produto para verificar se há uma imagem associada
+      const { data: product } = await supabase
+        .from('products')
+        .select('image_url')
+        .eq('id', id)
+        .single();
+
+      // Se houver uma imagem e ela estiver no bucket 'imagens', tentamos excluí-la
+      if (product?.image_url) {
+        try {
+          const imageUrl = product.image_url;
+          // Verifica se é uma URL do Supabase Storage
+          if (imageUrl.includes('supabase.co') && imageUrl.includes('/storage/v1/object/public/imagens/')) {
+            // Extrai o caminho do arquivo do URL
+            const filePath = imageUrl.split('/public/imagens/')[1];
+            if (filePath) {
+              // Tenta excluir o arquivo do storage
+              await supabase.storage
+                .from('imagens')
+                .remove([filePath]);
+            }
+          }
+        } catch (storageError) {
+          console.error("Erro ao excluir imagem:", storageError);
+          // Continuamos mesmo se houver erro ao excluir a imagem
+        }
+      }
+
+      // Em seguida, excluímos o produto
       const { error } = await supabase
         .from('products')
         .delete()

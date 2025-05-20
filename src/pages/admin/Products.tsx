@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,11 +23,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { useProducts } from "@/context/ProductContext";
 import { Product } from "@/types";
-import { Edit, Plus, Trash2, Eye } from "lucide-react";
+import { Edit, Plus, Trash2, Upload, ImagePlus } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const emptyProduct: Omit<Product, "id"> = {
   name: "",
@@ -47,6 +48,8 @@ const ProductsPage = () => {
   );
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -56,7 +59,7 @@ const ProductsPage = () => {
     if (type === "number") {
       setCurrentProduct({
         ...currentProduct,
-        [name]: parseFloat(value) || 0,
+        [name]: value === "" ? "" : parseFloat(value) || 0,
       });
     } else {
       setCurrentProduct({
@@ -74,13 +77,18 @@ const ProductsPage = () => {
   };
 
   const handleAddProduct = () => {
-    if (!currentProduct.name || !currentProduct.description || currentProduct.price <= 0) {
+    if (!currentProduct.name || !currentProduct.description || !currentProduct.price) {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
     // Add new product
-    addProduct(currentProduct as Omit<Product, "id">);
+    addProduct({
+      ...currentProduct,
+      price: typeof currentProduct.price === 'string' 
+        ? parseFloat(currentProduct.price as string) || 0 
+        : currentProduct.price
+    } as Omit<Product, "id">);
     
     // Reset form
     setCurrentProduct(emptyProduct);
@@ -88,17 +96,82 @@ const ProductsPage = () => {
   };
 
   const handleEditProduct = () => {
-    if (!currentProduct.name || !currentProduct.description || currentProduct.price <= 0) {
+    if (!currentProduct.name || !currentProduct.description || !currentProduct.price) {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
     // Update existing product
-    updateProduct(currentProduct as Product);
+    updateProduct({
+      ...currentProduct,
+      price: typeof currentProduct.price === 'string' 
+        ? parseFloat(currentProduct.price as string) || 0 
+        : currentProduct.price
+    } as Product);
     
     // Reset form
     setCurrentProduct(emptyProduct);
     setIsEditing(false);
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      setIsUploading(true);
+      
+      // Verificar tamanho do arquivo (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("A imagem deve ter no máximo 5MB");
+        setIsUploading(false);
+        return;
+      }
+
+      // Verificar tipo de arquivo
+      if (!['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type)) {
+        toast.error("Formato de arquivo não suportado. Use JPG, PNG, WEBP ou GIF");
+        setIsUploading(false);
+        return;
+      }
+
+      // Gerar nome de arquivo único
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+      const filePath = `produtos/${fileName}`;
+
+      // Upload para o storage do Supabase
+      const { error: uploadError } = await supabase.storage
+        .from('imagens')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        toast.error(`Erro ao fazer upload: ${uploadError.message}`);
+        setIsUploading(false);
+        return;
+      }
+
+      // Obter a URL pública do arquivo
+      const { data } = supabase.storage
+        .from('imagens')
+        .getPublicUrl(filePath);
+
+      if (data?.publicUrl) {
+        setCurrentProduct({
+          ...currentProduct,
+          imageUrl: data.publicUrl
+        });
+        toast.success("Imagem carregada com sucesso!");
+      }
+    } catch (error: any) {
+      toast.error(`Erro ao fazer upload: ${error.message}`);
+    } finally {
+      setIsUploading(false);
+      // Limpar o input file para permitir selecionar o mesmo arquivo novamente
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const openEditDialog = (product: Product) => {
@@ -123,6 +196,12 @@ const ProductsPage = () => {
     setCurrentProduct(emptyProduct);
     setIsAdding(false);
     setIsEditing(false);
+  };
+
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -161,11 +240,11 @@ const ProductsPage = () => {
                   id="price"
                   name="price"
                   type="number"
-                  value={currentProduct.price}
+                  step="0.01"
+                  value={currentProduct.price === 0 ? "" : currentProduct.price}
                   onChange={handleInputChange}
                   placeholder="0.00"
                   min="0"
-                  step="0.01"
                   required
                 />
               </div>
@@ -181,14 +260,43 @@ const ProductsPage = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="imageUrl">URL da Imagem*</Label>
-                <Input
-                  id="imageUrl"
-                  name="imageUrl"
-                  value={currentProduct.imageUrl}
-                  onChange={handleInputChange}
-                  placeholder="https://exemplo.com/imagem.jpg"
-                />
+                <Label htmlFor="imageUrl">Imagem do Produto</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="imageUrl"
+                    name="imageUrl"
+                    value={currentProduct.imageUrl}
+                    onChange={handleInputChange}
+                    placeholder="https://exemplo.com/imagem.jpg"
+                    className="flex-1"
+                  />
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={triggerFileInput} 
+                    disabled={isUploading}
+                    className="flex gap-2"
+                  >
+                    {isUploading ? "Enviando..." : "Galeria"}
+                    <ImagePlus className="h-4 w-4" />
+                  </Button>
+                </div>
+                {currentProduct.imageUrl && (
+                  <div className="mt-2 h-24 w-24 overflow-hidden rounded border">
+                    <img 
+                      src={currentProduct.imageUrl}
+                      alt="Prévia da imagem"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="category">Categoria</Label>
@@ -217,7 +325,7 @@ const ProductsPage = () => {
                   Cancelar
                 </Button>
               </DialogClose>
-              <Button type="submit" onClick={handleAddProduct}>
+              <Button type="submit" onClick={handleAddProduct} disabled={isUploading}>
                 Adicionar Produto
               </Button>
             </DialogFooter>
@@ -250,11 +358,11 @@ const ProductsPage = () => {
                   id="edit-price"
                   name="price"
                   type="number"
-                  value={currentProduct.price}
+                  step="0.01"
+                  value={currentProduct.price === 0 ? "" : currentProduct.price}
                   onChange={handleInputChange}
                   placeholder="0.00"
                   min="0"
-                  step="0.01"
                   required
                 />
               </div>
@@ -270,14 +378,43 @@ const ProductsPage = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="edit-imageUrl">URL da Imagem*</Label>
-                <Input
-                  id="edit-imageUrl"
-                  name="imageUrl"
-                  value={currentProduct.imageUrl}
-                  onChange={handleInputChange}
-                  placeholder="https://exemplo.com/imagem.jpg"
-                />
+                <Label htmlFor="edit-imageUrl">Imagem do Produto</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="edit-imageUrl"
+                    name="imageUrl"
+                    value={currentProduct.imageUrl}
+                    onChange={handleInputChange}
+                    placeholder="https://exemplo.com/imagem.jpg"
+                    className="flex-1"
+                  />
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={triggerFileInput} 
+                    disabled={isUploading}
+                    className="flex gap-2"
+                  >
+                    {isUploading ? "Enviando..." : "Galeria"}
+                    <ImagePlus className="h-4 w-4" />
+                  </Button>
+                </div>
+                {currentProduct.imageUrl && (
+                  <div className="mt-2 h-24 w-24 overflow-hidden rounded border">
+                    <img 
+                      src={currentProduct.imageUrl}
+                      alt="Prévia da imagem"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="edit-category">Categoria</Label>
@@ -306,7 +443,7 @@ const ProductsPage = () => {
                   Cancelar
                 </Button>
               </DialogClose>
-              <Button type="submit" onClick={handleEditProduct}>
+              <Button type="submit" onClick={handleEditProduct} disabled={isUploading}>
                 Salvar Alterações
               </Button>
             </DialogFooter>
@@ -350,13 +487,17 @@ const ProductsPage = () => {
               products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>
-                    {product.imageUrl && (
+                    {product.imageUrl ? (
                       <div className="h-10 w-10 overflow-hidden rounded">
                         <img
                           src={product.imageUrl}
                           alt={product.name}
                           className="h-full w-full object-cover"
                         />
+                      </div>
+                    ) : (
+                      <div className="flex h-10 w-10 items-center justify-center rounded bg-gray-100">
+                        <Upload className="h-5 w-5 text-gray-400" />
                       </div>
                     )}
                   </TableCell>
@@ -391,7 +532,7 @@ const ProductsPage = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={6} className="py-8 text-center text-gray-500">
                   Nenhum produto cadastrado. Adicione seu primeiro produto!
                 </TableCell>
               </TableRow>
