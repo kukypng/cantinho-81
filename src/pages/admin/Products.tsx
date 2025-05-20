@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -100,8 +99,12 @@ const ProductsPage = () => {
       return false;
     }
     
-    // Fix: Check if price is empty string or 0 - this is where the TypeScript error was
-    if (currentProduct.price === "" || (typeof currentProduct.price === 'number' && currentProduct.price === 0)) {
+    // Fixed: Properly check price based on its type
+    if (
+      currentProduct.price === 0 || 
+      currentProduct.price === "" || 
+      typeof currentProduct.price === "string" && currentProduct.price.trim() === ""
+    ) {
       setInputError({field: "price", message: "Preço deve ser maior que zero"});
       return false;
     }
