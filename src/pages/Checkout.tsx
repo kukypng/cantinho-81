@@ -8,7 +8,7 @@ import OrderSummary from "@/components/checkout/OrderSummary";
 import CustomCakeForm from "@/components/checkout/CustomCakeForm";
 import useCheckout from "@/hooks/useCheckout";
 import { useStore } from "@/context/StoreContext";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Truck, CreditCard, Cake } from "lucide-react";
 
 const Checkout = () => {
   const { settings } = useStore();
@@ -51,10 +51,13 @@ const Checkout = () => {
         <div className="grid gap-8 md:grid-cols-3">
           <div className="md:col-span-2 space-y-6">
             <div className="flex items-center mb-6">
-              <div className="w-7 h-7 rounded-full bg-primary/90 flex items-center justify-center mr-3 shadow-md">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-r from-store-pink to-store-purple flex items-center justify-center mr-3 shadow-md">
                 <span className="text-white font-semibold text-sm">1</span>
               </div>
-              <h2 className="text-xl font-semibold text-gradient">Entrega</h2>
+              <h2 className="text-xl font-semibold text-gradient flex items-center">
+                <Truck className="mr-2 h-5 w-5" />
+                Entrega
+              </h2>
             </div>
             
             <DeliveryMethodSelector 
@@ -63,7 +66,7 @@ const Checkout = () => {
             />
 
             {deliveryMethod === "delivery" && (
-              <div className="pl-10 border-l-2 border-primary/20 py-2 animate-fade-in">
+              <div className="pl-10 border-l-2 border-primary/20 py-2 animate-fade-in-slide">
                 <ShippingInfoForm 
                   shippingInfo={shippingInfo}
                   onChange={handleInputChange}
@@ -74,12 +77,15 @@ const Checkout = () => {
             {hasCustomCakeItem && (
               <>
                 <div className="flex items-center mb-6 mt-10">
-                  <div className="w-7 h-7 rounded-full bg-primary/90 flex items-center justify-center mr-3 shadow-md">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-r from-store-pink to-store-purple flex items-center justify-center mr-3 shadow-md">
                     <span className="text-white font-semibold text-sm">2</span>
                   </div>
-                  <h2 className="text-xl font-semibold text-gradient">Personalização</h2>
+                  <h2 className="text-xl font-semibold text-gradient flex items-center">
+                    <Cake className="mr-2 h-5 w-5" />
+                    Personalização
+                  </h2>
                 </div>
-                <div className="pl-10 border-l-2 border-primary/20 py-2 animate-fade-in">
+                <div className="pl-10 border-l-2 border-primary/20 py-2 animate-fade-in-slide">
                   <CustomCakeForm
                     customCakeDetails={customCakeDetails}
                     customCakeMessage={settings.customCakeMessage || ""}
@@ -90,12 +96,15 @@ const Checkout = () => {
             )}
 
             <div className="flex items-center mb-6 mt-10">
-              <div className="w-7 h-7 rounded-full bg-primary/90 flex items-center justify-center mr-3 shadow-md">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-r from-store-pink to-store-purple flex items-center justify-center mr-3 shadow-md">
                 <span className="text-white font-semibold text-sm">3</span>
               </div>
-              <h2 className="text-xl font-semibold text-gradient">Pagamento</h2>
+              <h2 className="text-xl font-semibold text-gradient flex items-center">
+                <CreditCard className="mr-2 h-5 w-5" />
+                Pagamento
+              </h2>
             </div>
-            <div className="pl-10 border-l-2 border-primary/20 py-2 animate-fade-in">
+            <div className="pl-10 border-l-2 border-primary/20 py-2 animate-fade-in-slide">
               <PaymentMethodSelector 
                 value={paymentMethod}
                 onChange={handlePaymentMethodChange}
@@ -108,7 +117,7 @@ const Checkout = () => {
           </div>
 
           <div className="md:sticky md:top-24 self-start">
-            <div className="bg-gradient-to-br from-white/70 to-gray-50/70 rounded-xl p-1 shadow-md backdrop-blur-md">
+            <div className="bg-gradient-to-br from-white/90 to-gray-50/90 rounded-xl p-1 shadow-md backdrop-blur-md">
               <OrderSummary 
                 items={items}
                 subtotal={subtotal}
@@ -122,7 +131,7 @@ const Checkout = () => {
               />
               
               <div className="flex items-center justify-center py-3 px-4 bg-primary/5 rounded-lg mt-4 text-sm text-gray-600">
-                <ArrowRight className="h-4 w-4 mr-2 text-primary" />
+                <ArrowRight className="h-4 w-4 mr-2 text-primary animate-pulse" />
                 <p>Complete seu pedido para finalizar a compra</p>
               </div>
             </div>

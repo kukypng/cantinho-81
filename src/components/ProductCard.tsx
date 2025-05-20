@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { Product } from "@/types";
-import { ShoppingCart, XCircle, Package } from "lucide-react";
+import { ShoppingCart, XCircle, Package, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface ProductCardProps {
@@ -16,18 +16,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
 
   return (
-    <Card className="overflow-hidden border bg-white shadow-md transition-all hover:shadow-lg h-full">
+    <Card className="overflow-hidden border bg-white shadow-md transition-all hover:shadow-lg h-full group">
       <div className="relative">
         <div className="aspect-square overflow-hidden">
           <img
             src={product.imageUrl || "https://placehold.co/400x400"}
             alt={product.name}
-            className={`h-full w-full object-cover transition-transform duration-500 hover:scale-105 ${isOutOfStock ? 'opacity-70' : ''}`}
+            className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 ${isOutOfStock ? 'opacity-70' : ''}`}
             loading="lazy"
           />
         </div>
         {product.featured && (
-          <div className="absolute top-2 left-2 bg-store-pink text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+          <div className="absolute top-2 left-2 bg-store-pink text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm animate-pulse">
             Destaque
           </div>
         )}
@@ -43,6 +43,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <XCircle className="h-4 w-4" /> Esgotado
           </div>
         )}
+        
+        {/* Quick action button that appears on hover */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            className="rounded-full bg-white/90 hover:bg-white hover:text-store-pink shadow-lg h-10 w-10"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              !isOutOfStock && addToCart(product);
+            }}
+            disabled={isOutOfStock}
+          >
+            {isOutOfStock ? <XCircle className="h-5 w-5" /> : <Heart className="h-5 w-5" />}
+          </Button>
+        </div>
       </div>
       
       <CardContent className="p-3 text-left">
@@ -64,7 +81,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           className={`w-full rounded-full text-white text-sm py-1 h-auto ${
             isOutOfStock 
               ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed' 
-              : 'bg-store-pink hover:bg-store-pink/90'
+              : 'bg-store-pink hover:bg-store-pink/90 transition-all duration-300 shadow-sm hover:shadow-md'
           }`}
         >
           {isOutOfStock ? (

@@ -16,13 +16,13 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, allowEdit = true }) =
   const { product, quantity } = item;
 
   return (
-    <Card className="mb-4 bg-white/80 backdrop-blur-sm hover-scale-sm">
+    <Card className="mb-4 bg-white/90 backdrop-blur-sm hover-scale-sm border border-gray-100/80 shadow-sm hover:shadow-md transition-all duration-300">
       <CardContent className="flex items-center p-4">
-        <div className="mr-4 h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg shadow-sm">
+        <div className="mr-4 h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg shadow-sm group">
           <img
             src={product.imageUrl || "https://placehold.co/400x400"}
             alt={product.name}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         </div>
         <div className="flex-1">
@@ -30,13 +30,13 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, allowEdit = true }) =
           <p className="text-sm text-gray-500">
             R$ {product.price.toFixed(2)} x {quantity}
           </p>
-          <p className="font-bold text-primary">
+          <p className="font-bold text-store-pink">
             R$ {(product.price * quantity).toFixed(2)}
           </p>
         </div>
         {allowEdit && (
           <div className="flex items-center gap-2">
-            <div className="flex items-center bg-gray-100 rounded-full px-1">
+            <div className="flex items-center bg-gray-100 rounded-full px-1 shadow-sm">
               <Button
                 variant="ghost"
                 size="icon"

@@ -1,13 +1,14 @@
 
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, ArrowRight, Instagram, Phone } from "lucide-react";
+import { ShoppingCart, Menu, ArrowRight, Instagram, Phone, Search } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Input } from "@/components/ui/input";
 
 // Interface que define as propriedades do componente StoreLayout
 interface StoreLayoutProps {
@@ -31,7 +32,7 @@ const NavigationLinks = memo(({
 }: {
   isMobile: boolean;
 }) => !isMobile && <nav className="hidden space-x-6 md:flex">
-      {navigationItems.map(item => <Link key={item.name} to={item.href} className="text-sm font-medium text-store-pink transition-colors hover:text-store-pink/80 hover:underline py-1 btn-pop">
+      {navigationItems.map(item => <Link key={item.name} to={item.href} className="text-sm font-medium text-gray-700 transition-colors hover:text-store-pink hover:underline py-1 btn-pop">
           {item.name}
         </Link>)}
     </nav>);
@@ -83,19 +84,34 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
               {/* Logo e nome da loja */}
               <div className="flex items-center gap-2">
                 <Link to="/" className="flex items-center transition-transform duration-300 hover:scale-105">
-                  <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[#FF1B8D] to-[#9747FF] bg-clip-text text-transparent drop-shadow-sm">{settings.storeName}</span>
+                  <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-[#FF1B8D] to-[#9747FF] bg-clip-text text-transparent drop-shadow-sm shine-effect">{settings.storeName}</span>
                 </Link>
               </div>
               
               {/* Links de navegação - aparece apenas em desktop */}
               <NavigationLinks isMobile={isMobile} />
 
+              {/* Barra de pesquisa simplificada - apenas visual */}
+              {!isMobile && (
+                <div className="hidden md:flex items-center max-w-xs w-full mx-4">
+                  <div className="relative w-full">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input 
+                      type="text" 
+                      placeholder="Buscar produtos..." 
+                      className="pl-10 pr-4 py-1 h-9 text-sm bg-gray-50 border-gray-200 focus:border-store-pink"
+                      onClick={(e) => e.preventDefault()}
+                    />
+                  </div>
+                </div>
+              )}
+
               {/* Carrinho e menu móvel */}
               <div className="flex items-center gap-2 sm:gap-4">
                 {/* Ícone do carrinho com contador */}
                 <div className="relative">
                   <Link to="/cart" className="relative btn-pop">
-                    <div className="bg-gray-100 p-1.5 sm:p-2 rounded-full shadow-sm">
+                    <div className="bg-gray-100 p-1.5 sm:p-2 rounded-full shadow-sm hover:bg-gray-200 transition-colors">
                       <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 text-store-pink" />
                     </div>
                     {totalItems > 0 && <span className="absolute -right-1 -top-1 sm:-right-2 sm:-top-2 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-store-pink text-[0.65rem] sm:text-xs font-bold text-white shadow-sm animate-bounce-subtle">
@@ -104,7 +120,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                   </Link>
                   {/* Dica visual quando há itens no carrinho - Visível em TODOS os dispositivos */}
                   {totalItems > 0 && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-2 whitespace-nowrap">
-                      <div className="flex items-center gap-2 px-2 sm:px-3 py-0.5 sm:py-1 shadow-lg animate-pulse rounded-full bg-store-pink">
+                      <div className="flex items-center gap-2 px-2 sm:px-3 py-0.5 sm:py-1 shadow-lg animate-pulse rounded-full bg-gradient-to-r from-store-pink to-store-purple">
                         <span className="text-xs sm:text-sm font-medium text-white">Finalizar</span>
                         <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                       </div>
@@ -131,7 +147,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
           </div>
 
           {/* Mensagem de boas-vindas - configurada nas configurações da loja */}
-          {settings.welcomeMessage && <div className="bg-gray-100 p-2 sm:p-3 text-center text-xs sm:text-sm font-medium text-gray-800 animate-fade-in shadow-sm">
+          {settings.welcomeMessage && <div className="bg-gradient-to-r from-store-pink/10 to-store-purple/10 p-2 sm:p-3 text-center text-xs sm:text-sm font-medium text-gray-800 animate-fade-in shadow-sm">
               {settings.welcomeMessage}
             </div>}
         </header>}
