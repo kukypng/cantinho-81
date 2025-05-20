@@ -70,21 +70,8 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Botões de acesso rápido */}
-        <div className="mb-4 sm:mb-6 flex justify-end gap-2">
-          {/* Botão do carrinho - sempre visível */}
-          <Link to="/cart">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex items-center gap-2 text-store-pink border-store-pink/30 hover:border-store-pink/70"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-              Carrinho
-            </Button>
-          </Link>
-
-          {/* Botão de acesso à área administrativa */}
+        {/* Botão de acesso à área administrativa */}
+        <div className="mb-4 sm:mb-6 flex justify-end">
           <Link to="/admin">
             <Button 
               variant="outline" 

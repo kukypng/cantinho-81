@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { CartItem, Product } from "@/types";
 import { toast } from "sonner";
 
@@ -18,7 +18,24 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   
-  // Removemos os useEffects de carregar/salvar do localStorage
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem("cart");
+      if (savedCart) {
+        setItems(JSON.parse(savedCart));
+      }
+    } catch (error) {
+      console.error("Failed to load cart:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("cart", JSON.stringify(items));
+    } catch (error) {
+      console.error("Failed to save cart:", error);
+    }
+  }, [items]);
 
   const addToCart = (product: Product) => {
     setItems(prevItems => {
