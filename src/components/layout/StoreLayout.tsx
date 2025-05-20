@@ -1,13 +1,14 @@
 
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, ArrowRight, Instagram, Phone } from "lucide-react";
+import { ShoppingCart, Menu, ArrowRight, Instagram, Phone, Lock } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/context/AuthContext";
 
 // Interface que define as propriedades do componente StoreLayout
 interface StoreLayoutProps {
@@ -75,6 +76,9 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
   // Verifica se o dispositivo é móvel para adaptar o layout
   const isMobile = useIsMobile();
   
+  // Obtém informações de autenticação
+  const { isAdmin } = useAuth();
+  
   return <div className="flex min-h-screen flex-col bg-gradient-to-br from-white to-gray-50">
       {/* Cabeçalho da loja - pode ser ocultado com a prop showHeader=false */}
       {showHeader && <header className="sticky top-0 z-10 animate-fade-in shadow-md">
@@ -92,6 +96,15 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
 
               {/* Carrinho e menu móvel */}
               <div className="flex items-center gap-2 sm:gap-4">
+                {/* Botão de área administrativa - adicionado ao lado do carrinho */}
+                {isAdmin && (
+                  <Link to="/admin" className="relative btn-pop">
+                    <div className="bg-gray-100 p-1.5 sm:p-2 rounded-full shadow-sm">
+                      <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-store-pink" />
+                    </div>
+                  </Link>
+                )}
+                
                 {/* Ícone do carrinho com contador */}
                 <div className="relative">
                   <Link to="/cart" className="relative btn-pop">

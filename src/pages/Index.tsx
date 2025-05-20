@@ -5,10 +5,9 @@ import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/context/ProductContext";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/context/StoreContext";
-import { MapPin, BellRing, Search, Lock } from "lucide-react";
+import { MapPin, BellRing, Search } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 /**
@@ -70,19 +69,7 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Botão de acesso à área administrativa */}
-        <div className="mb-4 sm:mb-6 flex justify-end">
-          <Link to="/admin">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className={`flex items-center gap-2 ${isAdmin ? 'text-store-pink border-store-pink/30 hover:border-store-pink/70' : 'text-gray-500'}`}
-            >
-              <Lock className="h-3.5 w-3.5" />
-              Área Administrativa
-            </Button>
-          </Link>
-        </div>
+        {/* Removido o botão de acesso à área administrativa daqui */}
         
         {/* Área de avisos personalizados */}
         <div className="mb-4 sm:mb-6 rounded-xl bg-gray-50 p-3 sm:p-4 space-y-3">
