@@ -5,9 +5,11 @@ import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/context/ProductContext";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/context/StoreContext";
-import { MapPin, BellRing, Search } from "lucide-react";
+import { MapPin, BellRing, Search, Lock } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 /**
  * Página inicial da loja
@@ -25,6 +27,9 @@ const Index = () => {
   const {
     settings
   } = useStore();
+
+  // Obtém informações de autenticação
+  const { isAdmin } = useAuth();
 
   // Estado para armazenar a categoria selecionada no filtro
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -63,6 +68,20 @@ const Index = () => {
               className="pl-10 rounded-full shadow-md hover:shadow-lg transition-shadow text-sm h-10"
             />
           </div>
+        </div>
+        
+        {/* Botão de acesso à área administrativa */}
+        <div className="mb-4 sm:mb-6 flex justify-end">
+          <Link to="/admin">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className={`flex items-center gap-2 ${isAdmin ? 'text-store-pink border-store-pink/30 hover:border-store-pink/70' : 'text-gray-500'}`}
+            >
+              <Lock className="h-3.5 w-3.5" />
+              Área Administrativa
+            </Button>
+          </Link>
         </div>
         
         {/* Área de avisos personalizados */}
