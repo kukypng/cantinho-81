@@ -23,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useProducts } from "@/context/ProductContext";
 import { Product } from "@/types";
-import { Edit, Plus, Trash2, Upload, ImagePlus, AlertCircle } from "lucide-react";
+import { Edit, Plus, Trash2, Upload, ImagePlus, AlertCircle, Package, ShoppingCart } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -37,6 +37,8 @@ const emptyProduct: Omit<Product, "id"> = {
   imageUrl: "",
   featured: false,
   category: "",
+  stock: 0,
+  maxPurchaseQuantity: 5
 };
 
 const ProductsPage = () => {
@@ -100,16 +102,16 @@ const ProductsPage = () => {
       return false;
     }
     
-    // Fixed: Correctly handle different price types
+    // Convert to number first for proper validation
     const priceValue = typeof currentProduct.price === 'string' 
       ? parseFloat(currentProduct.price) 
       : currentProduct.price;
       
-    // Check if price is valid
+    // Check if price is valid using type-safe comparison
     if (
       priceValue === 0 || 
       isNaN(priceValue) || 
-      (typeof currentProduct.price === 'string' && currentProduct.price.trim() === '')
+      (typeof currentProduct.price === 'string' && currentProduct.price === '')
     ) {
       setInputError({field: "price", message: "Preço deve ser maior que zero"});
       return false;
@@ -130,13 +132,15 @@ const ProductsPage = () => {
 
     // Garante que price é um número
     const price = typeof currentProduct.price === 'string' 
-      ? parseFloat(currentProduct.price as string) || 0 
+      ? parseFloat(currentProduct.price) || 0 
       : currentProduct.price;
 
     // Add new product
     addProduct({
       ...currentProduct,
-      price
+      price,
+      stock: currentProduct.stock || 0,
+      maxPurchaseQuantity: currentProduct.maxPurchaseQuantity || 5
     } as Omit<Product, "id">);
     
     // Reset form
@@ -151,13 +155,15 @@ const ProductsPage = () => {
 
     // Garante que price é um número
     const price = typeof currentProduct.price === 'string' 
-      ? parseFloat(currentProduct.price as string) || 0 
+      ? parseFloat(currentProduct.price) || 0 
       : currentProduct.price;
 
     // Update existing product
     updateProduct({
       ...currentProduct,
-      price
+      price,
+      stock: currentProduct.stock || 0,
+      maxPurchaseQuantity: currentProduct.maxPurchaseQuantity || 5
     } as Product);
     
     // Reset form
@@ -380,6 +386,41 @@ const ProductsPage = () => {
           placeholder="Categoria do produto"
         />
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor={isEditing ? "edit-stock" : "stock"} className="font-medium flex items-center">
+            <Package className="h-4 w-4 mr-1" /> Estoque
+          </Label>
+          <Input
+            id={isEditing ? "edit-stock" : "stock"}
+            name="stock"
+            type="number"
+            value={currentProduct.stock}
+            onChange={handleInputChange}
+            placeholder="Quantidade em estoque"
+            min="0"
+          />
+        </div>
+        
+        <div className="grid gap-2">
+          <Label htmlFor={isEditing ? "edit-maxPurchaseQuantity" : "maxPurchaseQuantity"} className="font-medium flex items-center">
+            <ShoppingCart className="h-4 w-4 mr-1" /> Máx. por Cliente
+          </Label>
+          <Input
+            id={isEditing ? "edit-maxPurchaseQuantity" : "maxPurchaseQuantity"}
+            name="maxPurchaseQuantity"
+            type="number"
+            value={currentProduct.maxPurchaseQuantity || 5}
+            onChange={handleInputChange}
+            placeholder="Quantidade máxima por cliente"
+            min="1"
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Quantidade máxima que um cliente pode comprar (padrão: 5)
+          </p>
+        </div>
+      </div>
       
       <div className="flex items-center space-x-2 pt-2">
         <Checkbox
@@ -480,6 +521,8 @@ const ProductsPage = () => {
               <TableHead>Nome</TableHead>
               <TableHead>Categoria</TableHead>
               <TableHead className="text-right">Preço</TableHead>
+              <TableHead className="text-center">Estoque</TableHead>
+              <TableHead className="text-center">Máx/Cliente</TableHead>
               <TableHead className="w-[100px]">Destaque</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
@@ -508,6 +551,12 @@ const ProductsPage = () => {
                   <TableCell className="text-right">
                     R$ {product.price.toFixed(2)}
                   </TableCell>
+                  <TableCell className="text-center">
+                    {product.stock || 0}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {product.maxPurchaseQuantity || 5}
+                  </TableCell>
                   <TableCell>
                     {product.featured ? "Sim" : "Não"}
                   </TableCell>
@@ -534,7 +583,7 @@ const ProductsPage = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-gray-500">
+                <TableCell colSpan={8} className="py-8 text-center text-gray-500">
                   Nenhum produto cadastrado. Adicione seu primeiro produto!
                 </TableCell>
               </TableRow>
@@ -547,4 +596,3 @@ const ProductsPage = () => {
 };
 
 export default ProductsPage;
-

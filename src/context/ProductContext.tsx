@@ -34,9 +34,11 @@ const fetchProducts = async (): Promise<Product[]> => {
     name: item.name,
     description: item.description || '',
     price: item.price,
-    imageUrl: item.image_url || '', // Map image_url to imageUrl
+    imageUrl: item.image_url || '',
     featured: item.featured || false,
-    category: item.category || ''
+    category: item.category || '',
+    stock: item.stock || 0,
+    maxPurchaseQuantity: item.max_purchase_quantity || 5
   }));
 };
 
@@ -79,7 +81,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         price: product.price,
         image_url: product.imageUrl,
         featured: product.featured || false,
-        category: product.category || ''
+        category: product.category || '',
+        stock: product.stock || 0,
+        max_purchase_quantity: product.maxPurchaseQuantity || 5
       };
 
       const { data, error } = await supabase
@@ -112,7 +116,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         image_url: rest.imageUrl,
         featured: rest.featured || false,
         category: rest.category || '',
-        updated_at: new Date().toISOString() // Convert Date to ISO string
+        stock: rest.stock || 0,
+        max_purchase_quantity: rest.maxPurchaseQuantity || 5,
+        updated_at: new Date().toISOString()
       };
 
       const { data, error } = await supabase

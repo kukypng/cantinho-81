@@ -1,5 +1,7 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { CartItem, Product } from "@/types";
+import { toast } from "sonner";
 
 interface CartContextType {
   items: CartItem[];
@@ -38,8 +40,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const addToCart = (product: Product) => {
     setItems(prevItems => {
       const existingItem = prevItems.find(item => item.product.id === product.id);
+      const maxQuantity = product.maxPurchaseQuantity || 5;
       
       if (existingItem) {
+        // Verificar se a adição de mais um item ultrapassa o limite máximo
+        if (existingItem.quantity >= maxQuantity) {
+          toast.error(`Quantidade máxima permitida é ${maxQuantity} unidades por cliente`);
+          return prevItems;
+        }
+        
         return prevItems.map(item =>
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
@@ -61,11 +70,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     
-    setItems(prevItems =>
-      prevItems.map(item =>
+    setItems(prevItems => {
+      const item = prevItems.find(item => item.product.id === productId);
+      if (!item) return prevItems;
+      
+      const maxQuantity = item.product.maxPurchaseQuantity || 5;
+      
+      if (quantity > maxQuantity) {
+        toast.error(`Quantidade máxima permitida é ${maxQuantity} unidades por cliente`);
+        return prevItems.map(item =>
+          item.product.id === productId ? { ...item, quantity: maxQuantity } : item
+        );
+      }
+      
+      return prevItems.map(item =>
         item.product.id === productId ? { ...item, quantity } : item
-      )
-    );
+      );
+    });
   };
 
   const clearCart = () => {

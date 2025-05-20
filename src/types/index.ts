@@ -9,7 +9,9 @@
  *   price: 25.90,
  *   imageUrl: "https://...",
  *   featured: true,
- *   category: "Bolos no pote"
+ *   category: "Bolos no pote",
+ *   stock: 100,
+ *   maxPurchaseQuantity: 5
  * }
  */
 export interface Product {
@@ -20,6 +22,8 @@ export interface Product {
   imageUrl: string;
   featured?: boolean;
   category?: string;
+  stock?: number;
+  maxPurchaseQuantity?: number;
 }
 
 /**
