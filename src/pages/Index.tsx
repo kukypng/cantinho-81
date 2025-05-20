@@ -70,20 +70,6 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Botão de acesso à área administrativa */}
-        <div className="mb-4 sm:mb-6 flex justify-end">
-          <Link to="/admin">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className={`flex items-center gap-2 ${isAdmin ? 'text-store-pink border-store-pink/30 hover:border-store-pink/70' : 'text-gray-500'}`}
-            >
-              <Lock className="h-3.5 w-3.5" />
-              Área Administrativa
-            </Button>
-          </Link>
-        </div>
-        
         {/* Área de avisos personalizados */}
         <div className="mb-4 sm:mb-6 rounded-xl bg-gray-50 p-3 sm:p-4 space-y-3">
           {settings.announcements && settings.announcements.length > 0 ? (
@@ -149,6 +135,22 @@ const Index = () => {
               Limpar filtros
             </Button>
           </div>}
+          
+        {/* Botão de acesso à área administrativa - movido para o rodapé da página */}
+        {isAdmin && (
+          <div className="mt-10 text-center">
+            <Link to="/admin">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-gray-500 hover:text-store-pink flex items-center gap-2 opacity-70 hover:opacity-100"
+              >
+                <Lock className="h-3.5 w-3.5" />
+                Área Administrativa
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </StoreLayout>;
 };
