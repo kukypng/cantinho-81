@@ -100,7 +100,8 @@ const ProductsPage = () => {
       return false;
     }
     
-    if (currentProduct.price === "" || currentProduct.price === 0) {
+    // Fix: Check if price is empty string or 0 - this is where the TypeScript error was
+    if (currentProduct.price === "" || (typeof currentProduct.price === 'number' && currentProduct.price === 0)) {
       setInputError({field: "price", message: "Preço deve ser maior que zero"});
       return false;
     }
