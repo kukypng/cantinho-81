@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import { Home, ShoppingCart, User, Lock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -7,7 +7,8 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/s
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
 
-const MobileMenu = () => {
+// Using memo to prevent unnecessary re-renders
+const MobileMenu = memo(() => {
   const { isAuthenticated, isAdmin } = useAuth();
   const { settings } = useStore();
 
@@ -52,6 +53,8 @@ const MobileMenu = () => {
       </SheetContent>
     </Sheet>
   );
-};
+});
+
+MobileMenu.displayName = "MobileMenu";
 
 export default MobileMenu;
