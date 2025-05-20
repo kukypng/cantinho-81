@@ -1,12 +1,14 @@
+
 import React, { useState } from "react";
 import StoreLayout from "@/components/layout/StoreLayout";
 import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/context/ProductContext";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/context/StoreContext";
-import { MapPin, BellRing, Search } from "lucide-react";
+import { MapPin, BellRing, Search, Lock } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 /**
@@ -38,7 +40,7 @@ const Index = () => {
   // Extrai todas as categorias únicas dos produtos
   const categories = Array.from(new Set(products.map(product => product.category).filter(Boolean)));
 
-  // Filtros os produtos pela categoria selecionada e termo de busca
+  // Filtra os produtos pela categoria selecionada e termo de busca
   const filteredProducts = products.filter(product => {
     // Filtro por categoria
     const categoryMatch = selectedCategory ? product.category === selectedCategory : true;
@@ -51,15 +53,6 @@ const Index = () => {
     
     return categoryMatch && searchMatch;
   });
-  
-  // Determina se deve mostrar o aviso de entrega grátis
-  const shouldShowFreeDeliveryNotice = 
-    settings.freeDeliveryThreshold > 0 && 
-    settings.showFreeDeliveryNotice !== false;
-    
-  // Texto personalizado do aviso de entrega grátis
-  const freeDeliveryNoticeText = settings.freeDeliveryNoticeText || 
-    `Entrega Grátis acima de R$ ${settings.freeDeliveryThreshold}`;
   
   return <StoreLayout>
       <div className="container mx-auto px-3 py-4 sm:py-6">
@@ -77,7 +70,19 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Removido o botão de acesso à área administrativa daqui */}
+        {/* Botão de acesso à área administrativa */}
+        <div className="mb-4 sm:mb-6 flex justify-end">
+          <Link to="/admin">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className={`flex items-center gap-2 ${isAdmin ? 'text-store-pink border-store-pink/30 hover:border-store-pink/70' : 'text-gray-500'}`}
+            >
+              <Lock className="h-3.5 w-3.5" />
+              Área Administrativa
+            </Button>
+          </Link>
+        </div>
         
         {/* Área de avisos personalizados */}
         <div className="mb-4 sm:mb-6 rounded-xl bg-gray-50 p-3 sm:p-4 space-y-3">
@@ -92,12 +97,12 @@ const Index = () => {
               </Alert>
             ))
           ) : (
-            // Exibe o banner de entrega grátis apenas se configurado e ativado
-            shouldShowFreeDeliveryNotice && (
+            // Exibe o banner de entrega grátis apenas se o limite estiver configurado e não há avisos personalizados
+            settings.freeDeliveryThreshold && settings.freeDeliveryThreshold > 0 && (
               <div className="flex justify-center">
                 <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-gray-900 bg-store-yellow shadow-md animate-bounce-subtle">
                   <MapPin className="h-4 w-4 text-store-pink" />
-                  {freeDeliveryNoticeText}
+                  Entrega Grátis acima de R$ {settings.freeDeliveryThreshold}
                 </div>
               </div>
             )

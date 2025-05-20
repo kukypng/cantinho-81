@@ -22,9 +22,6 @@ const Settings = () => {
     whatsappNumber: settings.whatsappNumber,
     deliveryFee: settings.deliveryFee,
     freeDeliveryThreshold: settings.freeDeliveryThreshold || 0,
-    freeDeliveryEnabled: settings.freeDeliveryThreshold > 0,
-    showFreeDeliveryNotice: settings.showFreeDeliveryNotice !== false,
-    freeDeliveryNoticeText: settings.freeDeliveryNoticeText || `Entrega Grátis acima de R$ ${settings.freeDeliveryThreshold}`,
     welcomeMessage: settings.welcomeMessage || "",
     footerMessage: settings.footerMessage || "",
     customCakeMessage: settings.customCakeMessage || "",
@@ -49,13 +46,6 @@ const Settings = () => {
         [name]: value,
       });
     }
-  };
-
-  const handleToggleChange = (name: string, value: boolean) => {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
   };
 
   const handleAnnouncementAdd = () => {
@@ -94,18 +84,13 @@ const Settings = () => {
     // Filter out empty announcements
     const filteredAnnouncements = formData.announcements.filter(ann => ann.trim() !== "");
     
-    // Set freeDeliveryThreshold to 0 if free delivery is disabled
-    const freeDeliveryThreshold = formData.freeDeliveryEnabled ? formData.freeDeliveryThreshold : 0;
-    
     // Update settings
     updateSettings({
       ...settings,
       storeName: formData.storeName,
       whatsappNumber: formData.whatsappNumber,
       deliveryFee: formData.deliveryFee,
-      freeDeliveryThreshold: freeDeliveryThreshold,
-      showFreeDeliveryNotice: formData.showFreeDeliveryNotice,
-      freeDeliveryNoticeText: formData.freeDeliveryNoticeText,
+      freeDeliveryThreshold: formData.freeDeliveryThreshold,
       welcomeMessage: formData.welcomeMessage,
       footerMessage: formData.footerMessage,
       customCakeMessage: formData.customCakeMessage,
@@ -149,9 +134,7 @@ const Settings = () => {
             <DeliverySettingsSection
               deliveryFee={formData.deliveryFee}
               freeDeliveryThreshold={formData.freeDeliveryThreshold}
-              freeDeliveryEnabled={formData.freeDeliveryEnabled}
               onInputChange={handleInputChange}
-              onToggleChange={handleToggleChange}
             />
 
             <CouponsSection 
@@ -166,15 +149,10 @@ const Settings = () => {
               footerMessage={formData.footerMessage}
               customCakeMessage={formData.customCakeMessage}
               announcements={formData.announcements}
-              freeDeliveryThreshold={formData.freeDeliveryThreshold}
-              showFreeDeliveryNotice={formData.showFreeDeliveryNotice}
-              freeDeliveryEnabled={formData.freeDeliveryEnabled}
-              freeDeliveryNoticeText={formData.freeDeliveryNoticeText}
               onInputChange={handleInputChange}
               onAnnouncementAdd={handleAnnouncementAdd}
               onAnnouncementChange={handleAnnouncementChange}
               onAnnouncementRemove={handleAnnouncementRemove}
-              onToggleChange={handleToggleChange}
             />
 
             <SocialMediaSection

@@ -9,11 +9,7 @@ import couponsConfig from '@/config/coupons.json';
  * Hook para acessar as configurações do site de forma centralizada
  */
 export function useConfig() {
-  const [store] = useState({
-    ...storeConfig,
-    showFreeDeliveryNotice: storeConfig.showFreeDeliveryNotice !== false,
-    freeDeliveryNoticeText: storeConfig.freeDeliveryNoticeText || `Entrega Grátis acima de R$ ${storeConfig.freeDeliveryThreshold}`
-  });
+  const [store] = useState(storeConfig);
   const [appearance] = useState(appearanceConfig);
   const [products] = useState(productsConfig);
   const [coupons] = useState(couponsConfig);

@@ -5,25 +5,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Trash2, TruckIcon } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import HelpTooltip from "./HelpTooltip";
-import { Switch } from "@/components/ui/switch";
-import { Toggle } from "@/components/ui/toggle";
 
 interface MessagesSectionProps {
   welcomeMessage: string;
   footerMessage: string;
   customCakeMessage: string;
   announcements: string[];
-  freeDeliveryThreshold: number;
-  showFreeDeliveryNotice: boolean;
-  freeDeliveryEnabled: boolean;
-  freeDeliveryNoticeText: string;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onAnnouncementAdd: () => void;
   onAnnouncementChange: (index: number, value: string) => void;
   onAnnouncementRemove: (index: number) => void;
-  onToggleChange: (name: string, value: boolean) => void;
 }
 
 const MessagesSection: React.FC<MessagesSectionProps> = ({
@@ -31,77 +24,17 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({
   footerMessage,
   customCakeMessage,
   announcements = [],
-  freeDeliveryThreshold,
-  showFreeDeliveryNotice,
-  freeDeliveryEnabled,
-  freeDeliveryNoticeText,
   onInputChange,
   onAnnouncementAdd,
   onAnnouncementChange,
-  onAnnouncementRemove,
-  onToggleChange
+  onAnnouncementRemove
 }) => {
   return (
     <Card>
       <CardContent className="pt-6">
         <h2 className="text-lg font-semibold mb-4">Mensagens e Avisos</h2>
         
-        <div className="space-y-6">
-          {/* Free Delivery Settings */}
-          <div className="border rounded-md p-4 bg-gray-50/50">
-            <h3 className="text-md font-medium mb-3 flex items-center gap-2">
-              <TruckIcon className="h-4 w-4" />
-              Configurações de Entrega Grátis
-            </h3>
-            
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="freeDeliveryEnabled">Ativar Entrega Grátis</Label>
-                  <p className="text-xs text-gray-500">
-                    Quando ativado, a entrega será gratuita para pedidos acima do valor configurado
-                  </p>
-                </div>
-                <Switch
-                  id="freeDeliveryEnabled"
-                  checked={freeDeliveryEnabled}
-                  onCheckedChange={(checked) => onToggleChange("freeDeliveryEnabled", checked)}
-                />
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="showFreeDeliveryNotice">Mostrar Aviso de Entrega Grátis</Label>
-                  <p className="text-xs text-gray-500">
-                    Exibe um aviso na página inicial sobre a entrega grátis
-                  </p>
-                </div>
-                <Switch
-                  id="showFreeDeliveryNotice"
-                  checked={showFreeDeliveryNotice}
-                  onCheckedChange={(checked) => onToggleChange("showFreeDeliveryNotice", checked)}
-                  disabled={!freeDeliveryEnabled}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="freeDeliveryNoticeText" className="flex items-center gap-2">
-                  Texto do Aviso de Entrega Grátis
-                  <HelpTooltip text="Este texto será exibido no aviso de entrega grátis na página inicial" />
-                </Label>
-                <Input
-                  id="freeDeliveryNoticeText"
-                  name="freeDeliveryNoticeText"
-                  value={freeDeliveryNoticeText}
-                  onChange={onInputChange}
-                  placeholder="Entrega Grátis acima de R$ 28"
-                  disabled={!freeDeliveryEnabled || !showFreeDeliveryNotice}
-                  className="mt-1"
-                />
-              </div>
-            </div>
-          </div>
-          
+        <div className="space-y-4">
           <div>
             <Label htmlFor="welcomeMessage" className="flex items-center gap-2">
               Mensagem de Boas-vindas
@@ -113,7 +46,6 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({
               value={welcomeMessage}
               onChange={onInputChange}
               placeholder="Bem-vindo à nossa loja!"
-              className="mt-1"
             />
           </div>
           
@@ -128,7 +60,6 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({
               value={footerMessage}
               onChange={onInputChange}
               placeholder="Feito com amor ❤️"
-              className="mt-1"
             />
           </div>
           
@@ -144,7 +75,6 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({
               onChange={onInputChange}
               placeholder="Descreva seu bolo personalizado e entraremos em contato com um orçamento."
               rows={3}
-              className="mt-1"
             />
           </div>
           

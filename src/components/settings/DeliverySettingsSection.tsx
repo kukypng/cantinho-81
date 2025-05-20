@@ -10,7 +10,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Switch } from "@/components/ui/switch";
 
 interface HelpTooltipProps {
   text: string;
@@ -32,17 +31,13 @@ const HelpTooltip = ({ text }: HelpTooltipProps) => (
 interface DeliverySettingsSectionProps {
   deliveryFee: number;
   freeDeliveryThreshold: number;
-  freeDeliveryEnabled: boolean;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onToggleChange: (name: string, value: boolean) => void;
 }
 
 const DeliverySettingsSection = ({
   deliveryFee,
   freeDeliveryThreshold,
-  freeDeliveryEnabled,
-  onInputChange,
-  onToggleChange
+  onInputChange
 }: DeliverySettingsSectionProps) => {
   return (
     <Card>
@@ -73,20 +68,6 @@ const DeliverySettingsSection = ({
           />
         </div>
 
-        <div className="flex items-center justify-between pt-2">
-          <div className="space-y-0.5">
-            <Label htmlFor="freeDeliveryEnabled">Entrega Grátis</Label>
-            <p className="text-xs text-gray-500">
-              Ativar entrega grátis para pedidos acima de um valor mínimo
-            </p>
-          </div>
-          <Switch
-            id="freeDeliveryEnabled"
-            checked={freeDeliveryEnabled}
-            onCheckedChange={(checked) => onToggleChange("freeDeliveryEnabled", checked)}
-          />
-        </div>
-
         <div className="grid gap-2">
           <div className="flex items-center">
             <Label htmlFor="freeDeliveryThreshold">
@@ -103,17 +84,10 @@ const DeliverySettingsSection = ({
             value={freeDeliveryThreshold}
             onChange={onInputChange}
             placeholder="0.00"
-            disabled={!freeDeliveryEnabled}
           />
-          {freeDeliveryEnabled ? (
-            <p className="text-xs text-gray-500">
-              Pedidos acima de R$ {freeDeliveryThreshold} terão entrega grátis.
-            </p>
-          ) : (
-            <p className="text-xs text-gray-500">
-              Entrega grátis está desativada.
-            </p>
-          )}
+          <p className="text-xs text-gray-500">
+            Deixe como 0 para desativar a entrega grátis.
+          </p>
         </div>
       </CardContent>
     </Card>

@@ -14,8 +14,6 @@
     "instagram": "https://instagram.com/cantinhoda.ysa",
     "whatsapp": "https://wa.me/5564999421093"
   },
-  "showFreeDeliveryNotice": true,
-  "freeDeliveryNoticeText": "Entrega Grátis acima de R$ 28",
   
   "___AJUDA___": {
     "storeName": "Nome da sua loja que aparece no site",
@@ -26,8 +24,6 @@
     "footerMessage": "Mensagem que aparece no rodapé de todas as páginas",
     "customCakeMessage": "Texto que aparece no formulário de bolos personalizados",
     "announcements": "Lista de avisos que aparecem no topo da página inicial (deixe vazio para não mostrar)",
-    "socialMedia": "Links para suas redes sociais (deixe em branco se não tiver)",
-    "showFreeDeliveryNotice": "Ativa ou desativa o aviso de entrega grátis",
-    "freeDeliveryNoticeText": "Texto personalizado para o aviso de entrega grátis"
+    "socialMedia": "Links para suas redes sociais (deixe em branco se não tiver)"
   }
 }
