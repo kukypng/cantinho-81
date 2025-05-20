@@ -1,4 +1,3 @@
-
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu, ArrowRight, Instagram, Phone, Lock } from "lucide-react";
@@ -96,7 +95,14 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
 
               {/* Carrinho e menu móvel */}
               <div className="flex items-center gap-2 sm:gap-4">
-                {/* Botão de área administrativa - adicionado ao lado do carrinho */}
+                {/* Botão de login para admin - visível para todos */}
+                <Link to="/login" className="relative btn-pop">
+                  <div className="bg-gray-100 p-1.5 sm:p-2 rounded-full shadow-sm">
+                    <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-store-pink" />
+                  </div>
+                </Link>
+                
+                {/* Botão de área administrativa - mostrado apenas para admins */}
                 {isAdmin && (
                   <Link to="/admin" className="relative btn-pop">
                     <div className="bg-gray-100 p-1.5 sm:p-2 rounded-full shadow-sm">
