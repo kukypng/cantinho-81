@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Coupon } from "@/types";
 import { toast } from "sonner";
@@ -52,16 +51,22 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Usar React Query para buscar os cupons
+  // Usar React Query para buscar os cupons - fix onSettled issue
   const { 
     data: coupons = [], 
     isLoading, 
     error 
   } = useQuery({
     queryKey: ['coupons'],
-    queryFn: fetchCoupons,
-    onSettled: () => setIsLoaded(true)
+    queryFn: fetchCoupons
   });
+  
+  // Update isLoaded state when query completes
+  React.useEffect(() => {
+    if (!isLoading) {
+      setIsLoaded(true);
+    }
+  }, [isLoading]);
 
   // Carregar o cupom aplicado do localStorage
   useEffect(() => {

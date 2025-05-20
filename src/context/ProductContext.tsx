@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext } from "react";
 import { Product } from "@/types";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,7 +28,16 @@ const fetchProducts = async (): Promise<Product[]> => {
     throw new Error(error.message);
   }
   
-  return data as Product[];
+  // Transform Supabase data to match our Product interface
+  return data.map((item: any) => ({
+    id: item.id,
+    name: item.name,
+    description: item.description || '',
+    price: item.price,
+    imageUrl: item.image_url || '', // Map image_url to imageUrl
+    featured: item.featured || false,
+    category: item.category || ''
+  }));
 };
 
 export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -43,9 +52,19 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Mutação para adicionar produto
   const addProductMutation = useMutation({
     mutationFn: async (product: Omit<Product, "id">) => {
+      // Transform the product to match Supabase schema
+      const dbProduct = {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        image_url: product.imageUrl,
+        featured: product.featured || false,
+        category: product.category || ''
+      };
+
       const { data, error } = await supabase
         .from('products')
-        .insert(product)
+        .insert(dbProduct)
         .select()
         .single();
       
@@ -65,9 +84,20 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const updateProductMutation = useMutation({
     mutationFn: async (product: Product) => {
       const { id, ...rest } = product;
+      // Transform the product to match Supabase schema
+      const dbProduct = {
+        name: rest.name,
+        description: rest.description,
+        price: rest.price,
+        image_url: rest.imageUrl,
+        featured: rest.featured || false,
+        category: rest.category || '',
+        updated_at: new Date().toISOString() // Convert Date to ISO string
+      };
+
       const { data, error } = await supabase
         .from('products')
-        .update({ ...rest, updated_at: new Date() })
+        .update(dbProduct)
         .eq('id', id)
         .select()
         .single();

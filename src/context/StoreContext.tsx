@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { StoreSettings } from "@/types";
 import defaultSettingsData from "@/config/defaultSettings.json";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,7 +49,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const queryClient = useQueryClient();
   const [isLoaded, setIsLoaded] = useState(false);
   
-  // Usar React Query para buscar as configurações
+  // Usar React Query para buscar as configurações - fix onSettled issue
   const { 
     data: settings = defaultSettingsData as StoreSettings, 
     isLoading, 
@@ -57,8 +57,15 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   } = useQuery({
     queryKey: ['storeSettings'],
     queryFn: fetchStoreSettings,
-    onSettled: () => setIsLoaded(true)
+    // Remove onSettled and handle state change differently
   });
+
+  // Update isLoaded state when query completes
+  React.useEffect(() => {
+    if (!isLoading) {
+      setIsLoaded(true);
+    }
+  }, [isLoading]);
 
   // Mutação para atualizar as configurações
   const updateSettingsMutation = useMutation({
