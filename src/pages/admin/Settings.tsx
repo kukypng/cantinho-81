@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -40,7 +39,7 @@ const Settings = () => {
     if (e.target instanceof HTMLInputElement && e.target.type === "number") {
       setFormData({
         ...formData,
-        [name]: value === "" ? "" : parseFloat(value) || 0,
+        [name]: value === "" ? 0 : parseFloat(value) || 0,
       });
     } else {
       // Para campos de texto normais
@@ -87,23 +86,18 @@ const Settings = () => {
     // Filter out empty announcements
     const filteredAnnouncements = formData.announcements.filter(ann => ann.trim() !== "");
     
-    // Converter valores vazios de campos numéricos para 0
-    const processedData = {
-      ...formData,
-      deliveryFee: formData.deliveryFee === "" ? 0 : Number(formData.deliveryFee),
-      freeDeliveryThreshold: formData.freeDeliveryThreshold === "" ? 0 : Number(formData.freeDeliveryThreshold)
-    };
+    // Processamento já feito no handleInputChange, então não é necessário converter novamente
     
     // Update settings
     updateSettings({
       ...settings,
-      storeName: processedData.storeName,
-      whatsappNumber: processedData.whatsappNumber,
-      deliveryFee: processedData.deliveryFee,
-      freeDeliveryThreshold: processedData.freeDeliveryThreshold,
-      welcomeMessage: processedData.welcomeMessage,
-      footerMessage: processedData.footerMessage,
-      customCakeMessage: processedData.customCakeMessage,
+      storeName: formData.storeName,
+      whatsappNumber: formData.whatsappNumber,
+      deliveryFee: formData.deliveryFee,
+      freeDeliveryThreshold: formData.freeDeliveryThreshold,
+      welcomeMessage: formData.welcomeMessage,
+      footerMessage: formData.footerMessage,
+      customCakeMessage: formData.customCakeMessage,
       announcements: filteredAnnouncements,
       socialMedia
     });
