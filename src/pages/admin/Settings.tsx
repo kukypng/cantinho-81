@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -37,40 +38,44 @@ const Settings = () => {
     
     // Verifica se é um campo numérico
     if (e.target instanceof HTMLInputElement && e.target.type === "number") {
-      setFormData({
-        ...formData,
+      setFormData((prev) => ({
+        ...prev,
         [name]: value === "" ? 0 : parseFloat(value) || 0,
-      });
+      }));
     } else {
       // Para campos de texto normais
-      setFormData({
-        ...formData,
+      setFormData((prev) => ({
+        ...prev,
         [name]: value,
-      });
+      }));
     }
   };
 
   const handleAnnouncementAdd = () => {
-    setFormData({
-      ...formData,
-      announcements: [...formData.announcements, ""]
-    });
+    setFormData((prev) => ({
+      ...prev,
+      announcements: [...prev.announcements, ""]
+    }));
   };
 
   const handleAnnouncementChange = (index: number, value: string) => {
-    const updatedAnnouncements = [...formData.announcements];
-    updatedAnnouncements[index] = value;
-    setFormData({
-      ...formData,
-      announcements: updatedAnnouncements
+    setFormData((prev) => {
+      const updatedAnnouncements = [...prev.announcements];
+      updatedAnnouncements[index] = value;
+      return {
+        ...prev,
+        announcements: updatedAnnouncements
+      };
     });
   };
 
   const handleAnnouncementRemove = (index: number) => {
-    const updatedAnnouncements = formData.announcements.filter((_, i) => i !== index);
-    setFormData({
-      ...formData,
-      announcements: updatedAnnouncements
+    setFormData((prev) => {
+      const updatedAnnouncements = prev.announcements.filter((_, i) => i !== index);
+      return {
+        ...prev,
+        announcements: updatedAnnouncements
+      };
     });
   };
 
@@ -85,8 +90,6 @@ const Settings = () => {
     
     // Filter out empty announcements
     const filteredAnnouncements = formData.announcements.filter(ann => ann.trim() !== "");
-    
-    // Processamento já feito no handleInputChange, então não é necessário converter novamente
     
     // Update settings
     updateSettings({
