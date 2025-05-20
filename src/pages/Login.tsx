@@ -1,33 +1,53 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, ChevronLeft } from "lucide-react";
+import { Loader2, ChevronLeft, AlertCircle } from "lucide-react";
 import StoreLayout from "@/components/layout/StoreLayout";
 import { useStore } from "@/context/StoreContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 interface LocationState {
   from?: {
     pathname: string;
   };
+  message?: string;
 }
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+  const { login, isAuthenticated, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { settings } = useStore();
   
   const from = (location.state as LocationState)?.from?.pathname || "/admin";
+  const message = (location.state as LocationState)?.message;
+
+  // Redirecionar se já estiver autenticado como admin
+  useEffect(() => {
+    if (isAuthenticated && isAdmin) {
+      navigate("/admin");
+    }
+  }, [isAuthenticated, isAdmin, navigate]);
+
+  // Mostrar mensagem se existir
+  useEffect(() => {
+    if (message) {
+      toast.error(message);
+    }
+  }, [message]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsLoading(true);
     
     try {
@@ -36,6 +56,8 @@ const Login = () => {
         // Redirect to the page they tried to visit or admin dashboard
         navigate(from, { replace: true });
       }
+    } catch (err: any) {
+      setError(err.message || "Erro ao fazer login");
     } finally {
       setIsLoading(false);
     }
@@ -64,6 +86,13 @@ const Login = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {error && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="email" className="text-sm font-medium">
@@ -72,7 +101,7 @@ const Login = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="vai embora"
+                    placeholder="seu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -108,7 +137,7 @@ const Login = () => {
               </form>
             </CardContent>
             <CardFooter className="justify-center text-center text-sm text-gray-500">
-              <p>Sai daqui demonio</p>
+              <p>Acesso restrito a administradores</p>
             </CardFooter>
           </Card>
         </div>

@@ -19,9 +19,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  if (!isAuthenticated || !isAdmin) {
+  if (!isAuthenticated) {
     // Redirect to login and remember where they were trying to go
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (!isAdmin) {
+    // Usuário está autenticado mas não é admin
+    return <Navigate to="/" state={{ message: "Acesso restrito a administradores" }} replace />;
   }
 
   return <>{children}</>;

@@ -1,8 +1,9 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Coupon } from "@/types";
-import configCoupons from "@/config/coupons.json";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface CouponContextType {
   coupons: Coupon[];
@@ -12,52 +13,69 @@ interface CouponContextType {
   removeCoupon: () => void;
   calculateDiscount: (subtotal: number, deliveryFee: number) => number;
   isLoaded: boolean;
-  updateCoupon: (coupon: Coupon) => void;
-  addCoupon: (coupon: Omit<Coupon, "active" | "usageCount">) => void;
-  deleteCoupon: (code: string) => void;
+  isLoading: boolean;
+  updateCoupon: (coupon: Coupon) => Promise<void>;
+  addCoupon: (coupon: Omit<Coupon, "active" | "usageCount">) => Promise<void>;
+  deleteCoupon: (code: string) => Promise<void>;
+  error: Error | null;
 }
 
 const CouponContext = createContext<CouponContextType | undefined>(undefined);
 
+// Função para buscar cupons do Supabase
+const fetchCoupons = async (): Promise<Coupon[]> => {
+  const { data, error } = await supabase
+    .from('coupons')
+    .select('*')
+    .order('code');
+  
+  if (error) {
+    throw new Error(error.message);
+  }
+  
+  // Converter do formato do banco para o formato da aplicação
+  return data.map((item: any) => ({
+    code: item.code,
+    discountType: item.discount_type as "percentage" | "fixed",
+    discountValue: item.discount_value,
+    minOrderValue: item.min_order_value || 0,
+    active: item.active,
+    description: item.description || '',
+    expiryDate: item.expiry_date,
+    usageLimit: item.usage_limit,
+    usageCount: item.usage_count || 0
+  }));
+};
+
 export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const queryClient = useQueryClient();
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load coupons from localStorage on mount, falling back to config file
+  // Usar React Query para buscar os cupons
+  const { 
+    data: coupons = [], 
+    isLoading, 
+    error 
+  } = useQuery({
+    queryKey: ['coupons'],
+    queryFn: fetchCoupons,
+    onSettled: () => setIsLoaded(true)
+  });
+
+  // Carregar o cupom aplicado do localStorage
   useEffect(() => {
     try {
-      const savedCoupons = localStorage.getItem("coupons");
-      if (savedCoupons) {
-        setCoupons(JSON.parse(savedCoupons));
-      } else {
-        // Use coupons from config file if none found in localStorage
-        setCoupons(configCoupons as Coupon[]);
-        localStorage.setItem("coupons", JSON.stringify(configCoupons));
-      }
-      
-      // Load applied coupon from localStorage if exists
       const savedAppliedCoupon = localStorage.getItem("appliedCoupon");
       if (savedAppliedCoupon) {
         setAppliedCoupon(JSON.parse(savedAppliedCoupon));
       }
-      
-      setIsLoaded(true);
     } catch (error) {
-      console.error("Failed to load coupons:", error);
-      setCoupons(configCoupons as Coupon[]);
-      setIsLoaded(true);
+      console.error("Failed to load applied coupon:", error);
     }
   }, []);
 
-  // Save coupons to localStorage whenever they change
-  useEffect(() => {
-    if (isLoaded && coupons.length > 0) {
-      localStorage.setItem("coupons", JSON.stringify(coupons));
-    }
-  }, [coupons, isLoaded]);
-
-  // Save applied coupon to localStorage whenever it changes
+  // Salvar o cupom aplicado no localStorage
   useEffect(() => {
     if (isLoaded) {
       try {
@@ -72,44 +90,115 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [appliedCoupon, isLoaded]);
 
-  // Add a new coupon
-  const addCoupon = (coupon: Omit<Coupon, "active" | "usageCount">) => {
-    const newCoupon: Coupon = {
-      ...coupon,
-      active: true,
-      usageCount: 0
-    };
-    
-    setCoupons(prev => [...prev, newCoupon]);
-    toast.success(`Cupom "${coupon.code}" adicionado com sucesso!`);
-  };
+  // Mutação para adicionar cupom
+  const addCouponMutation = useMutation({
+    mutationFn: async (coupon: Omit<Coupon, "active" | "usageCount">) => {
+      // Converter para o formato do banco
+      const dbCoupon = {
+        code: coupon.code,
+        discount_type: coupon.discountType,
+        discount_value: coupon.discountValue,
+        min_order_value: coupon.minOrderValue,
+        active: true,
+        description: coupon.description,
+        expiry_date: coupon.expiryDate,
+        usage_limit: coupon.usageLimit,
+        usage_count: 0
+      };
 
-  // Update an existing coupon
-  const updateCoupon = (coupon: Coupon) => {
-    setCoupons(prev => 
-      prev.map(c => c.code === coupon.code ? coupon : c)
-    );
-    
-    // If this is the currently applied coupon, update it too
-    if (appliedCoupon && appliedCoupon.code === coupon.code) {
-      setAppliedCoupon(coupon);
+      const { data, error } = await supabase
+        .from('coupons')
+        .insert(dbCoupon)
+        .select()
+        .single();
+      
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coupons'] });
+      toast.success("Cupom adicionado com sucesso!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao adicionar cupom: ${error.message}`);
     }
-    
-    toast.success(`Cupom "${coupon.code}" atualizado com sucesso!`);
+  });
+
+  // Mutação para atualizar cupom
+  const updateCouponMutation = useMutation({
+    mutationFn: async (coupon: Coupon) => {
+      // Converter para o formato do banco
+      const dbCoupon = {
+        code: coupon.code,
+        discount_type: coupon.discountType,
+        discount_value: coupon.discountValue,
+        min_order_value: coupon.minOrderValue,
+        active: coupon.active,
+        description: coupon.description,
+        expiry_date: coupon.expiryDate,
+        usage_limit: coupon.usageLimit,
+        usage_count: coupon.usageCount || 0
+      };
+
+      const { data, error } = await supabase
+        .from('coupons')
+        .update(dbCoupon)
+        .eq('code', coupon.code)
+        .select()
+        .single();
+      
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coupons'] });
+      toast.success("Cupom atualizado com sucesso!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao atualizar cupom: ${error.message}`);
+    }
+  });
+
+  // Mutação para deletar cupom
+  const deleteCouponMutation = useMutation({
+    mutationFn: async (code: string) => {
+      const { error } = await supabase
+        .from('coupons')
+        .delete()
+        .eq('code', code);
+      
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coupons'] });
+      toast.success("Cupom removido com sucesso!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao remover cupom: ${error.message}`);
+    }
+  });
+
+  // Adicionar um novo cupom
+  const addCoupon = async (coupon: Omit<Coupon, "active" | "usageCount">) => {
+    await addCouponMutation.mutateAsync(coupon);
   };
 
-  // Delete a coupon
-  const deleteCoupon = (code: string) => {
-    setCoupons(prev => prev.filter(c => c.code !== code));
-    
-    // If this is the currently applied coupon, remove it
+  // Atualizar um cupom existente
+  const updateCoupon = async (coupon: Coupon) => {
+    await updateCouponMutation.mutateAsync(coupon);
+  };
+
+  // Deletar um cupom
+  const deleteCoupon = async (code: string) => {
+    // Se este é o cupom aplicado, removê-lo
     if (appliedCoupon && appliedCoupon.code === code) {
       setAppliedCoupon(null);
     }
     
-    toast.success(`Cupom "${code}" removido com sucesso!`);
+    await deleteCouponMutation.mutateAsync(code);
   };
 
+  // Validar cupom (verifica se é válido para a compra)
   const validateCoupon = (code: string, orderTotal: number) => {
     const normalizedCode = code.toUpperCase();
     const coupon = coupons.find(c => c.code.toUpperCase() === normalizedCode);
@@ -140,8 +229,9 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return { valid: true, coupon };
   };
 
+  // Aplicar cupom
   const applyCoupon = (code: string) => {
-    // If a coupon is already applied, remove it first
+    // Remover cupom existente
     if (appliedCoupon) {
       setAppliedCoupon(null);
     }
@@ -157,8 +247,6 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return { success: false, message: "Este cupom não está mais ativo" };
     }
     
-    // We don't check minOrderValue here because it's checked during checkout
-    
     if (coupon.expiryDate && new Date() > new Date(coupon.expiryDate)) {
       return { success: false, message: "Este cupom está expirado" };
     }
@@ -167,7 +255,7 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return { success: false, message: "Este cupom atingiu o limite de uso" };
     }
     
-    // Apply the coupon
+    // Aplicar o cupom
     setAppliedCoupon(coupon);
     
     return { 
@@ -176,14 +264,16 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
   };
   
+  // Remover cupom aplicado
   const removeCoupon = () => {
     setAppliedCoupon(null);
   };
   
+  // Calcular o desconto baseado no cupom aplicado
   const calculateDiscount = (subtotal: number, deliveryFee: number) => {
     if (!appliedCoupon) return 0;
     
-    // Check if the minimum order value is met
+    // Verificar se atinge o valor mínimo
     if (appliedCoupon.minOrderValue && subtotal < appliedCoupon.minOrderValue) return 0;
     
     let discountAmount = 0;
@@ -191,16 +281,16 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (appliedCoupon.discountType === "percentage") {
       discountAmount = subtotal * (appliedCoupon.discountValue / 100);
     } else if (appliedCoupon.discountType === "fixed") {
-      // Fixed amount discount
+      // Desconto de valor fixo
       discountAmount = appliedCoupon.discountValue;
       
-      // For shipping discounts (like "FRETEGRATIS"), apply to delivery fee
+      // Para descontos de frete (como "FRETEGRATIS")
       if (appliedCoupon.discountValue === deliveryFee) {
         discountAmount = deliveryFee;
       }
     }
     
-    // Don't allow discount to exceed total
+    // Não permitir que o desconto exceda o total
     const total = subtotal + deliveryFee;
     return Math.min(discountAmount, total);
   };
@@ -214,9 +304,11 @@ export const CouponProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       removeCoupon,
       calculateDiscount,
       isLoaded,
+      isLoading,
       updateCoupon,
       addCoupon,
-      deleteCoupon
+      deleteCoupon,
+      error: error as Error | null
     }}>
       {children}
     </CouponContext.Provider>

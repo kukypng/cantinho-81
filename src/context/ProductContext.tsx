@@ -2,70 +2,120 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Product } from "@/types";
 import { toast } from "sonner";
-import configProducts from "@/config/products.json";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface ProductContextType {
   products: Product[];
   featuredProducts: Product[];
   getProductById: (id: string) => Product | undefined;
-  addProduct: (product: Omit<Product, "id">) => void;
-  updateProduct: (product: Product) => void;
-  deleteProduct: (id: string) => void;
+  addProduct: (product: Omit<Product, "id">) => Promise<void>;
+  updateProduct: (product: Product) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
+  isLoading: boolean;
+  error: Error | null;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
+const fetchProducts = async (): Promise<Product[]> => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    throw new Error(error.message);
+  }
+  
+  return data as Product[];
+};
+
 export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>([]);
+  // Use React Query para gerenciar dados
+  const queryClient = useQueryClient();
+  
+  const { data: products = [], isLoading, error } = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+  });
 
-  // Load products from localStorage on mount, falling back to config file
-  useEffect(() => {
-    try {
-      const savedProducts = localStorage.getItem("products");
-      if (savedProducts) {
-        setProducts(JSON.parse(savedProducts));
-      } else {
-        // Use products from config file if none found in localStorage
-        setProducts(configProducts as Product[]);
-        localStorage.setItem("products", JSON.stringify(configProducts));
-      }
-    } catch (error) {
-      console.error("Failed to load products:", error);
-      // Fall back to config products
-      setProducts(configProducts as Product[]);
+  // Mutação para adicionar produto
+  const addProductMutation = useMutation({
+    mutationFn: async (product: Omit<Product, "id">) => {
+      const { data, error } = await supabase
+        .from('products')
+        .insert(product)
+        .select()
+        .single();
+      
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      toast.success("Produto adicionado com sucesso!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao adicionar produto: ${error.message}`);
     }
-  }, []);
+  });
 
-  // Save products to localStorage whenever they change
-  useEffect(() => {
-    if (products.length > 0) {
-      localStorage.setItem("products", JSON.stringify(products));
+  // Mutação para atualizar produto
+  const updateProductMutation = useMutation({
+    mutationFn: async (product: Product) => {
+      const { id, ...rest } = product;
+      const { data, error } = await supabase
+        .from('products')
+        .update({ ...rest, updated_at: new Date() })
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      toast.success("Produto atualizado com sucesso!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao atualizar produto: ${error.message}`);
     }
-  }, [products]);
+  });
 
-  // Add a new product
-  const addProduct = (product: Omit<Product, "id">) => {
-    const newProduct: Product = {
-      ...product,
-      id: Date.now().toString(), // Simple ID generation
-    };
-    
-    setProducts(prev => [...prev, newProduct]);
-    toast.success("Produto adicionado com sucesso!");
+  // Mutação para deletar produto
+  const deleteProductMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      toast.success("Produto removido com sucesso!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao remover produto: ${error.message}`);
+    }
+  });
+
+  // Adicionar um novo produto
+  const addProduct = async (product: Omit<Product, "id">) => {
+    await addProductMutation.mutateAsync(product);
   };
 
-  // Update an existing product
-  const updateProduct = (product: Product) => {
-    setProducts(prev => 
-      prev.map(p => p.id === product.id ? product : p)
-    );
-    toast.success("Produto atualizado com sucesso!");
+  // Atualizar um produto existente
+  const updateProduct = async (product: Product) => {
+    await updateProductMutation.mutateAsync(product);
   };
 
-  // Delete a product
-  const deleteProduct = (id: string) => {
-    setProducts(prev => prev.filter(p => p.id !== id));
-    toast.success("Produto removido com sucesso!");
+  // Deletar um produto
+  const deleteProduct = async (id: string) => {
+    await deleteProductMutation.mutateAsync(id);
   };
 
   const getProductById = (id: string) => {
@@ -82,7 +132,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         featuredProducts,
         addProduct,
         updateProduct,
-        deleteProduct
+        deleteProduct,
+        isLoading,
+        error: error as Error | null
       }}
     >
       {children}

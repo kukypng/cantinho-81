@@ -9,16 +9,177 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      announcements: {
+        Row: {
+          active: boolean | null
+          content: string
+          created_at: string | null
+          id: string
+          order: number | null
+        }
+        Insert: {
+          active?: boolean | null
+          content: string
+          created_at?: string | null
+          id?: string
+          order?: number | null
+        }
+        Update: {
+          active?: boolean | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          order?: number | null
+        }
+        Relationships: []
+      }
+      coupons: {
+        Row: {
+          active: boolean | null
+          code: string
+          description: string | null
+          discount_type: string
+          discount_value: number
+          expiry_date: string | null
+          id: string
+          min_order_value: number | null
+          usage_count: number | null
+          usage_limit: number | null
+        }
+        Insert: {
+          active?: boolean | null
+          code: string
+          description?: string | null
+          discount_type: string
+          discount_value: number
+          expiry_date?: string | null
+          id?: string
+          min_order_value?: number | null
+          usage_count?: number | null
+          usage_limit?: number | null
+        }
+        Update: {
+          active?: boolean | null
+          code?: string
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          expiry_date?: string | null
+          id?: string
+          min_order_value?: number | null
+          usage_count?: number | null
+          usage_limit?: number | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          featured: boolean | null
+          id: string
+          image_url: string | null
+          name: string
+          price: number
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price: number
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      store_settings: {
+        Row: {
+          address: string | null
+          custom_cake_message: string | null
+          delivery_fee: number | null
+          footer_message: string | null
+          free_delivery_threshold: number | null
+          id: string
+          logo_url: string | null
+          social_media: Json | null
+          store_name: string
+          welcome_message: string | null
+          whatsapp_number: string | null
+        }
+        Insert: {
+          address?: string | null
+          custom_cake_message?: string | null
+          delivery_fee?: number | null
+          footer_message?: string | null
+          free_delivery_threshold?: number | null
+          id?: string
+          logo_url?: string | null
+          social_media?: Json | null
+          store_name: string
+          welcome_message?: string | null
+          whatsapp_number?: string | null
+        }
+        Update: {
+          address?: string | null
+          custom_cake_message?: string | null
+          delivery_fee?: number | null
+          footer_message?: string | null
+          free_delivery_threshold?: number | null
+          id?: string
+          logo_url?: string | null
+          social_media?: Json | null
+          store_name?: string
+          welcome_message?: string | null
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: { _role: Database["public"]["Enums"]["app_role"] }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "customer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +294,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "customer"],
+    },
   },
 } as const

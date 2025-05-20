@@ -2,54 +2,129 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { StoreSettings } from "@/types";
 import defaultSettingsData from "@/config/defaultSettings.json";
-import configStore from "@/config/store.json";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface StoreContextType {
   settings: StoreSettings;
-  updateSettings: (newSettings: StoreSettings) => void;
+  updateSettings: (newSettings: StoreSettings) => Promise<void>;
   isLoaded: boolean;
+  isLoading: boolean;
+  error: Error | null;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
-export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Combine default settings with config settings, prioritizing localStorage
-  const initialSettings = { ...defaultSettingsData, ...configStore };
+const fetchStoreSettings = async (): Promise<StoreSettings> => {
+  const { data, error } = await supabase
+    .from('store_settings')
+    .select('*')
+    .single();
   
-  const [settings, setSettings] = useState<StoreSettings>(initialSettings);
+  if (error) {
+    // Se não encontrou configurações, retorna as configurações padrão
+    if (error.code === 'PGRST116') {
+      return defaultSettingsData as StoreSettings;
+    }
+    throw new Error(error.message);
+  }
+  
+  // Formata os dados para o formato esperado pelo app
+  return {
+    storeName: data.store_name,
+    whatsappNumber: data.whatsapp_number || '',
+    deliveryFee: data.delivery_fee || 0,
+    freeDeliveryThreshold: data.free_delivery_threshold,
+    address: data.address,
+    welcomeMessage: data.welcome_message,
+    footerMessage: data.footer_message,
+    customCakeMessage: data.custom_cake_message,
+    logoUrl: data.logo_url,
+    socialMedia: data.social_media || {}
+  } as StoreSettings;
+};
+
+export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const queryClient = useQueryClient();
   const [isLoaded, setIsLoaded] = useState(false);
+  
+  // Usar React Query para buscar as configurações
+  const { 
+    data: settings = defaultSettingsData as StoreSettings, 
+    isLoading, 
+    error 
+  } = useQuery({
+    queryKey: ['storeSettings'],
+    queryFn: fetchStoreSettings,
+    onSettled: () => setIsLoaded(true)
+  });
 
-  // Load settings from localStorage on mount
-  useEffect(() => {
-    try {
-      const savedSettings = localStorage.getItem("storeSettings");
-      if (savedSettings) {
-        setSettings(JSON.parse(savedSettings));
+  // Mutação para atualizar as configurações
+  const updateSettingsMutation = useMutation({
+    mutationFn: async (newSettings: StoreSettings) => {
+      // Converte para o formato esperado pelo banco de dados
+      const dbSettings = {
+        store_name: newSettings.storeName,
+        whatsapp_number: newSettings.whatsappNumber,
+        delivery_fee: newSettings.deliveryFee,
+        free_delivery_threshold: newSettings.freeDeliveryThreshold,
+        address: newSettings.address,
+        welcome_message: newSettings.welcomeMessage,
+        footer_message: newSettings.footerMessage,
+        custom_cake_message: newSettings.customCakeMessage,
+        logo_url: newSettings.logoUrl,
+        social_media: newSettings.socialMedia || {}
+      };
+
+      // Verificar se já existem configurações
+      const { data: existingSettings } = await supabase
+        .from('store_settings')
+        .select('id')
+        .single();
+        
+      if (existingSettings) {
+        // Atualizar configurações existentes
+        const { data, error } = await supabase
+          .from('store_settings')
+          .update(dbSettings)
+          .eq('id', existingSettings.id)
+          .select();
+          
+        if (error) throw new Error(error.message);
+        return data;
+      } else {
+        // Inserir novas configurações
+        const { data, error } = await supabase
+          .from('store_settings')
+          .insert(dbSettings)
+          .select();
+          
+        if (error) throw new Error(error.message);
+        return data;
       }
-      setIsLoaded(true);
-    } catch (error) {
-      console.error("Failed to load settings:", error);
-      setIsLoaded(true);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['storeSettings'] });
+      toast.success("Configurações atualizadas com sucesso!");
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao atualizar configurações: ${error.message}`);
     }
-  }, []);
+  });
 
-  // Save settings to localStorage whenever they change
-  useEffect(() => {
-    if (isLoaded) {
-      try {
-        localStorage.setItem("storeSettings", JSON.stringify(settings));
-      } catch (error) {
-        console.error("Failed to save settings:", error);
-      }
-    }
-  }, [settings, isLoaded]);
-
-  const updateSettings = (newSettings: StoreSettings) => {
-    setSettings(newSettings);
+  const updateSettings = async (newSettings: StoreSettings) => {
+    await updateSettingsMutation.mutateAsync(newSettings);
   };
 
   return (
-    <StoreContext.Provider value={{ settings, updateSettings, isLoaded }}>
+    <StoreContext.Provider value={{ 
+      settings, 
+      updateSettings, 
+      isLoaded,
+      isLoading,
+      error: error as Error | null
+    }}>
       {children}
     </StoreContext.Provider>
   );
