@@ -21,14 +21,26 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Removemos os useEffects de carregar/salvar do localStorage
 
   const addToCart = (product: Product) => {
+    // Verificar se o produto está em estoque
+    if (product.stock !== undefined && product.stock <= 0) {
+      toast.error(`${product.name} está esgotado`);
+      return;
+    }
+    
     setItems(prevItems => {
       const existingItem = prevItems.find(item => item.product.id === product.id);
       const maxQuantity = product.maxPurchaseQuantity || 5;
       
       if (existingItem) {
-        // Verificar se a adição de mais um item ultrapassa o limite máximo
+        // Verificar se a adição de mais um item ultrapassa o limite máximo ou o estoque disponível
         if (existingItem.quantity >= maxQuantity) {
           toast.error(`Quantidade máxima permitida é ${maxQuantity} unidades por cliente`);
+          return prevItems;
+        }
+        
+        // Verificar se há estoque suficiente
+        if (product.stock !== undefined && existingItem.quantity >= product.stock) {
+          toast.error(`Não há estoque suficiente. Disponível: ${product.stock} unidades`);
           return prevItems;
         }
         
@@ -58,11 +70,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!item) return prevItems;
       
       const maxQuantity = item.product.maxPurchaseQuantity || 5;
+      const availableStock = item.product.stock;
       
+      // Verificar limite máximo por cliente
       if (quantity > maxQuantity) {
         toast.error(`Quantidade máxima permitida é ${maxQuantity} unidades por cliente`);
         return prevItems.map(item =>
           item.product.id === productId ? { ...item, quantity: maxQuantity } : item
+        );
+      }
+      
+      // Verificar estoque disponível
+      if (availableStock !== undefined && quantity > availableStock) {
+        toast.error(`Não há estoque suficiente. Disponível: ${availableStock} unidades`);
+        return prevItems.map(item =>
+          item.product.id === productId ? { ...item, quantity: availableStock } : item
         );
       }
       
