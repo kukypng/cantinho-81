@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MessageSquare, HelpCircle, FileText } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,8 +10,7 @@ import { Link } from "react-router-dom";
  * sobre como usar o painel de configurações.
  */
 const BeginnersGuide = () => {
-  return (
-    <Card className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200 shadow-md animate-fade-in overflow-hidden">
+  return <Card className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200 shadow-md animate-fade-in overflow-hidden">
       <CardContent className="pt-6">
         <div className="flex items-start space-x-3">
           <div className="p-2 bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-full shadow-md">
@@ -36,19 +34,10 @@ const BeginnersGuide = () => {
               </p>
             </div>
             
-            <div className="bg-white/50 p-3 rounded-lg border border-yellow-200 flex items-start space-x-2">
-              <FileText className="h-4 w-4 text-yellow-600 mt-0.5" />
-              <p className="text-xs text-yellow-800">
-                <strong>Sabia que:</strong> Você também pode editar diretamente os arquivos de dados na pasta 
-                <code className="mx-1 px-1 py-0.5 bg-white/70 rounded text-xs font-mono">src/data</code>
-                seguindo as instruções no arquivo README.md nessa pasta.
-              </p>
-            </div>
+            
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default BeginnersGuide;
