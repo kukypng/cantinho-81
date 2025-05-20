@@ -114,9 +114,11 @@ export type Database = {
           custom_cake_message: string | null
           delivery_fee: number | null
           footer_message: string | null
+          free_delivery_message: string | null
           free_delivery_threshold: number | null
           id: string
           logo_url: string | null
+          show_free_delivery_banner: boolean | null
           social_media: Json | null
           store_name: string
           welcome_message: string | null
@@ -127,9 +129,11 @@ export type Database = {
           custom_cake_message?: string | null
           delivery_fee?: number | null
           footer_message?: string | null
+          free_delivery_message?: string | null
           free_delivery_threshold?: number | null
           id?: string
           logo_url?: string | null
+          show_free_delivery_banner?: boolean | null
           social_media?: Json | null
           store_name: string
           welcome_message?: string | null
@@ -140,9 +144,11 @@ export type Database = {
           custom_cake_message?: string | null
           delivery_fee?: number | null
           footer_message?: string | null
+          free_delivery_message?: string | null
           free_delivery_threshold?: number | null
           id?: string
           logo_url?: string | null
+          show_free_delivery_banner?: boolean | null
           social_media?: Json | null
           store_name?: string
           welcome_message?: string | null
