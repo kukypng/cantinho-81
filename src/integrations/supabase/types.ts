@@ -80,8 +80,10 @@ export type Database = {
           featured: boolean | null
           id: string
           image_url: string | null
+          max_purchase_quantity: number | null
           name: string
           price: number
+          stock: number | null
           updated_at: string | null
         }
         Insert: {
@@ -91,8 +93,10 @@ export type Database = {
           featured?: boolean | null
           id?: string
           image_url?: string | null
+          max_purchase_quantity?: number | null
           name: string
           price: number
+          stock?: number | null
           updated_at?: string | null
         }
         Update: {
@@ -102,8 +106,10 @@ export type Database = {
           featured?: boolean | null
           id?: string
           image_url?: string | null
+          max_purchase_quantity?: number | null
           name?: string
           price?: number
+          stock?: number | null
           updated_at?: string | null
         }
         Relationships: []
