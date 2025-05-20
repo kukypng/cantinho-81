@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,8 +31,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
         )}
         {isOutOfStock && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-bold py-2 px-4 flex items-center justify-center gap-1.5 shadow-lg">
-            <XCircle className="h-4 w-4" /> Esgotado
+          <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
+            <XCircle className="h-3 w-3" /> Esgotado
           </div>
         )}
       </div>
