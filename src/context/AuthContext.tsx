@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { User, Session } from '@supabase/supabase-js';
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,58 +19,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Verificar sessão existente e configurar listener de autenticação
-  useEffect(() => {
-    // Primeiro configurar o listener para mudanças no estado de autenticação
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setCurrentUser(session?.user || null);
-        
-        if (session?.user) {
-          // Verificar se o usuário é admin
-          const { data, error } = await supabase
-            .rpc('has_role', { _role: 'admin' });
-            
-          if (!error) {
-            setIsAdmin(data || false);
-          }
-        } else {
-          setIsAdmin(false);
-        }
-        
-        setIsLoading(false);
-      }
-    );
-
-    // Depois verificar a sessão atual
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setCurrentUser(session?.user || null);
-      
-      if (session?.user) {
-        // Verificar se o usuário é admin
-        supabase
-          .rpc('has_role', { _role: 'admin' })
-          .then(({ data, error }) => {
-            if (!error) {
-              setIsAdmin(data || false);
-            }
-            setIsLoading(false);
-          });
-      } else {
-        setIsAdmin(false);
-        setIsLoading(false);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+  // Removemos os useEffects de verificação de sessão existente
 
   // Login com Supabase
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -100,6 +52,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           toast.error("Acesso restrito apenas para administradores");
           return false;
         }
+
+        // Definir manualmente o usuário e sessão
+        setCurrentUser(data.user);
+        setSession(data.session);
         
         toast.success("Login realizado com sucesso!");
         return true;
@@ -119,6 +75,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       await supabase.auth.signOut();
+      // Limpar manualmente os estados
+      setCurrentUser(null);
+      setSession(null);
+      setIsAdmin(false);
       toast.info("Logout realizado com sucesso");
     } catch (error: any) {
       console.error("Erro no logout:", error.message);
