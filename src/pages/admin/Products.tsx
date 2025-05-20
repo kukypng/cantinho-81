@@ -23,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useProducts } from "@/context/ProductContext";
 import { Product } from "@/types";
-import { Edit, Plus, Trash2, Upload, ImagePlus } from "lucide-react";
+import { Edit, Plus, Trash2, Upload, ImagePlus, AlertCircle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -49,6 +49,7 @@ const ProductsPage = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [inputError, setInputError] = useState<{field: string, message: string} | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (
@@ -56,11 +57,28 @@ const ProductsPage = () => {
   ) => {
     const { name, value, type } = e.target as HTMLInputElement;
     
+    // Limpa o erro quando o usuário começa a digitar no campo com erro
+    if (inputError?.field === name) {
+      setInputError(null);
+    }
+    
     if (type === "number") {
-      setCurrentProduct({
-        ...currentProduct,
-        [name]: value === "" ? "" : parseFloat(value) || 0,
-      });
+      // Permite que o campo fique vazio (para que o usuário possa apagar tudo e começar de novo)
+      if (value === "") {
+        setCurrentProduct({
+          ...currentProduct,
+          [name]: "",
+        });
+      } else {
+        // Validar se é um número válido
+        const numberValue = parseFloat(value);
+        if (!isNaN(numberValue)) {
+          setCurrentProduct({
+            ...currentProduct,
+            [name]: numberValue,
+          });
+        }
+      }
     } else {
       setCurrentProduct({
         ...currentProduct,
@@ -76,18 +94,39 @@ const ProductsPage = () => {
     });
   };
 
+  const validateProduct = () => {
+    if (!currentProduct.name.trim()) {
+      setInputError({field: "name", message: "Nome do produto é obrigatório"});
+      return false;
+    }
+    
+    if (currentProduct.price === "" || currentProduct.price === 0) {
+      setInputError({field: "price", message: "Preço deve ser maior que zero"});
+      return false;
+    }
+    
+    if (!currentProduct.description.trim()) {
+      setInputError({field: "description", message: "Descrição do produto é obrigatória"});
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleAddProduct = () => {
-    if (!currentProduct.name || !currentProduct.description || !currentProduct.price) {
-      toast.error("Por favor, preencha todos os campos obrigatórios.");
+    if (!validateProduct()) {
       return;
     }
+
+    // Garante que price é um número
+    const price = typeof currentProduct.price === 'string' 
+      ? parseFloat(currentProduct.price as string) || 0 
+      : currentProduct.price;
 
     // Add new product
     addProduct({
       ...currentProduct,
-      price: typeof currentProduct.price === 'string' 
-        ? parseFloat(currentProduct.price as string) || 0 
-        : currentProduct.price
+      price
     } as Omit<Product, "id">);
     
     // Reset form
@@ -96,17 +135,19 @@ const ProductsPage = () => {
   };
 
   const handleEditProduct = () => {
-    if (!currentProduct.name || !currentProduct.description || !currentProduct.price) {
-      toast.error("Por favor, preencha todos os campos obrigatórios.");
+    if (!validateProduct()) {
       return;
     }
+
+    // Garante que price é um número
+    const price = typeof currentProduct.price === 'string' 
+      ? parseFloat(currentProduct.price as string) || 0 
+      : currentProduct.price;
 
     // Update existing product
     updateProduct({
       ...currentProduct,
-      price: typeof currentProduct.price === 'string' 
-        ? parseFloat(currentProduct.price as string) || 0 
-        : currentProduct.price
+      price
     } as Product);
     
     // Reset form
@@ -194,6 +235,7 @@ const ProductsPage = () => {
 
   const closeAndResetForm = () => {
     setCurrentProduct(emptyProduct);
+    setInputError(null);
     setIsAdding(false);
     setIsEditing(false);
   };
@@ -203,6 +245,144 @@ const ProductsPage = () => {
       fileInputRef.current.click();
     }
   };
+
+  // Renderiza o indicador de erro para os campos do formulário
+  const renderErrorIndicator = (fieldName: string) => {
+    if (inputError && inputError.field === fieldName) {
+      return (
+        <div className="text-red-500 text-sm mt-1 flex items-center">
+          <AlertCircle className="h-4 w-4 mr-1" />
+          {inputError.message}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Componente de formulário para adicionar ou editar produtos
+  const ProductForm = ({ isEditing = false }: { isEditing?: boolean }) => (
+    <div className="grid gap-4 py-4">
+      <div className="grid gap-2">
+        <Label htmlFor={isEditing ? "edit-name" : "name"} className="font-medium">
+          Nome do Produto*
+        </Label>
+        <Input
+          id={isEditing ? "edit-name" : "name"}
+          name="name"
+          value={currentProduct.name}
+          onChange={handleInputChange}
+          placeholder="Nome do produto"
+          className={inputError?.field === "name" ? "border-red-500 focus-visible:ring-red-500" : ""}
+          required
+        />
+        {renderErrorIndicator("name")}
+      </div>
+      
+      <div className="grid gap-2">
+        <Label htmlFor={isEditing ? "edit-price" : "price"} className="font-medium">
+          Preço*
+        </Label>
+        <Input
+          id={isEditing ? "edit-price" : "price"}
+          name="price"
+          type="number"
+          step="0.01"
+          value={currentProduct.price === 0 ? "" : currentProduct.price}
+          onChange={handleInputChange}
+          placeholder="0.00"
+          min="0"
+          className={inputError?.field === "price" ? "border-red-500 focus-visible:ring-red-500" : ""}
+          required
+        />
+        {renderErrorIndicator("price")}
+      </div>
+      
+      <div className="grid gap-2">
+        <Label htmlFor={isEditing ? "edit-description" : "description"} className="font-medium">
+          Descrição*
+        </Label>
+        <Textarea
+          id={isEditing ? "edit-description" : "description"}
+          name="description"
+          value={currentProduct.description}
+          onChange={handleInputChange}
+          placeholder="Descrição do produto"
+          className={inputError?.field === "description" ? "border-red-500 focus-visible:ring-red-500" : ""}
+          required
+        />
+        {renderErrorIndicator("description")}
+      </div>
+      
+      <div className="grid gap-2">
+        <Label htmlFor={isEditing ? "edit-imageUrl" : "imageUrl"} className="font-medium">
+          Imagem do Produto
+        </Label>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <Input
+              id={isEditing ? "edit-imageUrl" : "imageUrl"}
+              name="imageUrl"
+              value={currentProduct.imageUrl}
+              onChange={handleInputChange}
+              placeholder="URL da imagem (ou use o botão de Galeria)"
+              className="flex-1"
+            />
+            <input 
+              type="file" 
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={triggerFileInput} 
+              disabled={isUploading}
+              className="flex gap-2 whitespace-nowrap"
+            >
+              {isUploading ? "Enviando..." : "Galeria"}
+              <ImagePlus className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          {currentProduct.imageUrl && (
+            <div className="mt-2 h-32 w-32 overflow-hidden rounded border">
+              <img 
+                src={currentProduct.imageUrl}
+                alt="Prévia da imagem"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <div className="grid gap-2">
+        <Label htmlFor={isEditing ? "edit-category" : "category"} className="font-medium">
+          Categoria
+        </Label>
+        <Input
+          id={isEditing ? "edit-category" : "category"}
+          name="category"
+          value={currentProduct.category}
+          onChange={handleInputChange}
+          placeholder="Categoria do produto"
+        />
+      </div>
+      
+      <div className="flex items-center space-x-2 pt-2">
+        <Checkbox
+          id={isEditing ? "edit-featured" : "featured"}
+          checked={currentProduct.featured}
+          onCheckedChange={handleCheckboxChange}
+        />
+        <Label htmlFor={isEditing ? "edit-featured" : "featured"} className="font-normal">
+          Produto em destaque
+        </Label>
+      </div>
+    </div>
+  );
 
   return (
     <AdminLayout title="Gerenciar Produtos">
@@ -219,106 +399,12 @@ const ProductsPage = () => {
             <DialogHeader>
               <DialogTitle>Adicionar Produto</DialogTitle>
               <DialogDescription>
-                Preencha os dados do novo produto.
+                Preencha os dados do novo produto. Os campos marcados com * são obrigatórios.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">Nome do Produto*</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={currentProduct.name}
-                  onChange={handleInputChange}
-                  placeholder="Nome do produto"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="price">Preço*</Label>
-                <Input
-                  id="price"
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  value={currentProduct.price === 0 ? "" : currentProduct.price}
-                  onChange={handleInputChange}
-                  placeholder="0.00"
-                  min="0"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="description">Descrição*</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  value={currentProduct.description}
-                  onChange={handleInputChange}
-                  placeholder="Descrição do produto"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="imageUrl">Imagem do Produto</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="imageUrl"
-                    name="imageUrl"
-                    value={currentProduct.imageUrl}
-                    onChange={handleInputChange}
-                    placeholder="https://exemplo.com/imagem.jpg"
-                    className="flex-1"
-                  />
-                  <input 
-                    type="file" 
-                    accept="image/*"
-                    ref={fileInputRef}
-                    onChange={handleFileSelect}
-                    className="hidden"
-                  />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={triggerFileInput} 
-                    disabled={isUploading}
-                    className="flex gap-2"
-                  >
-                    {isUploading ? "Enviando..." : "Galeria"}
-                    <ImagePlus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {currentProduct.imageUrl && (
-                  <div className="mt-2 h-24 w-24 overflow-hidden rounded border">
-                    <img 
-                      src={currentProduct.imageUrl}
-                      alt="Prévia da imagem"
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="category">Categoria</Label>
-                <Input
-                  id="category"
-                  name="category"
-                  value={currentProduct.category}
-                  onChange={handleInputChange}
-                  placeholder="Categoria do produto"
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="featured"
-                  checked={currentProduct.featured}
-                  onCheckedChange={handleCheckboxChange}
-                />
-                <Label htmlFor="featured" className="font-normal">
-                  Produto em destaque
-                </Label>
-              </div>
-            </div>
+            
+            <ProductForm />
+            
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline" onClick={closeAndResetForm}>
@@ -337,106 +423,12 @@ const ProductsPage = () => {
             <DialogHeader>
               <DialogTitle>Editar Produto</DialogTitle>
               <DialogDescription>
-                Atualize os dados do produto.
+                Atualize os dados do produto. Os campos marcados com * são obrigatórios.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="edit-name">Nome do Produto*</Label>
-                <Input
-                  id="edit-name"
-                  name="name"
-                  value={currentProduct.name}
-                  onChange={handleInputChange}
-                  placeholder="Nome do produto"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="edit-price">Preço*</Label>
-                <Input
-                  id="edit-price"
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  value={currentProduct.price === 0 ? "" : currentProduct.price}
-                  onChange={handleInputChange}
-                  placeholder="0.00"
-                  min="0"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="edit-description">Descrição*</Label>
-                <Textarea
-                  id="edit-description"
-                  name="description"
-                  value={currentProduct.description}
-                  onChange={handleInputChange}
-                  placeholder="Descrição do produto"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="edit-imageUrl">Imagem do Produto</Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="edit-imageUrl"
-                    name="imageUrl"
-                    value={currentProduct.imageUrl}
-                    onChange={handleInputChange}
-                    placeholder="https://exemplo.com/imagem.jpg"
-                    className="flex-1"
-                  />
-                  <input 
-                    type="file" 
-                    accept="image/*"
-                    ref={fileInputRef}
-                    onChange={handleFileSelect}
-                    className="hidden"
-                  />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={triggerFileInput} 
-                    disabled={isUploading}
-                    className="flex gap-2"
-                  >
-                    {isUploading ? "Enviando..." : "Galeria"}
-                    <ImagePlus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {currentProduct.imageUrl && (
-                  <div className="mt-2 h-24 w-24 overflow-hidden rounded border">
-                    <img 
-                      src={currentProduct.imageUrl}
-                      alt="Prévia da imagem"
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="edit-category">Categoria</Label>
-                <Input
-                  id="edit-category"
-                  name="category"
-                  value={currentProduct.category}
-                  onChange={handleInputChange}
-                  placeholder="Categoria do produto"
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="edit-featured"
-                  checked={currentProduct.featured}
-                  onCheckedChange={handleCheckboxChange}
-                />
-                <Label htmlFor="edit-featured" className="font-normal">
-                  Produto em destaque
-                </Label>
-              </div>
-            </div>
+            
+            <ProductForm isEditing={true} />
+            
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline" onClick={closeAndResetForm}>
@@ -455,7 +447,7 @@ const ProductsPage = () => {
             <DialogHeader>
               <DialogTitle>Excluir Produto</DialogTitle>
               <DialogDescription>
-                Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.
+                Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita e a imagem associada também será removida.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

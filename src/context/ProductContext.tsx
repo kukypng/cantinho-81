@@ -40,6 +40,26 @@ const fetchProducts = async (): Promise<Product[]> => {
   }));
 };
 
+// Função utilitária para extrair o caminho do arquivo da URL do Storage
+const extractFilePathFromUrl = (url: string): string | null => {
+  if (!url) return null;
+  
+  try {
+    // Verifica se é uma URL do Supabase Storage
+    if (url.includes('supabase.co') && url.includes('/storage/v1/object/public/imagens/')) {
+      // Extrai o caminho do arquivo do URL
+      const filePath = url.split('/public/imagens/')[1];
+      if (filePath) {
+        return filePath;
+      }
+    }
+  } catch (e) {
+    console.error("Erro ao extrair caminho do arquivo:", e);
+  }
+  
+  return null;
+};
+
 export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Use React Query para gerenciar dados
   const queryClient = useQueryClient();
@@ -117,41 +137,47 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Mutação para deletar produto
   const deleteProductMutation = useMutation({
     mutationFn: async (id: string) => {
-      // Primeiro, tentamos obter o produto para verificar se há uma imagem associada
-      const { data: product } = await supabase
-        .from('products')
-        .select('image_url')
-        .eq('id', id)
-        .single();
+      try {
+        // Primeiro, tentamos obter o produto para verificar se há uma imagem associada
+        const { data: product } = await supabase
+          .from('products')
+          .select('image_url')
+          .eq('id', id)
+          .single();
 
-      // Se houver uma imagem e ela estiver no bucket 'imagens', tentamos excluí-la
-      if (product?.image_url) {
-        try {
-          const imageUrl = product.image_url;
-          // Verifica se é uma URL do Supabase Storage
-          if (imageUrl.includes('supabase.co') && imageUrl.includes('/storage/v1/object/public/imagens/')) {
-            // Extrai o caminho do arquivo do URL
-            const filePath = imageUrl.split('/public/imagens/')[1];
-            if (filePath) {
+        // Se houver uma imagem associada ao produto, tentamos excluí-la do storage
+        if (product?.image_url) {
+          const filePath = extractFilePathFromUrl(product.image_url);
+          
+          if (filePath) {
+            try {
               // Tenta excluir o arquivo do storage
-              await supabase.storage
+              const { error: storageError } = await supabase.storage
                 .from('imagens')
                 .remove([filePath]);
+                
+              if (storageError) {
+                console.error("Erro ao excluir imagem:", storageError);
+                // Continuamos mesmo com erro na exclusão da imagem
+              } else {
+                console.log("Imagem excluída com sucesso:", filePath);
+              }
+            } catch (storageError) {
+              console.error("Erro ao excluir imagem:", storageError);
             }
           }
-        } catch (storageError) {
-          console.error("Erro ao excluir imagem:", storageError);
-          // Continuamos mesmo se houver erro ao excluir a imagem
         }
-      }
 
-      // Em seguida, excluímos o produto
-      const { error } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', id);
-      
-      if (error) throw new Error(error.message);
+        // Em seguida, excluímos o produto
+        const { error } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', id);
+        
+        if (error) throw new Error(error.message);
+      } catch (error: any) {
+        throw new Error(`Erro ao excluir produto: ${error.message}`);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
