@@ -1,4 +1,3 @@
-
 import React from "react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,13 +7,14 @@ import { useStore } from "@/context/StoreContext";
 import { Package2, ShoppingCart, Truck, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-
 const Dashboard = () => {
-  const { products } = useProducts();
-  const { settings } = useStore();
-
-  return (
-    <AdminLayout title="Dashboard">
+  const {
+    products
+  } = useProducts();
+  const {
+    settings
+  } = useStore();
+  return <AdminLayout title="Dashboard">
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
@@ -36,16 +36,10 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {settings.deliveryFee > 0
-                  ? `R$ ${settings.deliveryFee.toFixed(2)}`
-                  : "Grátis"}
+                {settings.deliveryFee > 0 ? `R$ ${settings.deliveryFee.toFixed(2)}` : "Grátis"}
               </div>
               <p className="text-xs text-muted-foreground">
-                {settings.freeDeliveryThreshold
-                  ? `Grátis em pedidos acima de R$ ${settings.freeDeliveryThreshold.toFixed(
-                      2
-                    )}`
-                  : "Configuração de entrega"}
+                {settings.freeDeliveryThreshold ? `Grátis em pedidos acima de R$ ${settings.freeDeliveryThreshold.toFixed(2)}` : "Configuração de entrega"}
               </p>
             </CardContent>
           </Card>
@@ -66,7 +60,7 @@ const Dashboard = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Card className="md:col-span-2">
             <CardHeader>
-              <CardTitle>Bem-vindo ao Painel Administrativo</CardTitle>
+              <CardTitle>Bem-vindo ao Painel Admin</CardTitle>
               <CardDescription>
                 Gerencie sua loja online de forma rápida e fácil.
               </CardDescription>
@@ -124,8 +118,6 @@ const Dashboard = () => {
           </Card>
         </div>
       </div>
-    </AdminLayout>
-  );
+    </AdminLayout>;
 };
-
 export default Dashboard;
