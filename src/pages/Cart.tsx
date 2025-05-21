@@ -10,12 +10,14 @@ import { ArrowRight, ShoppingCart, Trash2, ShoppingBag } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
 import { useCoupon } from "@/context/CouponContext";
 import CouponForm from "@/components/checkout/CouponForm";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Cart = () => {
   const { items, clearCart, subtotal } = useCart();
   const { settings } = useStore();
   const { calculateDiscount } = useCoupon();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // Calculate totals
   const deliveryFee = settings.deliveryFee || 0;
@@ -26,9 +28,9 @@ const Cart = () => {
 
   return (
     <StoreLayout>
-      <div className="container max-w-5xl mx-auto px-4 py-6 sm:py-8">
-        <div className="mb-6 flex items-center">
-          <h1 className="text-xl sm:text-2xl font-bold text-gradient">Seu Carrinho</h1>
+      <div className="container max-w-4xl mx-auto px-3 py-4 sm:py-6">
+        <div className="mb-4 flex items-center">
+          <h1 className="text-lg sm:text-xl font-bold text-gradient">Seu Carrinho</h1>
           <div className="ml-auto">
             <Button
               variant="ghost"
@@ -36,19 +38,19 @@ const Cart = () => {
               className="text-gray-500 hover:text-store-pink"
               onClick={() => navigate("/")}
             >
-              <ShoppingBag className="mr-2 h-4 w-4" />
+              <ShoppingBag className="mr-1 h-4 w-4" />
               <span className="hidden sm:inline">Continuar Comprando</span>
             </Button>
           </div>
         </div>
 
         {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 p-8 sm:p-12 text-center bg-white/80 backdrop-blur-sm shadow-sm">
-            <div className="rounded-full bg-gray-100 p-5 sm:p-6 mb-4">
-              <ShoppingCart className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400" />
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 p-6 sm:p-8 text-center bg-white/90 backdrop-blur-sm shadow-sm">
+            <div className="rounded-full bg-gray-100 p-4 sm:p-5 mb-3">
+              <ShoppingCart className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
             </div>
-            <h2 className="mb-2 text-lg sm:text-xl font-semibold">Seu carrinho está vazio</h2>
-            <p className="mb-6 text-gray-500 max-w-md">
+            <h2 className="mb-2 text-base sm:text-lg font-semibold">Seu carrinho está vazio</h2>
+            <p className="mb-4 text-sm text-gray-500 max-w-md">
               Adicione alguns produtos para começar a comprar
             </p>
             <Link to="/">
@@ -59,56 +61,60 @@ const Cart = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-12">
-            <div className="md:col-span-7 lg:col-span-8">
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100/80">
-                <h2 className="text-lg font-medium text-gray-800 mb-4 flex items-center">
+          <div className="grid gap-4 md:grid-cols-11">
+            <div className="md:col-span-6 lg:col-span-7">
+              <div className="bg-white/95 backdrop-blur-sm rounded-xl p-3 sm:p-4 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100">
+                <h2 className="text-base font-medium text-gray-800 mb-3 flex items-center">
                   <ShoppingCart className="mr-2 h-4 w-4 text-store-pink" />
                   Itens do Carrinho ({items.length})
                 </h2>
-                <div className="space-y-3 sm:space-y-4 animate-fade-in">
+                <div className="space-y-2 sm:space-y-3 animate-fade-in max-h-[60vh] overflow-y-auto pr-1 pb-1">
                   {items.map((item) => (
                     <CartItemCard key={item.product.id} item={item} />
                   ))}
                 </div>
 
-                <div className="mt-5 sm:mt-6 flex justify-between">
+                <div className="mt-3 sm:mt-4 flex justify-between">
                   <Button
                     variant="outline"
-                    className="text-sm group hover:border-store-pink hover:text-store-pink transition-colors"
+                    size="sm"
+                    className="text-xs sm:text-sm group hover:border-store-pink hover:text-store-pink transition-colors"
                     onClick={() => navigate("/")}
                   >
-                    <ShoppingBag className="mr-2 h-4 w-4 group-hover:translate-x-[-2px] transition-transform" />
+                    <ShoppingBag className="mr-1.5 h-3 w-3 sm:h-4 sm:w-4 group-hover:translate-x-[-2px] transition-transform" />
                     Continuar Comprando
                   </Button>
-                  <Button
-                    variant="ghost"
-                    className="flex items-center text-red-500 hover:bg-red-50 hover:text-red-600 group"
-                    onClick={clearCart}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
-                    Limpar Carrinho
-                  </Button>
+                  {items.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="flex items-center text-xs sm:text-sm text-red-500 hover:bg-red-50 hover:text-red-600 group"
+                      onClick={clearCart}
+                    >
+                      <Trash2 className="mr-1.5 h-3 w-3 sm:h-4 sm:w-4 group-hover:rotate-12 transition-transform" />
+                      Limpar
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
 
             <div className="md:col-span-5 lg:col-span-4 animate-fade-in">
-              <div className="rounded-xl border bg-white/90 backdrop-blur-sm p-5 sm:p-6 shadow-sm hover:shadow-md transition-all sticky top-20">
-                <h2 className="mb-4 text-lg font-medium text-gray-800 flex items-center border-b pb-2">
+              <div className="rounded-xl border bg-white/95 backdrop-blur-sm p-3 sm:p-4 shadow-sm hover:shadow-md transition-all sticky top-20">
+                <h2 className="mb-3 text-base sm:text-lg font-medium text-gray-800 flex items-center border-b pb-2">
                   <span className="text-gradient">Resumo do Pedido</span>
                 </h2>
                 
-                <div className="mb-4">
+                <div className="mb-3">
                   <CouponForm />
                 </div>
                 
-                <div className="space-y-3 mt-5">
-                  <div className="flex justify-between text-sm">
+                <div className="space-y-2 mt-3">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-gray-500">Subtotal</span>
                     <span>R$ {subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-gray-500">Taxa de Entrega</span>
                     <span>
                       {hasFreeDelivery 
@@ -117,36 +123,36 @@ const Cart = () => {
                     </span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="flex justify-between text-green-600 text-sm">
+                    <div className="flex justify-between text-green-600 text-xs sm:text-sm">
                       <span>Desconto</span>
                       <span>-R$ {discountAmount.toFixed(2)}</span>
                     </div>
                   )}
-                  <Separator className="my-3" />
+                  <Separator className="my-2" />
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
-                    <span className="text-store-pink text-lg">R$ {total.toFixed(2)}</span>
+                    <span className="text-store-pink text-base sm:text-lg">R$ {total.toFixed(2)}</span>
                   </div>
                 </div>
                 <Button
-                  className="mt-5 sm:mt-6 w-full bg-gradient-to-r from-store-pink to-store-purple text-white hover:shadow-lg transition-all duration-300 group"
+                  className="mt-3 sm:mt-4 w-full bg-gradient-to-r from-store-pink to-store-purple text-white hover:shadow-lg transition-all duration-300 group"
                   onClick={() => navigate("/checkout")}
                 >
-                  Finalizar Compra
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  {isMobile ? 'Finalizar' : 'Finalizar Compra'}
+                  <ArrowRight className="ml-1.5 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 
-                <div className="mt-4 flex items-center justify-center text-xs text-gray-500">
+                <div className="mt-2 flex items-center justify-center text-xs text-gray-500">
                   <p className="flex items-center">
                     Pagamento seguro
-                    <svg className="ml-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <svg className="ml-1 h-3 w-3 sm:h-4 sm:w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
                     </svg>
                   </p>
                 </div>
                 
                 {hasFreeDelivery && (
-                  <div className="mt-3 bg-green-50 border border-green-100 rounded-lg p-2 text-xs text-green-700 flex items-center justify-center">
+                  <div className="mt-2 bg-green-50 border border-green-100 rounded-lg p-1.5 text-xs text-green-700 flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
