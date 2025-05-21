@@ -1,7 +1,7 @@
 
-import React, { memo } from "react";
-import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, ArrowRight, Instagram, Phone, Search } from "lucide-react";
+import React, { memo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ShoppingCart, Menu, ArrowRight, Instagram, Phone, Search, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,9 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Input } from "@/components/ui/input";
+import { useProducts } from "@/context/ProductContext";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 // Interface que define as propriedades do componente StoreLayout
 interface StoreLayoutProps {
@@ -54,6 +57,110 @@ const SocialMediaLinks = memo(({
 SocialMediaLinks.displayName = "SocialMediaLinks";
 
 /**
+ * Componente SearchBar aprimorado para busca de produtos
+ */
+const SearchBar = () => {
+  const { products } = useProducts();
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  
+  // Filtra produtos com base na consulta de pesquisa
+  const filteredProducts = searchQuery ? products.filter(product => 
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.category?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) : [];
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <div className="relative w-full max-w-[240px] md:max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input 
+            placeholder="Buscar produtos..." 
+            className={`pl-10 pr-4 py-1 h-9 text-sm bg-gray-50 focus:bg-white border-gray-200 
+                       focus:border-store-pink focus:shadow-md transition-all hover:bg-white`}
+            onClick={() => setOpen(true)}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSearchQuery("");
+              }}
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className="p-0 w-[300px] md:w-[350px]" side="bottom" align="start">
+        <Command>
+          <CommandInput 
+            placeholder="Digite para pesquisar produtos..." 
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+            className="h-9"
+          />
+          <CommandEmpty className="py-3">Nenhum produto encontrado.</CommandEmpty>
+          {filteredProducts.length > 0 && (
+            <CommandGroup heading="Produtos">
+              {filteredProducts.slice(0, 6).map(product => (
+                <CommandItem 
+                  key={product.id}
+                  onSelect={() => {
+                    navigate(`/product/${product.id}`);
+                    setOpen(false);
+                    setSearchQuery("");
+                  }}
+                  className="flex items-center gap-2 py-2 cursor-pointer"
+                >
+                  <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0">
+                    <img 
+                      src={product.imageUrl || "https://placehold.co/100x100"} 
+                      alt={product.name} 
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <p className="text-sm font-medium truncate">{product.name}</p>
+                    <p className="text-xs text-gray-500 truncate">{product.category}</p>
+                  </div>
+                  <div className="text-sm font-medium text-store-pink">
+                    R$ {product.price.toFixed(2)}
+                  </div>
+                </CommandItem>
+              ))}
+              {filteredProducts.length > 6 && (
+                <div className="px-2 pb-2 pt-1">
+                  <Button 
+                    variant="link" 
+                    size="sm" 
+                    className="w-full text-xs text-store-pink"
+                    onClick={() => {
+                      navigate(`/?search=${encodeURIComponent(searchQuery)}`);
+                      setOpen(false);
+                      setSearchQuery("");
+                    }}
+                  >
+                    Ver todos os {filteredProducts.length} resultados
+                  </Button>
+                </div>
+              )}
+            </CommandGroup>
+          )}
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+/**
  * Componente principal de layout da loja
  * Este componente contém o cabeçalho e rodapé da loja
  * É usado em todas as páginas públicas do site
@@ -91,23 +198,29 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
               {/* Links de navegação - aparece apenas em desktop */}
               <NavigationLinks isMobile={isMobile} />
 
-              {/* Barra de pesquisa simplificada - apenas visual */}
+              {/* Barra de pesquisa aprimorada */}
               {!isMobile && (
                 <div className="hidden md:flex items-center max-w-xs w-full mx-4">
-                  <div className="relative w-full">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input 
-                      type="text" 
-                      placeholder="Buscar produtos..." 
-                      className="pl-10 pr-4 py-1 h-9 text-sm bg-gray-50 border-gray-200 focus:border-store-pink"
-                      onClick={(e) => e.preventDefault()}
-                    />
-                  </div>
+                  <SearchBar />
                 </div>
               )}
 
               {/* Carrinho e menu móvel */}
               <div className="flex items-center gap-2 sm:gap-4">
+                {/* Barra de pesquisa em dispositivos móveis */}
+                {isMobile && (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon" className="text-store-pink hover:bg-gray-100 btn-pop p-1.5">
+                        <Search className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-3 w-[90vw]" side="bottom" align="end">
+                      <SearchBar />
+                    </PopoverContent>
+                  </Popover>
+                )}
+
                 {/* Ícone do carrinho com contador */}
                 <div className="relative">
                   <Link to="/cart" className="relative btn-pop">

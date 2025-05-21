@@ -26,15 +26,15 @@ const Cart = () => {
 
   return (
     <StoreLayout>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-gradient">Seu Carrinho</h1>
+      <div className="container max-w-5xl mx-auto px-4 py-6 sm:py-8">
+        <h1 className="mb-5 text-xl sm:text-2xl font-bold text-gradient">Seu Carrinho</h1>
 
         {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 p-12 text-center bg-white/80 backdrop-blur-sm shadow-sm">
-            <div className="rounded-full bg-gray-100 p-6 mb-4">
-              <ShoppingCart className="h-12 w-12 text-gray-400" />
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 p-8 sm:p-12 text-center bg-white/80 backdrop-blur-sm shadow-sm">
+            <div className="rounded-full bg-gray-100 p-5 sm:p-6 mb-4">
+              <ShoppingCart className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400" />
             </div>
-            <h2 className="mb-2 text-xl font-semibold">Seu carrinho está vazio</h2>
+            <h2 className="mb-2 text-lg sm:text-xl font-semibold">Seu carrinho está vazio</h2>
             <p className="mb-6 text-gray-500 max-w-md">
               Adicione alguns produtos para começar a comprar
             </p>
@@ -48,13 +48,13 @@ const Cart = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-3">
             <div className="md:col-span-2">
-              <div className="space-y-4 animate-fade-in">
+              <div className="space-y-3 sm:space-y-4 animate-fade-in">
                 {items.map((item) => (
                   <CartItemCard key={item.product.id} item={item} />
                 ))}
               </div>
 
-              <div className="mt-6 flex justify-between">
+              <div className="mt-5 sm:mt-6 flex justify-between">
                 <Button
                   variant="outline"
                   className="text-sm group hover:border-store-pink hover:text-store-pink transition-colors"
@@ -75,7 +75,7 @@ const Cart = () => {
             </div>
 
             <div className="animate-fade-in">
-              <div className="rounded-lg border bg-white/90 backdrop-blur-sm p-6 shadow-sm hover:shadow-md transition-all">
+              <div className="rounded-lg border bg-white/90 backdrop-blur-sm p-5 sm:p-6 shadow-sm hover:shadow-md transition-all">
                 <h2 className="mb-4 text-lg font-medium text-gray-800">Resumo do Pedido</h2>
                 
                 <div className="mb-4">
@@ -108,7 +108,7 @@ const Cart = () => {
                   </div>
                 </div>
                 <Button
-                  className="mt-6 w-full bg-gradient-to-r from-store-pink to-store-purple text-white hover:shadow-lg transition-all duration-300 group"
+                  className="mt-5 sm:mt-6 w-full bg-gradient-to-r from-store-pink to-store-purple text-white hover:shadow-lg transition-all duration-300 group"
                   onClick={() => navigate("/checkout")}
                 >
                   Finalizar Compra

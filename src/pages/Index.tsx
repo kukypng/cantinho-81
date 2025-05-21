@@ -1,14 +1,14 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import StoreLayout from "@/components/layout/StoreLayout";
 import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/context/ProductContext";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/context/StoreContext";
-import { MapPin, BellRing, Search, Lock } from "lucide-react";
+import { MapPin, BellRing, Search, Lock, X } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 /**
@@ -31,11 +31,23 @@ const Index = () => {
   // Obtém informações de autenticação
   const { isAdmin } = useAuth();
 
+  // Obter parâmetros de URL para pesquisa
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchParam = queryParams.get('search');
+
   // Estado para armazenar a categoria selecionada no filtro
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
   // Estado para armazenar o termo de busca
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchParam || "");
+
+  // Atualizar searchTerm quando o parâmetro de URL mudar
+  useEffect(() => {
+    if (searchParam) {
+      setSearchTerm(searchParam);
+    }
+  }, [searchParam]);
 
   // Extrai todas as categorias únicas dos produtos
   const categories = Array.from(new Set(products.map(product => product.category).filter(Boolean)));
@@ -48,14 +60,15 @@ const Index = () => {
     // Filtro por termo de busca
     const searchMatch = searchTerm 
       ? product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.category && product.category.toLowerCase().includes(searchTerm.toLowerCase()))
       : true;
     
     return categoryMatch && searchMatch;
   });
   
   return <StoreLayout>
-      <div className="container mx-auto px-3 py-4 sm:py-6">
+      <div className="container max-w-7xl mx-auto px-3 py-4 sm:py-6">
         {/* Barra de pesquisa */}
         <div className="mb-4 sm:mb-6">
           <div className="relative">
@@ -67,6 +80,14 @@ const Index = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 rounded-full shadow-md hover:shadow-lg transition-shadow text-sm h-10"
             />
+            {searchTerm && (
+              <button
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                onClick={() => setSearchTerm("")}
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
         </div>
         
