@@ -1,4 +1,3 @@
-
 import React, { memo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Menu, ArrowRight, Instagram, Phone, Search, X } from "lucide-react";
@@ -60,72 +59,42 @@ SocialMediaLinks.displayName = "SocialMediaLinks";
  * Componente SearchBar aprimorado para busca de produtos
  */
 const SearchBar = () => {
-  const { products } = useProducts();
+  const {
+    products
+  } = useProducts();
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  
-  // Filtra produtos com base na consulta de pesquisa
-  const filteredProducts = searchQuery ? products.filter(product => 
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.category?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) : [];
 
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
+  // Filtra produtos com base na consulta de pesquisa
+  const filteredProducts = searchQuery ? products.filter(product => product.name.toLowerCase().includes(searchQuery.toLowerCase()) || product.description.toLowerCase().includes(searchQuery.toLowerCase()) || product.category?.toLowerCase().includes(searchQuery.toLowerCase())) : [];
+  return <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <div className="relative w-full max-w-[240px] md:max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input 
-            placeholder="Buscar produtos..." 
-            className={`pl-10 pr-4 py-1 h-9 text-sm bg-gray-50 focus:bg-white border-gray-200 
-                       focus:border-store-pink focus:shadow-md transition-all hover:bg-white`}
-            onClick={() => setOpen(true)}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSearchQuery("");
-              }}
-            >
+          <Input placeholder="Buscar produtos..." className={`pl-10 pr-4 py-1 h-9 text-sm bg-gray-50 focus:bg-white border-gray-200 
+                       focus:border-store-pink focus:shadow-md transition-all hover:bg-white`} onClick={() => setOpen(true)} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+          {searchQuery && <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" onClick={e => {
+          e.stopPropagation();
+          setSearchQuery("");
+        }}>
               <X size={14} />
-            </button>
-          )}
+            </button>}
         </div>
       </PopoverTrigger>
       <PopoverContent className="p-0 w-[300px] md:w-[350px]" side="bottom" align="start">
         <Command>
-          <CommandInput 
-            placeholder="Digite para pesquisar produtos..." 
-            value={searchQuery}
-            onValueChange={setSearchQuery}
-            className="h-9"
-          />
+          <CommandInput placeholder="Digite para pesquisar produtos..." value={searchQuery} onValueChange={setSearchQuery} className="h-9" />
           <CommandEmpty className="py-3">Nenhum produto encontrado.</CommandEmpty>
-          {filteredProducts.length > 0 && (
-            <CommandGroup heading="Produtos">
-              {filteredProducts.slice(0, 6).map(product => (
-                <CommandItem 
-                  key={product.id}
-                  onSelect={() => {
-                    navigate(`/product/${product.id}`);
-                    setOpen(false);
-                    setSearchQuery("");
-                  }}
-                  className="flex items-center gap-2 py-2 cursor-pointer"
-                >
+          {filteredProducts.length > 0 && <CommandGroup heading="Produtos">
+              {filteredProducts.slice(0, 6).map(product => <CommandItem key={product.id} onSelect={() => {
+            navigate(`/product/${product.id}`);
+            setOpen(false);
+            setSearchQuery("");
+          }} className="flex items-center gap-2 py-2 cursor-pointer">
                   <div className="h-8 w-8 rounded overflow-hidden flex-shrink-0">
-                    <img 
-                      src={product.imageUrl || "https://placehold.co/100x100"} 
-                      alt={product.name} 
-                      className="h-full w-full object-cover"
-                    />
+                    <img src={product.imageUrl || "https://placehold.co/100x100"} alt={product.name} className="h-full w-full object-cover" />
                   </div>
                   <div className="flex-1 overflow-hidden">
                     <p className="text-sm font-medium truncate">{product.name}</p>
@@ -134,30 +103,20 @@ const SearchBar = () => {
                   <div className="text-sm font-medium text-store-pink">
                     R$ {product.price.toFixed(2)}
                   </div>
-                </CommandItem>
-              ))}
-              {filteredProducts.length > 6 && (
-                <div className="px-2 pb-2 pt-1">
-                  <Button 
-                    variant="link" 
-                    size="sm" 
-                    className="w-full text-xs text-store-pink"
-                    onClick={() => {
-                      navigate(`/?search=${encodeURIComponent(searchQuery)}`);
-                      setOpen(false);
-                      setSearchQuery("");
-                    }}
-                  >
+                </CommandItem>)}
+              {filteredProducts.length > 6 && <div className="px-2 pb-2 pt-1">
+                  <Button variant="link" size="sm" className="w-full text-xs text-store-pink" onClick={() => {
+              navigate(`/?search=${encodeURIComponent(searchQuery)}`);
+              setOpen(false);
+              setSearchQuery("");
+            }}>
                     Ver todos os {filteredProducts.length} resultados
                   </Button>
-                </div>
-              )}
-            </CommandGroup>
-          )}
+                </div>}
+            </CommandGroup>}
         </Command>
       </PopoverContent>
-    </Popover>
-  );
+    </Popover>;
 };
 
 /**
@@ -174,15 +133,14 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
   const {
     totalItems
   } = useCart();
-  
+
   // Obtém configurações da loja (nome, mensagens, redes sociais)
   const {
     settings
   } = useStore();
-  
+
   // Verifica se o dispositivo é móvel para adaptar o layout
   const isMobile = useIsMobile();
-  
   return <div className="flex min-h-screen flex-col bg-gradient-to-br from-white to-gray-50">
       {/* Cabeçalho da loja - pode ser ocultado com a prop showHeader=false */}
       {showHeader && <header className="sticky top-0 z-10 animate-fade-in shadow-md">
@@ -199,27 +157,21 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
               <NavigationLinks isMobile={isMobile} />
 
               {/* Barra de pesquisa aprimorada */}
-              {!isMobile && (
-                <div className="hidden md:flex items-center max-w-xs w-full mx-4">
+              {!isMobile && <div className="hidden md:flex items-center max-w-xs w-full mx-4">
                   <SearchBar />
-                </div>
-              )}
+                </div>}
 
               {/* Carrinho e menu móvel */}
               <div className="flex items-center gap-2 sm:gap-4">
                 {/* Barra de pesquisa em dispositivos móveis */}
-                {isMobile && (
-                  <Popover>
+                {isMobile && <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-store-pink hover:bg-gray-100 btn-pop p-1.5">
-                        <Search className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </Button>
+                      
                     </PopoverTrigger>
                     <PopoverContent className="p-3 w-[90vw]" side="bottom" align="end">
                       <SearchBar />
                     </PopoverContent>
-                  </Popover>
-                )}
+                  </Popover>}
 
                 {/* Ícone do carrinho com contador */}
                 <div className="relative">
