@@ -27,7 +27,20 @@ const Cart = () => {
   return (
     <StoreLayout>
       <div className="container max-w-5xl mx-auto px-4 py-6 sm:py-8">
-        <h1 className="mb-5 text-xl sm:text-2xl font-bold text-gradient">Seu Carrinho</h1>
+        <div className="mb-6 flex items-center">
+          <h1 className="text-xl sm:text-2xl font-bold text-gradient">Seu Carrinho</h1>
+          <div className="ml-auto">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-gray-500 hover:text-store-pink"
+              onClick={() => navigate("/")}
+            >
+              <ShoppingBag className="mr-2 h-4 w-4" />
+              <span className="hidden sm:inline">Continuar Comprando</span>
+            </Button>
+          </div>
+        </div>
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 p-8 sm:p-12 text-center bg-white/80 backdrop-blur-sm shadow-sm">
@@ -46,48 +59,56 @@ const Cart = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="md:col-span-2">
-              <div className="space-y-3 sm:space-y-4 animate-fade-in">
-                {items.map((item) => (
-                  <CartItemCard key={item.product.id} item={item} />
-                ))}
-              </div>
+          <div className="grid gap-6 md:grid-cols-12">
+            <div className="md:col-span-7 lg:col-span-8">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100/80">
+                <h2 className="text-lg font-medium text-gray-800 mb-4 flex items-center">
+                  <ShoppingCart className="mr-2 h-4 w-4 text-store-pink" />
+                  Itens do Carrinho ({items.length})
+                </h2>
+                <div className="space-y-3 sm:space-y-4 animate-fade-in">
+                  {items.map((item) => (
+                    <CartItemCard key={item.product.id} item={item} />
+                  ))}
+                </div>
 
-              <div className="mt-5 sm:mt-6 flex justify-between">
-                <Button
-                  variant="outline"
-                  className="text-sm group hover:border-store-pink hover:text-store-pink transition-colors"
-                  onClick={() => navigate("/")}
-                >
-                  <ShoppingBag className="mr-2 h-4 w-4 group-hover:translate-x-[-2px] transition-transform" />
-                  Continuar Comprando
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="flex items-center text-red-500 hover:bg-red-50 hover:text-red-600 group"
-                  onClick={clearCart}
-                >
-                  <Trash2 className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
-                  Limpar Carrinho
-                </Button>
+                <div className="mt-5 sm:mt-6 flex justify-between">
+                  <Button
+                    variant="outline"
+                    className="text-sm group hover:border-store-pink hover:text-store-pink transition-colors"
+                    onClick={() => navigate("/")}
+                  >
+                    <ShoppingBag className="mr-2 h-4 w-4 group-hover:translate-x-[-2px] transition-transform" />
+                    Continuar Comprando
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="flex items-center text-red-500 hover:bg-red-50 hover:text-red-600 group"
+                    onClick={clearCart}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
+                    Limpar Carrinho
+                  </Button>
+                </div>
               </div>
             </div>
 
-            <div className="animate-fade-in">
-              <div className="rounded-lg border bg-white/90 backdrop-blur-sm p-5 sm:p-6 shadow-sm hover:shadow-md transition-all">
-                <h2 className="mb-4 text-lg font-medium text-gray-800">Resumo do Pedido</h2>
+            <div className="md:col-span-5 lg:col-span-4 animate-fade-in">
+              <div className="rounded-xl border bg-white/90 backdrop-blur-sm p-5 sm:p-6 shadow-sm hover:shadow-md transition-all sticky top-20">
+                <h2 className="mb-4 text-lg font-medium text-gray-800 flex items-center border-b pb-2">
+                  <span className="text-gradient">Resumo do Pedido</span>
+                </h2>
                 
                 <div className="mb-4">
                   <CouponForm />
                 </div>
                 
-                <div className="space-y-3">
-                  <div className="flex justify-between">
+                <div className="space-y-3 mt-5">
+                  <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Subtotal</span>
                     <span>R$ {subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Taxa de Entrega</span>
                     <span>
                       {hasFreeDelivery 
@@ -96,12 +117,12 @@ const Cart = () => {
                     </span>
                   </div>
                   {discountAmount > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-green-600 text-sm">
                       <span>Desconto</span>
                       <span>-R$ {discountAmount.toFixed(2)}</span>
                     </div>
                   )}
-                  <Separator />
+                  <Separator className="my-3" />
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
                     <span className="text-store-pink text-lg">R$ {total.toFixed(2)}</span>
@@ -123,6 +144,15 @@ const Cart = () => {
                     </svg>
                   </p>
                 </div>
+                
+                {hasFreeDelivery && (
+                  <div className="mt-3 bg-green-50 border border-green-100 rounded-lg p-2 text-xs text-green-700 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Entrega gratuita aplicada
+                  </div>
+                )}
               </div>
             </div>
           </div>

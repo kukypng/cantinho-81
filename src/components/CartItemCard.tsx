@@ -18,13 +18,13 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, allowEdit = true }) =
   const isMobile = useIsMobile();
 
   return (
-    <Card className="mb-4 bg-white/90 backdrop-blur-sm hover-scale-sm border border-gray-100/80 shadow-sm hover:shadow-md transition-all duration-300">
-      <CardContent className={`flex items-center ${isMobile ? 'p-3' : 'p-4'}`}>
-        <div className={`${isMobile ? 'mr-2 h-14 w-14' : 'mr-4 h-16 w-16'} flex-shrink-0 overflow-hidden rounded-lg shadow-sm group`}>
+    <div className="group bg-white/95 backdrop-blur-sm border border-gray-100/80 rounded-lg p-3 transition-all hover:shadow-md hover:border-gray-200/80 hover:bg-white">
+      <div className="flex items-center">
+        <div className={`${isMobile ? 'mr-2 h-14 w-14' : 'mr-4 h-16 w-16'} flex-shrink-0 overflow-hidden rounded-lg shadow-sm group-hover:shadow-md transition-all`}>
           <img
             src={product.imageUrl || "https://placehold.co/400x400"}
             alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
         </div>
         <div className="flex-1">
@@ -38,7 +38,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, allowEdit = true }) =
         </div>
         {allowEdit && (
           <div className={`flex items-center ${isMobile ? 'gap-1 flex-col' : 'gap-2'}`}>
-            <div className="flex items-center bg-gray-100 rounded-full px-1 shadow-sm">
+            <div className="flex items-center bg-gray-100 rounded-full px-1 shadow-sm group-hover:bg-gray-200 transition-colors">
               <Button
                 variant="ghost"
                 size="icon"
@@ -68,8 +68,8 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, allowEdit = true }) =
             </Button>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
