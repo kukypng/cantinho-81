@@ -1,4 +1,3 @@
-
 import React, { memo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Menu, ArrowRight, Instagram, Phone, Search, X, Lock } from "lucide-react";
@@ -142,7 +141,9 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
   } = useStore();
 
   // Obtém informações de autenticação
-  const { isAdmin } = useAuth();
+  const {
+    isAdmin
+  } = useAuth();
 
   // Verifica se o dispositivo é móvel para adaptar o layout
   const isMobile = useIsMobile();
@@ -171,9 +172,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                 {/* Barra de pesquisa em dispositivos móveis */}
                 {isMobile && <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-gray-600 hover:bg-gray-100 btn-pop p-1.5">
-                        <Search className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </Button>
+                      
                     </PopoverTrigger>
                     <PopoverContent className="p-3 w-[90vw]" side="bottom" align="end">
                       <SearchBar />
@@ -213,10 +212,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                           </Link>)}
                           
                         {/* Botão de acesso à área administrativa adicionado ao menu */}
-                        <Link 
-                          to="/admin" 
-                          className="flex items-center gap-2 text-lg font-medium text-gray-500 hover:text-store-pink hover-scale btn-pop"
-                        >
+                        <Link to="/admin" className="flex items-center gap-2 text-lg font-medium text-gray-500 hover:text-store-pink hover-scale btn-pop">
                           <Lock className="h-4 w-4" />
                           Área Administrativa
                         </Link>
