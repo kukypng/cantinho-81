@@ -73,9 +73,8 @@ const SearchBar = () => {
   return <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <div className="relative w-full max-w-[240px] md:max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input placeholder="Buscar produtos..." className={`pl-10 pr-4 py-1 h-9 text-sm bg-gray-50 focus:bg-white border-gray-200 
-                       focus:border-store-pink focus:shadow-md transition-all hover:bg-white`} onClick={() => setOpen(true)} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+          
+          
           {searchQuery && <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" onClick={e => {
           e.stopPropagation();
           setSearchQuery("");
