@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useRef } from "react";
 import StoreLayout from "@/components/layout/StoreLayout";
 import DeliveryMethodSelector from "@/components/checkout/DeliveryMethodSelector";
 import ShippingInfoForm from "@/components/checkout/ShippingInfoForm";
@@ -8,12 +8,14 @@ import OrderSummary from "@/components/checkout/OrderSummary";
 import CustomCakeForm from "@/components/checkout/CustomCakeForm";
 import useCheckout from "@/hooks/useCheckout";
 import { useStore } from "@/context/StoreContext";
-import { ArrowRight, Truck, CreditCard, Cake } from "lucide-react";
+import { ArrowRight, ArrowUp, Truck, CreditCard, Cake } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 const Checkout = () => {
   const { settings } = useStore();
   const isMobile = useIsMobile();
+  const topRef = useRef<HTMLDivElement>(null);
   const {
     items,
     subtotal,
@@ -43,9 +45,13 @@ const Checkout = () => {
     return null;
   }
 
+  const scrollToTop = () => {
+    topRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <StoreLayout>
-      <div className="container mx-auto px-3 py-4 md:px-4 md:py-8 animate-fade-in">
+      <div ref={topRef} className="container mx-auto px-3 py-4 md:px-4 md:py-8 animate-fade-in">
         <h1 className="mb-4 md:mb-8 text-2xl md:text-3xl font-bold text-gradient">
           Finalizar Pedido
         </h1>
@@ -115,6 +121,18 @@ const Checkout = () => {
                 onChangeOptionChange={setNeedChange}
                 onChangeAmountChange={setChangeAmount}
               />
+            </div>
+            
+            <div className="flex justify-center mt-8 mb-4">
+              <Button 
+                onClick={scrollToTop} 
+                variant="outline" 
+                size="lg"
+                className="rounded-full shadow-md hover:shadow-lg"
+              >
+                <ArrowUp className="mr-2 h-4 w-4" />
+                Voltar ao topo
+              </Button>
             </div>
           </div>
 
