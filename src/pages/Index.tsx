@@ -5,10 +5,10 @@ import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/context/ProductContext";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/context/StoreContext";
-import { MapPin, BellRing, Search, Lock, X } from "lucide-react";
+import { MapPin, BellRing, Search, X } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 /**
@@ -156,20 +156,6 @@ const Index = () => {
               Limpar filtros
             </Button>
           </div>}
-          
-        {/* Botão de acesso à área administrativa ao final da página */}
-        <div className="mt-12 flex justify-center">
-          <Link to="/admin">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={`flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity ${isAdmin ? 'text-store-pink' : 'text-gray-400'}`}
-            >
-              <Lock className="h-3.5 w-3.5" />
-              Área Administrativa
-            </Button>
-          </Link>
-        </div>
       </div>
     </StoreLayout>;
 };
