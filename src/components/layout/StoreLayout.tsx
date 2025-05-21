@@ -214,7 +214,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
                         {/* Botão de acesso à área administrativa adicionado ao menu */}
                         <Link to="/admin" className="flex items-center gap-2 text-lg font-medium text-gray-500 hover:text-store-pink hover-scale btn-pop">
                           <Lock className="h-4 w-4" />
-                          Admin
+                          Área Administrativa
                         </Link>
                       </nav>
                     </SheetContent>
