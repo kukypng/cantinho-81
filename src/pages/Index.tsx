@@ -5,10 +5,10 @@ import ProductCard from "@/components/ProductCard";
 import { useProducts } from "@/context/ProductContext";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@/context/StoreContext";
-import { MapPin, BellRing, Search, X } from "lucide-react";
+import { MapPin, BellRing, Search, X, Gamepad2 } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 /**
@@ -41,6 +41,9 @@ const Index = () => {
   
   // Estado para armazenar o termo de busca
   const [searchTerm, setSearchTerm] = useState(searchParam || "");
+  
+  // Estado para controlar o easter egg
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
 
   // Atualizar searchTerm quando o parâmetro de URL mudar
   useEffect(() => {
@@ -48,6 +51,15 @@ const Index = () => {
       setSearchTerm(searchParam);
     }
   }, [searchParam]);
+  
+  // Verificar se o termo de busca é "cookie" para mostrar o easter egg
+  useEffect(() => {
+    if (searchTerm.toLowerCase() === "cookie") {
+      setShowEasterEgg(true);
+    } else {
+      setShowEasterEgg(false);
+    }
+  }, [searchTerm]);
 
   // Extrai todas as categorias únicas dos produtos
   const categories = Array.from(new Set(products.map(product => product.category).filter(Boolean)));
@@ -90,6 +102,27 @@ const Index = () => {
             )}
           </div>
         </div>
+        
+        {/* Easter Egg - Aparece apenas quando pesquisar "cookie" */}
+        {showEasterEgg && (
+          <div className="mb-4 sm:mb-6 animate-fade-in">
+            <Alert className="bg-gradient-to-r from-indigo-50 to-purple-50 border-store-pink/20 shadow-md hover:shadow-lg transition-all">
+              <Gamepad2 className="h-5 w-5 text-store-pink bounce-gentle" />
+              <AlertTitle className="text-store-pink font-medium flex items-center gap-2">
+                Easter Egg encontrado!
+              </AlertTitle>
+              <AlertDescription className="text-gray-700">
+                <p className="mb-2">Você encontrou o jogo secreto!</p>
+                <Link to="/easteregg">
+                  <Button size="sm" className="mt-1 bg-gradient-to-r from-store-pink to-store-purple shadow-md hover:shadow-xl transition-all">
+                    <Gamepad2 className="mr-2 h-4 w-4" />
+                    Jogar Agora
+                  </Button>
+                </Link>
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
         
         {/* Área de avisos personalizados */}
         <div className="mb-4 sm:mb-6 rounded-xl bg-gray-50 p-3 sm:p-4 space-y-3">
