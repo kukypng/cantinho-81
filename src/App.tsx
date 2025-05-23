@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import GameEasterEgg from "./pages/GameEasterEgg";
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard";
@@ -45,6 +46,7 @@ const App = () => {
                       <Route path="/login" element={<Login />} />
                       <Route path="/cart" element={<Cart />} />
                       <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/easteregg" element={<GameEasterEgg />} />
                       
                       {/* Admin Routes */}
                       <Route 

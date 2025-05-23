@@ -1,7 +1,7 @@
 
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
-import { Home, ShoppingCart, User, Lock, Settings, LogOut } from "lucide-react";
+import { Home, ShoppingCart, User, Lock, Settings, LogOut, Gamepad2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { useStore } from "@/context/StoreContext";
@@ -66,6 +66,17 @@ const MobileMenu = memo(() => {
                     >
                       <Settings className="w-5 h-5 text-store-pink" />
                       <span className="text-gray-800">Configurações</span>
+                    </Link>
+                  </SheetClose>
+                  
+                  {/* Easter egg link após o botão de admin */}
+                  <SheetClose asChild>
+                    <Link 
+                      to="/easteregg" 
+                      className="flex items-center gap-2 py-2 px-3 rounded-md hover:bg-gray-100 transition-colors text-xs text-gray-500"
+                    >
+                      <Gamepad2 className="w-4 h-4 text-gray-400" />
+                      <span>Easter Egg</span>
                     </Link>
                   </SheetClose>
                 </>
