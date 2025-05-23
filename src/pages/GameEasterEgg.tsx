@@ -1,391 +1,417 @@
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Home } from "lucide-react";
+import { Home, RefreshCw, Gamepad2, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import StoreLayout from "@/components/layout/StoreLayout";
 
-type Position = { x: number; y: number };
-type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
+// Define our puzzle piece type
+type PuzzlePiece = {
+  value: number;
+  x: number;
+  y: number;
+};
 
 const GameEasterEgg = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const [direction, setDirection] = useState<Direction>('RIGHT');
-  const [snake, setSnake] = useState<Position[]>([
-    { x: 10, y: 10 },
-    { x: 9, y: 10 },
-    { x: 8, y: 10 }
-  ]);
-  const [food, setFood] = useState<Position>({ x: 15, y: 15 });
-  const [gameSpeed, setGameSpeed] = useState(150);
-  const [canChangeDirection, setCanChangeDirection] = useState(true);
-  const [touchStart, setTouchStart] = useState<Position | null>(null);
+  // Game state
+  const [gridSize, setGridSize] = useState(3);
+  const [pieces, setPieces] = useState<PuzzlePiece[]>([]);
+  const [emptyPos, setEmptyPos] = useState({ x: gridSize - 1, y: gridSize - 1 });
+  const [moves, setMoves] = useState(0);
+  const [isSolved, setIsSolved] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
+  const [startTime, setStartTime] = useState(0);
+  const [time, setTime] = useState(0);
+  const [touchStart, setTouchStart] = useState<{x: number, y: number} | null>(null);
 
-  // Canvas settings
-  const boardSize = Math.min(window.innerWidth - 40, 400);
-  const gridSize = 20; // 20x20 grid
-  const cellSize = boardSize / gridSize;
-  
-  // Game loop
-  useEffect(() => {
-    if (gameOver || paused) return;
+  // Game constants
+  const tileSize = Math.min(window.innerWidth - 40, 300) / gridSize;
+  const boardSize = tileSize * gridSize;
+
+  // Calculate difficulty settings
+  const getDifficultySettings = () => {
+    switch(difficulty) {
+      case 'easy': 
+        return { gridSize: 3, shuffleCount: 20 };
+      case 'medium': 
+        return { gridSize: 4, shuffleCount: 40 };
+      case 'hard': 
+        return { gridSize: 5, shuffleCount: 80 };
+      default: 
+        return { gridSize: 3, shuffleCount: 20 };
+    }
+  };
+
+  // Initialize and reset game
+  const initGame = () => {
+    const { gridSize: newSize } = getDifficultySettings();
     
-    const moveSnake = () => {
-      setCanChangeDirection(true);
-      const head = { ...snake[0] };
-      
-      switch (direction) {
-        case 'UP': head.y -= 1; break;
-        case 'DOWN': head.y += 1; break;
-        case 'LEFT': head.x -= 1; break;
-        case 'RIGHT': head.x += 1; break;
-      }
-      
-      // Wall collision
-      if (
-        head.x < 0 || 
-        head.x >= gridSize || 
-        head.y < 0 || 
-        head.y >= gridSize ||
-        snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)
-      ) {
-        setGameOver(true);
-        return;
-      }
-      
-      const newSnake = [head, ...snake];
-      
-      // Food collision
-      if (head.x === food.x && head.y === food.y) {
-        setScore(prev => prev + 1);
-        generateFood(newSnake);
-        
-        // Increase speed every 5 points
-        if (score > 0 && score % 5 === 0) {
-          setGameSpeed(prev => Math.max(prev - 10, 60));
+    setGridSize(newSize);
+    setEmptyPos({ x: newSize - 1, y: newSize - 1 });
+    setMoves(0);
+    setIsSolved(false);
+    setIsPlaying(false);
+    setTime(0);
+
+    // Create ordered pieces
+    const newPieces: PuzzlePiece[] = [];
+    for (let y = 0; y < newSize; y++) {
+      for (let x = 0; x < newSize; x++) {
+        if (x !== newSize - 1 || y !== newSize - 1) {
+          newPieces.push({
+            value: y * newSize + x + 1,
+            x,
+            y
+          });
         }
-      } else {
-        newSnake.pop(); // Remove tail if no food eaten
       }
-      
-      setSnake(newSnake);
-    };
-    
-    const gameInterval = setInterval(moveSnake, gameSpeed);
-    return () => clearInterval(gameInterval);
-  }, [snake, direction, food, gameOver, paused, gameSpeed, score]);
-  
-  // Draw game
-  useEffect(() => {
-    if (!canvasRef.current) return;
-    
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
-    // Clear canvas
-    ctx.fillStyle = '#f8fafc'; // Light background
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw snake
-    snake.forEach((segment, index) => {
-      const isHead = index === 0;
-      ctx.fillStyle = isHead ? '#FF1B8D' : '#9747FF'; // Store pink/purple gradient theme
-      const x = segment.x * cellSize;
-      const y = segment.y * cellSize;
-      
-      // Rounded segments for smoother look
-      ctx.beginPath();
-      ctx.roundRect(x, y, cellSize, cellSize, isHead ? 3 : 5);
-      ctx.fill();
-      
-      // Add eyes to head
-      if (isHead) {
-        ctx.fillStyle = '#ffffff';
-        // Eyes position depends on direction
-        const eyeSize = cellSize / 5;
-        let eyeX1, eyeX2, eyeY1, eyeY2;
-        
-        switch (direction) {
-          case 'UP':
-            eyeX1 = x + cellSize / 3 - eyeSize / 2;
-            eyeY1 = y + cellSize / 3 - eyeSize / 2;
-            eyeX2 = x + 2 * cellSize / 3 - eyeSize / 2;
-            eyeY2 = y + cellSize / 3 - eyeSize / 2;
-            break;
-          case 'DOWN':
-            eyeX1 = x + cellSize / 3 - eyeSize / 2;
-            eyeY1 = y + 2 * cellSize / 3 - eyeSize / 2;
-            eyeX2 = x + 2 * cellSize / 3 - eyeSize / 2;
-            eyeY2 = y + 2 * cellSize / 3 - eyeSize / 2;
-            break;
-          case 'LEFT':
-            eyeX1 = x + cellSize / 3 - eyeSize / 2;
-            eyeY1 = y + cellSize / 3 - eyeSize / 2;
-            eyeX2 = x + cellSize / 3 - eyeSize / 2;
-            eyeY2 = y + 2 * cellSize / 3 - eyeSize / 2;
-            break;
-          case 'RIGHT':
-            eyeX1 = x + 2 * cellSize / 3 - eyeSize / 2;
-            eyeY1 = y + cellSize / 3 - eyeSize / 2;
-            eyeX2 = x + 2 * cellSize / 3 - eyeSize / 2;
-            eyeY2 = y + 2 * cellSize / 3 - eyeSize / 2;
-            break;
-        }
-        
-        ctx.beginPath();
-        ctx.arc(eyeX1, eyeY1, eyeSize, 0, 2 * Math.PI);
-        ctx.arc(eyeX2, eyeY2, eyeSize, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-    });
-    
-    // Draw food
-    ctx.fillStyle = '#FF1B8D'; // Pink food
-    ctx.beginPath();
-    ctx.roundRect(
-      food.x * cellSize, 
-      food.y * cellSize, 
-      cellSize, 
-      cellSize, 
-      cellSize / 2
-    );
-    ctx.fill();
-    
-    // Add a sparkle to the food
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(
-      food.x * cellSize + cellSize / 4, 
-      food.y * cellSize + cellSize / 4, 
-      cellSize / 8, 
-      0, 
-      2 * Math.PI
-    );
-    ctx.fill();
-    
-  }, [snake, food, cellSize]);
-  
-  // Generate new food
-  const generateFood = (currentSnake = snake) => {
-    let newFood;
-    let foodOnSnake = true;
-    
-    while (foodOnSnake) {
-      newFood = {
-        x: Math.floor(Math.random() * gridSize),
-        y: Math.floor(Math.random() * gridSize)
-      };
-      
-      foodOnSnake = currentSnake.some(
-        segment => segment.x === newFood.x && segment.y === newFood.y
-      );
     }
     
-    setFood(newFood as Position);
+    setPieces(newPieces);
   };
-  
-  // Handle keyboard controls
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!canChangeDirection) return;
-      
-      setCanChangeDirection(false);
-      switch (e.key) {
-        case 'ArrowUp':
-          if (direction !== 'DOWN') setDirection('UP');
-          break;
-        case 'ArrowDown':
-          if (direction !== 'UP') setDirection('DOWN');
-          break;
-        case 'ArrowLeft':
-          if (direction !== 'RIGHT') setDirection('LEFT');
-          break;
-        case 'ArrowRight':
-          if (direction !== 'LEFT') setDirection('RIGHT');
-          break;
-        case ' ':
-          setPaused(prev => !prev);
-          break;
-      }
-    };
+
+  // Start game with shuffled pieces
+  const startGame = () => {
+    const { shuffleCount } = getDifficultySettings();
     
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [direction, canChangeDirection]);
-  
+    // Shuffle pieces by making random valid moves
+    let currentPieces = [...pieces];
+    let currentEmpty = { ...emptyPos };
+    
+    for (let i = 0; i < shuffleCount; i++) {
+      // Get possible moves
+      const possibleMoves = [
+        { x: currentEmpty.x + 1, y: currentEmpty.y }, // Right
+        { x: currentEmpty.x - 1, y: currentEmpty.y }, // Left
+        { x: currentEmpty.x, y: currentEmpty.y + 1 }, // Down
+        { x: currentEmpty.x, y: currentEmpty.y - 1 }  // Up
+      ].filter(move => 
+        move.x >= 0 && move.x < gridSize && 
+        move.y >= 0 && move.y < gridSize
+      );
+      
+      // Pick random move
+      const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+      
+      // Find piece at move position
+      const pieceIndex = currentPieces.findIndex(p => p.x === move.x && p.y === move.y);
+      
+      if (pieceIndex !== -1) {
+        // Move piece to empty spot
+        currentPieces[pieceIndex] = {
+          ...currentPieces[pieceIndex],
+          x: currentEmpty.x,
+          y: currentEmpty.y
+        };
+        
+        // Update empty position
+        currentEmpty = { x: move.x, y: move.y };
+      }
+    }
+    
+    setPieces(currentPieces);
+    setEmptyPos(currentEmpty);
+    setIsPlaying(true);
+    setStartTime(Date.now());
+  };
+
+  // Check if puzzle is solved
+  const checkSolution = () => {
+    for (let piece of pieces) {
+      const correctPos = { 
+        x: (piece.value - 1) % gridSize, 
+        y: Math.floor((piece.value - 1) / gridSize) 
+      };
+      
+      if (piece.x !== correctPos.x || piece.y !== correctPos.y) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // Handle piece movement
+  const movePiece = (piece: PuzzlePiece) => {
+    if (!isPlaying || isSolved) return;
+    
+    // Check if piece is adjacent to empty space
+    const isAdjacent = (
+      (Math.abs(piece.x - emptyPos.x) === 1 && piece.y === emptyPos.y) || 
+      (Math.abs(piece.y - emptyPos.y) === 1 && piece.x === emptyPos.x)
+    );
+    
+    if (isAdjacent) {
+      // Move piece to empty position
+      const newPieces = pieces.map(p => {
+        if (p.value === piece.value) {
+          return { ...p, x: emptyPos.x, y: emptyPos.y };
+        }
+        return p;
+      });
+      
+      // Update empty position
+      setEmptyPos({ x: piece.x, y: piece.y });
+      
+      // Update pieces and count move
+      setPieces(newPieces);
+      setMoves(moves + 1);
+    }
+  };
+
+  // Handle keyboard controls
+  const handleKeyDown = (e: React.KeyboardEvent | KeyboardEvent) => {
+    if (!isPlaying || isSolved) return;
+    
+    let dx = 0, dy = 0;
+    
+    switch (e.key) {
+      case 'ArrowUp': dy = 1; break;
+      case 'ArrowDown': dy = -1; break;
+      case 'ArrowLeft': dx = 1; break;
+      case 'ArrowRight': dx = -1; break;
+      default: return;
+    }
+    
+    // Find piece that would move into the empty space
+    const pieceToMove = pieces.find(p => 
+      p.x === emptyPos.x + dx && p.y === emptyPos.y + dy
+    );
+    
+    if (pieceToMove) {
+      movePiece(pieceToMove);
+    }
+  };
+
   // Handle touch controls for mobile
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isPlaying || isSolved) return;
     const touch = e.touches[0];
     setTouchStart({ x: touch.clientX, y: touch.clientY });
   };
-  
+
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!touchStart || !canChangeDirection) return;
+    if (!touchStart || !isPlaying || isSolved) return;
     
     const touch = e.changedTouches[0];
-    const endX = touch.clientX;
-    const endY = touch.clientY;
+    const dx = touch.clientX - touchStart.x;
+    const dy = touch.clientY - touchStart.y;
     
-    const dx = endX - touchStart.x;
-    const dy = endY - touchStart.y;
+    // Determine swipe direction (require min distance to count as swipe)
+    const minSwipeDistance = 30;
     
-    // Determine which direction had the largest movement
-    if (Math.abs(dx) > Math.abs(dy)) {
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > minSwipeDistance) {
       // Horizontal swipe
-      if (dx > 0 && direction !== 'LEFT') {
-        setDirection('RIGHT');
-      } else if (dx < 0 && direction !== 'RIGHT') {
-        setDirection('LEFT');
-      }
-    } else {
+      const pieceToMove = pieces.find(p => 
+        (dx > 0 && p.x === emptyPos.x - 1 && p.y === emptyPos.y) || 
+        (dx < 0 && p.x === emptyPos.x + 1 && p.y === emptyPos.y)
+      );
+      if (pieceToMove) movePiece(pieceToMove);
+    } 
+    else if (Math.abs(dy) > minSwipeDistance) {
       // Vertical swipe
-      if (dy > 0 && direction !== 'UP') {
-        setDirection('DOWN');
-      } else if (dy < 0 && direction !== 'DOWN') {
-        setDirection('UP');
-      }
+      const pieceToMove = pieces.find(p => 
+        (dy > 0 && p.x === emptyPos.x && p.y === emptyPos.y - 1) || 
+        (dy < 0 && p.x === emptyPos.x && p.y === emptyPos.y + 1)
+      );
+      if (pieceToMove) movePiece(pieceToMove);
     }
     
-    setCanChangeDirection(false);
     setTouchStart(null);
   };
-  
-  // Reset game
-  const resetGame = () => {
-    setSnake([
-      { x: 10, y: 10 },
-      { x: 9, y: 10 },
-      { x: 8, y: 10 }
-    ]);
-    setDirection('RIGHT');
-    setScore(0);
-    setGameOver(false);
-    setPaused(false);
-    setGameSpeed(150);
-    generateFood();
-  };
-  
-  // Direction button handlers
-  const handleDirectionButton = (newDirection: Direction) => {
-    if (!canChangeDirection) return;
-    
-    switch (newDirection) {
-      case 'UP':
-        if (direction !== 'DOWN') setDirection('UP');
-        break;
-      case 'DOWN':
-        if (direction !== 'UP') setDirection('DOWN');
-        break;
-      case 'LEFT':
-        if (direction !== 'RIGHT') setDirection('LEFT');
-        break;
-      case 'RIGHT':
-        if (direction !== 'LEFT') setDirection('RIGHT');
-        break;
+
+  // Key press effect
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [pieces, emptyPos, isPlaying, isSolved]);
+
+  // Timer effect
+  useEffect(() => {
+    let timer: number;
+    if (isPlaying && !isSolved) {
+      timer = window.setInterval(() => {
+        setTime(Math.floor((Date.now() - startTime) / 1000));
+      }, 1000);
     }
-    setCanChangeDirection(false);
+    return () => clearInterval(timer);
+  }, [isPlaying, isSolved, startTime]);
+
+  // Check win condition
+  useEffect(() => {
+    if (isPlaying && pieces.length > 0) {
+      const solved = checkSolution();
+      if (solved) {
+        setIsSolved(true);
+        setIsPlaying(false);
+      }
+    }
+  }, [pieces, isPlaying]);
+
+  // Initialize game on mount and when difficulty changes
+  useEffect(() => {
+    initGame();
+  }, [difficulty]);
+
+  // Format time display
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-  
+
+  // Render each puzzle piece
+  const renderPiece = (piece: PuzzlePiece) => {
+    const isCorrectPosition = piece.x === (piece.value - 1) % gridSize && 
+                              piece.y === Math.floor((piece.value - 1) / gridSize);
+
+    return (
+      <div
+        key={piece.value}
+        onClick={() => movePiece(piece)}
+        className={`absolute flex items-center justify-center rounded-md cursor-pointer transition-all duration-200
+          ${isCorrectPosition ? 'bg-green-100' : 'bg-white'} 
+          border-2 ${isPlaying ? 'border-gray-200' : 'border-store-pink'}
+          shadow-md hover:shadow-lg active:scale-95 select-none`}
+        style={{
+          width: tileSize + 'px',
+          height: tileSize + 'px',
+          left: piece.x * tileSize + 'px',
+          top: piece.y * tileSize + 'px',
+          fontSize: tileSize / 2.5 + 'px',
+          fontWeight: 'bold',
+          color: isCorrectPosition ? 'rgb(22, 163, 74)' : '#FF1B8D',
+          transition: 'left 0.2s, top 0.2s'
+        }}
+      >
+        {piece.value}
+      </div>
+    );
+  };
+
+  // Main render
   return (
     <StoreLayout>
       <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
           <h1 className="mb-6 text-center text-2xl font-bold text-gradient">
-            {gameOver ? 'Game Over!' : 'Snake Game'}
+            {isSolved ? 'Parabéns!' : 'Quebra-cabeça Deslizante'}
           </h1>
           
+          {/* Game info panel */}
           <div className="mb-4 flex items-center justify-between">
-            <div className="text-lg font-bold text-store-pink">Score: {score}</div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setPaused(prev => !prev)}
-              disabled={gameOver}
-            >
-              {paused ? 'Resume' : 'Pause'}
-            </Button>
+            <div className="text-sm space-y-1">
+              <div><span className="font-bold text-store-pink">Movimentos:</span> {moves}</div>
+              <div><span className="font-bold text-store-pink">Tempo:</span> {formatTime(time)}</div>
+            </div>
+            
+            {!isPlaying ? (
+              <Button 
+                onClick={startGame}
+                className="flex items-center gap-2"
+              >
+                <Gamepad2 size={18} />
+                {pieces.length > 0 ? 'Jogar' : 'Carregando...'}
+              </Button>
+            ) : (
+              <Button 
+                variant="outline" 
+                onClick={initGame}
+                className="flex items-center gap-2"
+              >
+                <RefreshCw size={18} />
+                Reiniciar
+              </Button>
+            )}
           </div>
           
-          <div className="relative mb-6 overflow-hidden rounded-lg border border-gray-200 shadow-lg">
-            <canvas
-              ref={canvasRef}
-              width={boardSize}
-              height={boardSize}
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
-              className="block touch-none bg-gray-50"
-            />
+          {/* Difficulty selector */}
+          <div className="mb-4 flex justify-center space-x-2">
+            {(['easy', 'medium', 'hard'] as const).map(level => (
+              <Button
+                key={level}
+                variant={difficulty === level ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
+                  if (!isPlaying || window.confirm('Alterar a dificuldade reiniciará o jogo. Continuar?')) {
+                    setDifficulty(level);
+                  }
+                }}
+              >
+                {{easy: 'Fácil', medium: 'Médio', hard: 'Difícil'}[level]}
+              </Button>
+            ))}
+          </div>
+          
+          {/* Game board */}
+          <div 
+            className="relative mb-6 mx-auto bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shadow-lg touch-none"
+            style={{ 
+              width: boardSize + 'px', 
+              height: boardSize + 'px',
+              maxWidth: '100%',
+              touchAction: 'none'
+            }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            {pieces.map(renderPiece)}
             
-            {(gameOver || paused) && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 text-white">
-                <p className="mb-4 text-xl font-bold">
-                  {gameOver ? `Game Over! Score: ${score}` : 'Paused'}
-                </p>
-                <Button variant="outline" onClick={gameOver ? resetGame : () => setPaused(false)}>
-                  {gameOver ? 'Play Again' : 'Resume'}
-                </Button>
+            {/* Game overlay messages */}
+            {!isPlaying && pieces.length > 0 && !isSolved && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white rounded-lg">
+                <div className="text-center p-4">
+                  <p className="text-lg font-bold mb-2">Pronto para começar?</p>
+                  <Button onClick={startGame}>Iniciar Jogo</Button>
+                </div>
+              </div>
+            )}
+            
+            {isSolved && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white rounded-lg animate-fade-in">
+                <div className="text-center p-6">
+                  <p className="text-xl font-bold mb-2">Você venceu! 🎉</p>
+                  <p className="mb-4">
+                    Movimentos: {moves} | Tempo: {formatTime(time)}
+                  </p>
+                  <Button onClick={initGame}>Jogar Novamente</Button>
+                </div>
               </div>
             )}
           </div>
           
-          {/* Mobile controls */}
-          <div className="mb-6 hidden touch-none flex-col items-center sm:hidden">
-            <div className="mb-2">
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="h-12 w-12 rounded-full" 
-                onClick={() => handleDirectionButton('UP')}
-                disabled={gameOver || paused}
-              >
-                <ArrowUp />
-              </Button>
-            </div>
-            <div className="flex items-center justify-center gap-2">
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="h-12 w-12 rounded-full" 
-                onClick={() => handleDirectionButton('LEFT')}
-                disabled={gameOver || paused}
-              >
-                <ArrowLeft />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="h-12 w-12 rounded-full" 
-                onClick={() => handleDirectionButton('DOWN')}
-                disabled={gameOver || paused}
-              >
-                <ArrowDown />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="icon" 
-                className="h-12 w-12 rounded-full" 
-                onClick={() => handleDirectionButton('RIGHT')}
-                disabled={gameOver || paused}
-              >
-                <ArrowRight />
-              </Button>
+          {/* Mobile control hints */}
+          <div className="mb-6 text-center">
+            <p className="text-sm text-gray-500 mb-2">Como jogar:</p>
+            <div className="flex justify-center gap-4">
+              <div className="flex flex-col items-center">
+                <div className="flex gap-1 mb-1">
+                  <Button variant="outline" size="icon" disabled className="h-8 w-8 cursor-default">
+                    <ArrowUp className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex gap-1">
+                  <Button variant="outline" size="icon" disabled className="h-8 w-8 cursor-default">
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" disabled className="h-8 w-8 cursor-default">
+                    <ArrowDown className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" disabled className="h-8 w-8 cursor-default">
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Use setas ou deslize</p>
+              </div>
             </div>
           </div>
           
-          <div className="mb-2 text-center text-sm text-gray-500">
-            <p className="mb-1">Use arrow keys or swipe to control on mobile.</p>
-            <p>Press space to pause/resume.</p>
-          </div>
-          
+          {/* Return button */}
           <div className="text-center">
             <Link to="/">
               <Button variant="ghost" size="sm" className="flex items-center gap-2">
                 <Home size={16} />
-                Return to Store
+                Voltar para a Loja
               </Button>
             </Link>
           </div>
