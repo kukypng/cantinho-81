@@ -302,7 +302,7 @@ const GameEasterEgg = () => {
       <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
           <h1 className="mb-6 text-center text-2xl font-bold text-gradient">
-            {isSolved ? 'Parabéns!' : 'Quebra-cabeça Deslizante'}
+            {isSolved ? 'Parabéns!' : 'Quebra-cabeça by kuky.png'}
           </h1>
           
           {/* Game info panel */}
