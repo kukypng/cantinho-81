@@ -3,6 +3,7 @@ import React, { memo } from "react";
 import { cn } from "@/lib/utils";
 import Header from "./Header";
 import Footer from "./Footer";
+import LegalNotices from "@/components/legal/LegalNotices";
 
 interface StoreLayoutProps {
   children: React.ReactNode;
@@ -26,6 +27,7 @@ const StoreLayout: React.FC<StoreLayoutProps> = memo(({
       </main>
 
       {showFooter && <Footer />}
+      <LegalNotices />
     </div>
   );
 });

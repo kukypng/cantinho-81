@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
@@ -7,7 +6,11 @@ import StoreLayout from "@/components/layout/StoreLayout";
 import GameBoard from "@/components/game/GameBoard";
 import GameControls from "@/components/game/GameControls";
 import GameInstructions from "@/components/game/GameInstructions";
+import GameStats from "@/components/game/GameStats";
 import DeveloperCredit from "@/components/game/DeveloperCredit";
+import { useGameScores } from "@/hooks/useGameScores";
+import { GameAudio, createSuccessParticles } from "@/utils/gameEffects";
+import { toast } from "@/hooks/use-toast";
 
 type PuzzlePiece = {
   value: number;
@@ -27,6 +30,10 @@ const GameEasterEgg = () => {
   const [startTime, setStartTime] = useState(0);
   const [time, setTime] = useState(0);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
+  const [showStats, setShowStats] = useState(false);
+  const [gameAudio] = useState(() => new GameAudio());
+
+  const { saveScore } = useGameScores();
 
   // Game constants
   const tileSize = Math.min(window.innerWidth - 40, 300) / gridSize;
@@ -110,6 +117,8 @@ const GameEasterEgg = () => {
                       (Math.abs(piece.y - emptyPos.y) === 1 && piece.x === emptyPos.x);
     
     if (isAdjacent) {
+      gameAudio.playMoveSound();
+      
       const newPieces = pieces.map(p => {
         if (p.value === piece.value) {
           return { ...p, x: emptyPos.x, y: emptyPos.y };
@@ -120,6 +129,8 @@ const GameEasterEgg = () => {
       setEmptyPos({ x: piece.x, y: piece.y });
       setPieces(newPieces);
       setMoves(moves + 1);
+    } else {
+      gameAudio.playErrorSound();
     }
   };
 
@@ -170,6 +181,37 @@ const GameEasterEgg = () => {
     setTouchStart(null);
   };
 
+  // Enhanced solution detection with celebrations
+  useEffect(() => {
+    if (isPlaying && pieces.length > 0) {
+      const solved = checkSolution();
+      if (solved) {
+        setIsSolved(true);
+        setIsPlaying(false);
+        
+        // Play success sound
+        gameAudio.playSuccessSound();
+        
+        // Save score and check for new record
+        const result = saveScore(difficulty, moves, time);
+        
+        // Create visual celebration
+        const gameBoard = document.querySelector('.game-board');
+        if (gameBoard) {
+          createSuccessParticles(gameBoard as HTMLElement);
+        }
+        
+        // Show toast notification
+        toast({
+          title: result.isNewRecord ? "🏆 Novo Recorde!" : "🎉 Parabéns!",
+          description: result.isNewRecord 
+            ? `Você estabeleceu um novo recorde em ${difficulty}!`
+            : `Puzzle resolvido em ${moves} movimentos e ${Math.floor(time / 60)}:${(time % 60).toString().padStart(2, '0')}!`
+        });
+      }
+    }
+  }, [pieces, isPlaying, difficulty, moves, time, gameAudio, saveScore]);
+
   // Effects
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -185,16 +227,6 @@ const GameEasterEgg = () => {
     }
     return () => clearInterval(timer);
   }, [isPlaying, isSolved, startTime]);
-
-  useEffect(() => {
-    if (isPlaying && pieces.length > 0) {
-      const solved = checkSolution();
-      if (solved) {
-        setIsSolved(true);
-        setIsPlaying(false);
-      }
-    }
-  }, [pieces, isPlaying]);
 
   useEffect(() => {
     initGame();
@@ -216,6 +248,7 @@ const GameEasterEgg = () => {
             onStartGame={startGame}
             onResetGame={initGame}
             onDifficultyChange={setDifficulty}
+            onShowStats={() => setShowStats(true)}
           />
           
           <GameBoard
@@ -249,6 +282,8 @@ const GameEasterEgg = () => {
           </div>
         </div>
       </div>
+      
+      <GameStats isOpen={showStats} onClose={() => setShowStats(false)} />
     </StoreLayout>
   );
 };

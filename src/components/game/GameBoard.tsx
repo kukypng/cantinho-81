@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface PuzzlePiece {
@@ -55,10 +54,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
       <div
         key={piece.value}
         onClick={() => onPieceClick(piece)}
-        className={`absolute flex items-center justify-center rounded-md cursor-pointer transition-all duration-200
-          ${isCorrectPosition ? 'bg-green-100' : 'bg-white'} 
-          border-2 ${isPlaying ? 'border-gray-200' : 'border-store-pink'}
-          shadow-md hover:shadow-lg active:scale-95 select-none`}
+        className={`absolute flex items-center justify-center rounded-md cursor-pointer transition-all duration-200 transform hover:scale-105 active:scale-95
+          ${isCorrectPosition 
+            ? 'bg-gradient-to-br from-green-100 to-green-200 border-green-300' 
+            : 'bg-gradient-to-br from-white to-gray-50 border-gray-200'
+          } 
+          border-2 ${isPlaying ? '' : 'border-store-pink'}
+          shadow-md hover:shadow-lg select-none`}
         style={{
           width: tileSize + 'px',
           height: tileSize + 'px',
@@ -67,7 +69,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
           fontSize: tileSize / 2.5 + 'px',
           fontWeight: 'bold',
           color: isCorrectPosition ? 'rgb(22, 163, 74)' : '#FF1B8D',
-          transition: 'left 0.2s, top 0.2s'
+          transition: 'left 0.2s, top 0.2s, transform 0.1s, box-shadow 0.2s'
         }}
       >
         {piece.value}
@@ -77,7 +79,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
 
   return (
     <div
-      className="relative mb-6 mx-auto bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shadow-lg touch-none"
+      className="game-board relative mb-6 mx-auto bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden border border-gray-200 shadow-lg touch-none"
       style={{
         width: boardSize + 'px',
         height: boardSize + 'px',
