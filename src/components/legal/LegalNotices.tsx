@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Cookie, Shield, FileText, X } from "lucide-react";
+import { Cookie, Shield, FileText } from "lucide-react";
 import { useLegalNotices } from "@/hooks/useLegalNotices";
 
 const LegalNotices: React.FC = () => {
@@ -13,7 +13,7 @@ const LegalNotices: React.FC = () => {
 
   return (
     <Dialog open={hasUnacceptedNotices}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" hideCloseButton>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto [&>button]:hidden">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-store-pink">
             <Shield className="h-5 w-5" />
