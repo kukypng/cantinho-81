@@ -1,7 +1,7 @@
 
 import React, { memo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, ShoppingCart, Info, Phone } from "lucide-react";
+import { Home, ShoppingCart } from "lucide-react";
 
 interface NavigationLinksProps {
   isMobile: boolean;
@@ -17,16 +17,6 @@ const navigationItems = [
     name: "Produtos",
     href: "/",
     icon: ShoppingCart
-  },
-  {
-    name: "Sobre",
-    href: "/",
-    icon: Info
-  },
-  {
-    name: "Contato",
-    href: "/",
-    icon: Phone
   }
 ];
 
@@ -45,13 +35,13 @@ const NavigationLinks = memo(({ isMobile }: NavigationLinksProps) => {
           <Link
             key={item.name}
             to={item.href}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-gray-100 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:bg-gradient-to-r hover:from-store-pink/10 hover:to-store-purple/10 hover:shadow-md ${
               isActive 
-                ? 'text-store-pink bg-store-pink/10 font-semibold' 
+                ? 'text-store-pink bg-gradient-to-r from-store-pink/10 to-store-purple/10 font-semibold shadow-md border border-store-pink/20' 
                 : 'text-gray-600 hover:text-store-pink'
             }`}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-5 w-5" />
             <span className="text-sm font-medium">{item.name}</span>
           </Link>
         );
