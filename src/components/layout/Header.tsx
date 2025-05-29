@@ -1,4 +1,3 @@
-
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu, ArrowRight, Search, Lock, User, Heart, Settings } from "lucide-react";
@@ -11,15 +10,18 @@ import { useAuth } from "@/context/AuthContext";
 import NavigationLinks from "./NavigationLinks";
 import SearchBar from "./SearchBar";
 import MobileSearch from "./MobileSearch";
-
 const Header = memo(() => {
-  const { totalItems } = useCart();
-  const { settings } = useStore();
-  const { isAdmin } = useAuth();
+  const {
+    totalItems
+  } = useCart();
+  const {
+    settings
+  } = useStore();
+  const {
+    isAdmin
+  } = useAuth();
   const isMobile = useIsMobile();
-
-  return (
-    <header className="sticky top-0 z-10 animate-fade-in shadow-lg bg-white/95 backdrop-blur-sm border-b">
+  return <header className="sticky top-0 z-10 animate-fade-in shadow-lg bg-white/95 backdrop-blur-sm border-b">
       <div className="container mx-auto flex h-16 sm:h-18 items-center justify-between px-4 sm:px-6">
         {/* Logo and store name */}
         <div className="flex items-center gap-3">
@@ -34,20 +36,14 @@ const Header = memo(() => {
         <NavigationLinks isMobile={isMobile} />
 
         {/* Search bar - desktop only */}
-        {!isMobile && (
-          <div className="hidden md:flex flex-1 max-w-md mx-6">
+        {!isMobile && <div className="hidden md:flex flex-1 max-w-md mx-6">
             <SearchBar />
-          </div>
-        )}
+          </div>}
 
         {/* Desktop actions */}
-        {!isMobile && (
-          <div className="hidden md:flex items-center gap-3">
+        {!isMobile && <div className="hidden md:flex items-center gap-3">
             {/* Favorites button */}
-            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-store-pink hover:bg-store-pink/10 btn-pop">
-              <Heart className="h-4 w-4 mr-2" />
-              Favoritos
-            </Button>
+            
             
             {/* User account */}
             <Button variant="ghost" size="sm" className="text-gray-600 hover:text-store-pink hover:bg-store-pink/10 btn-pop">
@@ -62,8 +58,7 @@ const Header = memo(() => {
                 Admin
               </Button>
             </Link>
-          </div>
-        )}
+          </div>}
 
         {/* Cart and mobile menu */}
         <div className="flex items-center gap-3 sm:gap-4">
@@ -76,27 +71,22 @@ const Header = memo(() => {
               <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-2 sm:p-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105 border border-gray-200">
                 <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-store-pink" />
               </div>
-              {totalItems > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-store-pink to-store-purple text-xs font-bold text-white shadow-lg animate-pulse border-2 border-white">
+              {totalItems > 0 && <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-store-pink to-store-purple text-xs font-bold text-white shadow-lg animate-pulse border-2 border-white">
                   {totalItems}
-                </span>
-              )}
+                </span>}
             </Link>
             
             {/* Cart notification - desktop only */}
-            {totalItems > 0 && !isMobile && (
-              <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-3 whitespace-nowrap">
+            {totalItems > 0 && !isMobile && <Link to="/cart" className="absolute right-full top-1/2 -translate-y-1/2 mr-3 whitespace-nowrap">
                 <div className="flex items-center gap-2 px-4 py-2 shadow-xl rounded-full bg-gradient-to-r from-store-pink to-store-purple hover:from-store-pink/90 hover:to-store-purple/90 transition-all duration-200 hover:scale-105">
                   <span className="text-sm font-semibold text-white">Finalizar Compra</span>
                   <ArrowRight className="h-4 w-4 text-white" />
                 </div>
-              </Link>
-            )}
+              </Link>}
           </div>
           
           {/* Mobile menu */}
-          {isMobile && (
-            <Sheet>
+          {isMobile && <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-store-pink hover:bg-store-pink/10 btn-pop p-2">
                   <Menu className="h-5 w-5" />
@@ -122,24 +112,19 @@ const Header = memo(() => {
                   </Link>
                 </nav>
               </SheetContent>
-            </Sheet>
-          )}
+            </Sheet>}
         </div>
       </div>
 
       {/* Welcome message with enhanced design */}
-      {settings.welcomeMessage && (
-        <div className="bg-gradient-to-r from-store-pink/5 via-store-purple/5 to-store-pink/5 border-t border-store-pink/10 p-3 text-center text-sm font-medium text-gray-800 animate-fade-in">
+      {settings.welcomeMessage && <div className="bg-gradient-to-r from-store-pink/5 via-store-purple/5 to-store-pink/5 border-t border-store-pink/10 p-3 text-center text-sm font-medium text-gray-800 animate-fade-in">
           <div className="flex items-center justify-center gap-2">
             <div className="w-2 h-2 bg-store-pink rounded-full animate-pulse"></div>
             {settings.welcomeMessage}
             <div className="w-2 h-2 bg-store-purple rounded-full animate-pulse"></div>
           </div>
-        </div>
-      )}
-    </header>
-  );
+        </div>}
+    </header>;
 });
-
 Header.displayName = "Header";
 export default Header;
