@@ -10,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/context/AuthContext";
 import SearchBar from "./SearchBar";
 import MobileSearch from "./MobileSearch";
+import ThemeToggle from "./ThemeToggle";
 
 const Header = memo(() => {
   const { totalItems } = useCart();
@@ -18,7 +19,7 @@ const Header = memo(() => {
   const isMobile = useIsMobile();
 
   return (
-    <header className="sticky top-0 z-10 animate-fade-in shadow-lg bg-white/95 backdrop-blur-sm border-b">
+    <header className="sticky top-0 z-10 animate-fade-in shadow-lg bg-white/95 backdrop-blur-sm border-b dark:bg-gray-900/95 dark:border-gray-800">
       <div className="container mx-auto flex h-16 sm:h-18 items-center justify-between px-4 sm:px-6">
         {/* Logo and store name */}
         <div className="flex items-center gap-3">
@@ -39,6 +40,9 @@ const Header = memo(() => {
         {/* Desktop actions */}
         {!isMobile && (
           <div className="hidden md:flex items-center gap-3">
+            {/* Theme toggle */}
+            <ThemeToggle />
+            
             {/* Admin access */}
             <Link to="/admin">
               <Button variant="outline" size="sm" className="text-gray-600 hover:text-store-pink hover:border-store-pink btn-pop">
@@ -57,11 +61,11 @@ const Header = memo(() => {
           {/* Cart icon with counter */}
           <div className="relative">
             <Link to="/cart" className="relative btn-pop group">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-2 sm:p-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105 border border-gray-200">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 p-2 sm:p-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105 border border-gray-200 dark:border-gray-600">
                 <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 text-store-pink" />
               </div>
               {totalItems > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-store-pink to-store-purple text-xs font-bold text-white shadow-lg animate-pulse border-2 border-white">
+                <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-store-pink to-store-purple text-xs font-bold text-white shadow-lg animate-pulse border-2 border-white dark:border-gray-900">
                   {totalItems}
                 </span>
               )}
@@ -86,13 +90,19 @@ const Header = memo(() => {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="glass-morphism border-l border-gray-100 w-80">
+              <SheetContent side="right" className="glass-morphism border-l border-gray-100 dark:border-gray-800 w-80 dark:bg-gray-900/95">
                 <nav className="flex flex-col gap-6 pt-12">
-                  <Link to="/cart" className="flex items-center gap-3 text-lg font-medium text-gradient hover-scale btn-pop p-3 rounded-lg hover:bg-gray-50">
+                  {/* Theme toggle in mobile menu */}
+                  <div className="flex items-center justify-between p-3">
+                    <span className="text-lg font-medium text-gray-700 dark:text-gray-300">Tema</span>
+                    <ThemeToggle />
+                  </div>
+                  
+                  <Link to="/cart" className="flex items-center gap-3 text-lg font-medium text-gradient hover-scale btn-pop p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
                     <ShoppingCart className="h-5 w-5" />
                     Carrinho
                   </Link>
-                  <Link to="/admin" className="flex items-center gap-3 text-lg font-medium text-gray-500 hover:text-store-pink hover-scale btn-pop p-3 rounded-lg hover:bg-gray-50">
+                  <Link to="/admin" className="flex items-center gap-3 text-lg font-medium text-gray-500 hover:text-store-pink hover-scale btn-pop p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
                     <Lock className="h-5 w-5" />
                     Admin
                   </Link>
@@ -105,7 +115,7 @@ const Header = memo(() => {
 
       {/* Welcome message with enhanced design */}
       {settings.welcomeMessage && (
-        <div className="bg-gradient-to-r from-store-pink/5 via-store-purple/5 to-store-pink/5 border-t border-store-pink/10 p-3 text-center text-sm font-medium text-gray-800 animate-fade-in">
+        <div className="bg-gradient-to-r from-store-pink/5 via-store-purple/5 to-store-pink/5 border-t border-store-pink/10 p-3 text-center text-sm font-medium text-gray-800 dark:text-gray-200 animate-fade-in">
           <div className="flex items-center justify-center gap-2">
             <div className="w-2 h-2 bg-store-pink rounded-full animate-pulse"></div>
             {settings.welcomeMessage}

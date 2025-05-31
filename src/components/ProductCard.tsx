@@ -1,10 +1,10 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { Product } from "@/types";
-import { ShoppingCart, XCircle, Package, Heart } from "lucide-react";
+import { ShoppingCart, XCircle, Package, Heart, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface ProductCardProps {
@@ -13,7 +13,22 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
+  
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
+  const isLowStock = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
+
+  const handleAddToCart = async () => {
+    if (isOutOfStock || isAdding) return;
+    
+    setIsAdding(true);
+    addToCart(product);
+    
+    // Resetar o estado após 1.5 segundos
+    setTimeout(() => {
+      setIsAdding(false);
+    }, 1500);
+  };
 
   return (
     <Card className="overflow-hidden border bg-white shadow-md transition-all hover:shadow-lg h-full group">
@@ -31,13 +46,25 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             Destaque
           </div>
         )}
-        {/* Stock badge on top of the image */}
-        {product.stock !== undefined && product.stock > 0 && (
-          <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/80 backdrop-blur-sm text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
-            <Package className="h-3 w-3 text-green-600" />
-            <span className="text-green-700">{product.stock}</span>
-          </div>
-        )}
+        
+        {/* Stock badges */}
+        <div className="absolute top-2 right-2 flex flex-col gap-1">
+          {/* Stock count badge */}
+          {product.stock !== undefined && product.stock > 0 && (
+            <div className="flex items-center gap-1 bg-white/80 backdrop-blur-sm text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
+              <Package className="h-3 w-3 text-green-600" />
+              <span className="text-green-700">{product.stock}</span>
+            </div>
+          )}
+          
+          {/* Low stock warning */}
+          {isLowStock && (
+            <div className="bg-store-yellow text-gray-800 text-xs font-bold px-2 py-1 rounded-full shadow-sm animate-pulse">
+              Poucas unidades!
+            </div>
+          )}
+        </div>
+
         {isOutOfStock && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-bold py-2 px-4 flex items-center justify-center gap-1.5 shadow-lg">
             <XCircle className="h-4 w-4" /> Esgotado
@@ -53,7 +80,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
-              !isOutOfStock && addToCart(product);
+              handleAddToCart();
             }}
             disabled={isOutOfStock}
           >
@@ -76,20 +103,32 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       
       <CardFooter className="p-3 pt-0">
         <Button
-          onClick={() => addToCart(product)}
-          disabled={isOutOfStock}
-          className={`w-full rounded-full text-white text-sm py-1 h-auto ${
+          onClick={handleAddToCart}
+          disabled={isOutOfStock || isAdding}
+          className={`w-full rounded-full text-white text-sm py-1 h-auto transition-all duration-300 ${
             isOutOfStock 
               ? 'bg-gray-400 hover:bg-gray-400 cursor-not-allowed' 
-              : 'bg-store-pink hover:bg-store-pink/90 transition-all duration-300 shadow-sm hover:shadow-md'
-          }`}
+              : isAdding
+              ? 'bg-green-500 hover:bg-green-500 scale-105 shadow-lg'
+              : 'bg-store-pink hover:bg-store-pink/90 shadow-sm hover:shadow-md'
+          } ${isAdding ? 'animate-pulse' : ''}`}
         >
           {isOutOfStock ? (
-            <XCircle className="mr-1 h-3 w-3" />
+            <>
+              <XCircle className="mr-1 h-3 w-3" />
+              Esgotado
+            </>
+          ) : isAdding ? (
+            <>
+              <Check className="mr-1 h-3 w-3" />
+              Adicionado!
+            </>
           ) : (
-            <ShoppingCart className="mr-1 h-3 w-3" />
+            <>
+              <ShoppingCart className="mr-1 h-3 w-3" />
+              Adicionar
+            </>
           )}
-          {isOutOfStock ? 'Esgotado' : 'Adicionar'}
         </Button>
       </CardFooter>
     </Card>
