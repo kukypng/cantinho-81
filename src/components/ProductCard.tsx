@@ -16,7 +16,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isAdding, setIsAdding] = useState(false);
   
   const isOutOfStock = product.stock !== undefined && product.stock <= 0;
-  const isLowStock = product.stock !== undefined && product.stock > 0 && product.stock <= 5;
 
   const handleAddToCart = async () => {
     if (isOutOfStock || isAdding) return;
@@ -56,13 +55,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               <span className="text-green-700">{product.stock}</span>
             </div>
           )}
-          
-          {/* Low stock warning */}
-          {isLowStock && (
-            <div className="bg-store-yellow text-gray-800 text-xs font-bold px-2 py-1 rounded-full shadow-sm animate-pulse">
-              Poucas unidades!
-            </div>
-          )}
         </div>
 
         {isOutOfStock && (
@@ -93,9 +85,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div className="flex justify-between items-start mb-1">
           <h3 className="text-base font-semibold text-gray-900 line-clamp-1">{product.name}</h3>
         </div>
-        <p className="text-xs text-gray-500 line-clamp-2 min-h-[32px] mb-2">
-          {product.description}
-        </p>
         <p className="text-lg font-bold text-store-pink">
           R$ {product.price.toFixed(2)}
         </p>

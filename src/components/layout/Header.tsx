@@ -10,7 +10,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/context/AuthContext";
 import SearchBar from "./SearchBar";
 import MobileSearch from "./MobileSearch";
-import ThemeToggle from "./ThemeToggle";
 
 const Header = memo(() => {
   const { totalItems } = useCart();
@@ -40,9 +39,6 @@ const Header = memo(() => {
         {/* Desktop actions */}
         {!isMobile && (
           <div className="hidden md:flex items-center gap-3">
-            {/* Theme toggle */}
-            <ThemeToggle />
-            
             {/* Admin access */}
             <Link to="/admin">
               <Button variant="outline" size="sm" className="text-gray-600 hover:text-store-pink hover:border-store-pink btn-pop">
@@ -92,12 +88,6 @@ const Header = memo(() => {
               </SheetTrigger>
               <SheetContent side="right" className="glass-morphism border-l border-gray-100 dark:border-gray-800 w-80 dark:bg-gray-900/95">
                 <nav className="flex flex-col gap-6 pt-12">
-                  {/* Theme toggle in mobile menu */}
-                  <div className="flex items-center justify-between p-3">
-                    <span className="text-lg font-medium text-gray-700 dark:text-gray-300">Tema</span>
-                    <ThemeToggle />
-                  </div>
-                  
                   <Link to="/cart" className="flex items-center gap-3 text-lg font-medium text-gradient hover-scale btn-pop p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
                     <ShoppingCart className="h-5 w-5" />
                     Carrinho
